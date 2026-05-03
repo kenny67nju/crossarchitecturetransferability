@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.22)  3 MAY 2026 14:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.22)  3 MAY 2026 16:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -768,7 +768,7 @@ Overfull \hbox (5.03912pt too wide) in paragraph at lines 83--92
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [4] [5]
-<fig_sigma_b_flow.pdf, id=215, 535.17482pt x 229.37842pt>
+<fig_sigma_b_flow.pdf, id=217, 535.17482pt x 229.37842pt>
 File: fig_sigma_b_flow.pdf Graphic file (type pdf)
 <use fig_sigma_b_flow.pdf>
 Package pdftex.def Info: fig_sigma_b_flow.pdf  used on input line 242.
@@ -777,12 +777,12 @@ Package pdftex.def Info: fig_sigma_b_flow.pdf  used on input line 242.
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 290.
  [7]
-<fig_pareto.pdf, id=327, 652.67644pt x 343.12202pt>
+<fig_pareto.pdf, id=329, 652.67644pt x 343.12202pt>
 File: fig_pareto.pdf Graphic file (type pdf)
 <use fig_pareto.pdf>
 Package pdftex.def Info: fig_pareto.pdf  used on input line 329.
 (pdftex.def)             Requested size: 194.76982pt x 102.3929pt.
-<fig_costsplit.pdf, id=328, 533.48688pt x 350.9125pt>
+<fig_costsplit.pdf, id=330, 533.48688pt x 350.9125pt>
 File: fig_costsplit.pdf Graphic file (type pdf)
 <use fig_costsplit.pdf>
 Package pdftex.def Info: fig_costsplit.pdf  used on input line 334.
@@ -792,7 +792,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [9]
 [10] [11])
-<fig_reff_d_scatter.pdf, id=495, 321.27808pt x 241.02484pt>
+<fig_reff_d_scatter.pdf, id=497, 321.27808pt x 241.02484pt>
 File: fig_reff_d_scatter.pdf Graphic file (type pdf)
 <use fig_reff_d_scatter.pdf>
 Package pdftex.def Info: fig_reff_d_scatter.pdf  used on input line 384.
@@ -849,10 +849,10 @@ dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2023/texmf-dist/fo
 nts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/
 urw/times/utmr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/
 utmri8a.pfb>
-Output written on main_v18.pdf (19 pages, 503912 bytes).
+Output written on main_v18.pdf (19 pages, 503939 bytes).
 PDF statistics:
- 768 PDF objects out of 1000 (max. 8388607)
- 429 compressed objects within 5 object streams
+ 770 PDF objects out of 1000 (max. 8388607)
+ 431 compressed objects within 5 object streams
  107 named destinations out of 1000 (max. 500000)
  55429 words of extra memory for PDF output out of 61914 (max. 10000000)
 
