@@ -1,7 +1,6 @@
 """
 reproduce_all.py — Reproduce all main results for the paper
-"The Feature-Width Confound: Why Label-Free Transferability Scores Fail
- Cross-Architecture and How to Fix Them"
+"Cross-Architecture Transferability is Width-Confounded: Diagnosis and Subspace Correction"
 
 Usage
 -----

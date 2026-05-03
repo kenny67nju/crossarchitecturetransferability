@@ -1,4 +1,4 @@
-# The Feature-Width Confound: Why Label-Free Transferability Scores Fail Cross-Architecture and How to Fix Them
+# Cross-Architecture Transferability is Width-Confounded: Diagnosis and Subspace Correction
 
 Reproduction package for the NeurIPS 2026 submission.
 

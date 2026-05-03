@@ -1,6 +1,5 @@
 # config.yaml — Paths and hyperparameters for reproducing paper results
-# "The Feature-Width Confound: Why Label-Free Transferability Scores Fail
-#  Cross-Architecture and How to Fix Them"
+# "Cross-Architecture Transferability is Width-Confounded: Diagnosis and Subspace Correction"
 
 # === Root paths ===
 # Set these to absolute paths on your system before running.
