@@ -19,7 +19,7 @@ pipeline, it matches this quality at one-third of the forward-pass cost.  Five l
 architecture evaluations suffice to match the best fully label-free strategy; K=35 labelled
 evaluations reduce regret to +0.018 --- a 5.7x improvement at the same forward-pass cost.
 
-Code: https://anonymous.4open.science/r/sdg-framework
+Code: https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8
 
 ---
 
