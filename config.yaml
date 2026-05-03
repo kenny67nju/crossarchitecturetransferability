@@ -1,0 +1,62 @@
+# config.yaml — Paths and hyperparameters for reproducing paper results
+# "The Feature-Width Confound: Why Label-Free Transferability Scores Fail
+#  Cross-Architecture and How to Fix Them"
+
+# === Root paths ===
+# Set these to absolute paths on your system before running.
+root: "."                          # repository root
+results_dir: "./results"           # output CSV directory
+features_dir: "./features"         # pre-extracted feature .npz files
+paper_dir: "./paper"               # LaTeX source directory
+
+# === Pool B (main experiment) ===
+pool_b:
+  feature_dir: "./features/pool_b"     # {arch}__{task}.npz
+  tasks: [cifar10, cifar100, dtd, eurosat, svhn]
+  ref_task: stl10                       # SA_k reference task
+  sa_k: 20                              # subspace-size k for SSR^‡
+  lp_test_split: 0.2                    # 80/20 logistic-probe split
+  lp_C: 1.0                             # L2 regularisation coefficient
+  lp_max_iter: 1000
+
+# === Extended pool (51v × 10t) ===
+extended_pool:
+  source_csv: "./results/extended_full_sota.csv"
+  tasks: [cifar10, cifar100, dtd, eurosat, fashion_mnist,
+          fgvc_aircraft, flowers102, food101, pets, svhn]
+
+# === VTAB pool (25 archs × 8 tasks) ===
+vtab:
+  feature_dir: "./features/vtab"        # {arch}__{task}.npz, n=1000 per file
+  tasks: [cifar10, cifar100, dtd, fashion_mnist,
+          flowers102, pets, stl10, svhn]
+  ref_task: stl10
+  sa_k: 20
+
+# === SSR^‡ formula ===
+ssr_dagger:
+  formula: "(log(reff) - log(SA_k)) / log(n_class)"
+  sa_k: 20                              # top-k principal components for SA_k
+  eps: 1.0e-12                          # numerical floor for logs
+
+# === Truncation ablation ===
+truncation:
+  D_values: [128, 256, 512, 768]        # truncation dimensions to test
+
+# === Mixed pipeline label budget sweep ===
+mixed_pipeline:
+  stage1_score: hscore                  # label-requiring stage-1
+  stage2_score: rankme                  # label-free stage-2
+  budget_values: [1, 3, 5, 10, 15, 20, 25, 30, 35]
+  n_bootstrap: 100                      # random subsets per budget value
+
+# === Bootstrap settings ===
+bootstrap:
+  n_resamples: 10000
+  seed: 42
+  level: 0.95                           # CI level
+
+# === Figures ===
+figures:
+  dpi: 300
+  format: pdf

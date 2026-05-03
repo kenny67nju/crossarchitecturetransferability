@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2023)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main_v18.aux
+The style file: plainnat.bst
+Database file #1: references.bib
+Warning--entry type for "wightman2019timm" isn't style-file defined
+--line 166 of file references.bib
+Warning--empty journal in kim2023vne
+You've used 34 entries,
+            2773 wiz_defined-function locations,
+            754 strings with 11991 characters,
+and the built_in function-call counts, 23125 in all, are:
+= -- 1995
+> -- 1665
+< -- 27
++ -- 556
+- -- 522
+* -- 1887
+:= -- 3347
+add.period$ -- 102
+call.type$ -- 34
+change.case$ -- 275
+chr.to.int$ -- 34
+cite$ -- 69
+duplicate$ -- 1001
+empty$ -- 1676
+format.name$ -- 568
+if$ -- 4987
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 33
+newline$ -- 178
+num.names$ -- 136
+pop$ -- 636
+preamble$ -- 1
+purify$ -- 241
+quote$ -- 0
+skip$ -- 916
+stack$ -- 0
+substring$ -- 955
+swap$ -- 280
+text.length$ -- 20
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 374
+warning$ -- 1
+while$ -- 169
+width$ -- 0
+write$ -- 438
+(There were 2 warnings)
