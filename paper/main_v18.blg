@@ -4,47 +4,46 @@ The top-level auxiliary file: main_v18.aux
 The style file: plainnat.bst
 Database file #1: references.bib
 Warning--entry type for "wightman2019timm" isn't style-file defined
---line 166 of file references.bib
-Warning--empty journal in kim2023vne
+--line 167 of file references.bib
 You've used 34 entries,
             2773 wiz_defined-function locations,
-            754 strings with 11991 characters,
-and the built_in function-call counts, 23125 in all, are:
-= -- 1995
-> -- 1665
-< -- 27
-+ -- 556
-- -- 522
-* -- 1887
-:= -- 3347
+            762 strings with 12184 characters,
+and the built_in function-call counts, 24135 in all, are:
+= -- 2105
+> -- 1701
+< -- 35
++ -- 568
+- -- 534
+* -- 1988
+:= -- 3449
 add.period$ -- 102
 call.type$ -- 34
-change.case$ -- 275
+change.case$ -- 279
 chr.to.int$ -- 34
-cite$ -- 69
-duplicate$ -- 1001
-empty$ -- 1676
-format.name$ -- 568
-if$ -- 4987
+cite$ -- 68
+duplicate$ -- 1045
+empty$ -- 1742
+format.name$ -- 580
+if$ -- 5230
 int.to.chr$ -- 1
 int.to.str$ -- 1
 missing$ -- 33
 newline$ -- 178
 num.names$ -- 136
-pop$ -- 636
+pop$ -- 638
 preamble$ -- 1
-purify$ -- 241
+purify$ -- 245
 quote$ -- 0
-skip$ -- 916
+skip$ -- 971
 stack$ -- 0
-substring$ -- 955
-swap$ -- 280
-text.length$ -- 20
+substring$ -- 1083
+swap$ -- 327
+text.length$ -- 28
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 374
-warning$ -- 1
-while$ -- 169
+warning$ -- 0
+while$ -- 178
 width$ -- 0
-write$ -- 438
-(There were 2 warnings)
+write$ -- 447
+(There was 1 warning)
