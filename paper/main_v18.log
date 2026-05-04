@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.22)  3 MAY 2026 16:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.22)  4 MAY 2026 13:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -792,7 +792,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [9]
 [10] [11])
-<fig_reff_d_scatter.pdf, id=497, 321.27808pt x 241.02484pt>
+<fig_reff_d_scatter.pdf, id=495, 321.27808pt x 241.02484pt>
 File: fig_reff_d_scatter.pdf Graphic file (type pdf)
 <use fig_reff_d_scatter.pdf>
 Package pdftex.def Info: fig_reff_d_scatter.pdf  used on input line 384.
@@ -801,7 +801,10 @@ Package pdftex.def Info: fig_reff_d_scatter.pdf  used on input line 384.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[12] [13 <./fig_reff_d_scatter.pdf>] [14]
+[12]
+Underfull \vbox (badness 2326) has occurred while \output is active []
+
+ [13 <./fig_reff_d_scatter.pdf>] [14]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 4
 81.
 
@@ -816,13 +819,13 @@ Package rerunfilecheck Info: File `main_v18.out' has not changed.
 (rerunfilecheck)             Checksum: EEA66484F63732DD3C60217BF45C8989;2090.
  ) 
 Here is how much of TeX's memory you used:
- 17891 strings out of 476025
- 288250 string characters out of 5790017
+ 17888 strings out of 476025
+ 288220 string characters out of 5790017
  1876388 words of memory out of 5000000
  37631 multiletter control sequences out of 15000+600000
- 568813 words of font info for 287 fonts, out of 8000000 for 9000
+ 568588 words of font info for 285 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,77p,2639b,702s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,77p,2639b,700s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></
@@ -849,7 +852,7 @@ dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2023/texmf-dist/fo
 nts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/
 urw/times/utmr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/
 utmri8a.pfb>
-Output written on main_v18.pdf (19 pages, 503939 bytes).
+Output written on main_v18.pdf (19 pages, 504427 bytes).
 PDF statistics:
  770 PDF objects out of 1000 (max. 8388607)
  431 compressed objects within 5 object streams

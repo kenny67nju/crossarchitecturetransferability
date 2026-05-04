@@ -34,15 +34,17 @@ Mathilde Caron, Hugo Touvron, Ishan Misra, Herv{\'e} J{\'e}gou, Julien Mairal,
 Ting Chen, Simon Kornblith, Mohammad Norouzi, and Geoffrey Hinton.
 \newblock A simple framework for contrastive learning of visual
   representations.
-\newblock In \emph{International Conference on Machine Learning (ICML)}, 2020.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, volume
+  119 of \emph{Proceedings of Machine Learning Research}, pages 1597--1607,
+  2020.
 
 \bibitem[Ding et~al.(2022)Ding, Chen, Levinboim, Changpinyo, and
   Soricut]{ding2022pactran}
 Nan Ding, Xi~Chen, Tomer Levinboim, Soravit Changpinyo, and Radu Soricut.
 \newblock {PACTran}: {PAC}-{B}ayesian metrics for estimating the
   transferability of pretrained models to classification tasks.
-\newblock In \emph{European Conference on Computer Vision (ECCV)}, pages
-  175--192, 2022.
+\newblock In \emph{European Conference on Computer Vision (ECCV)}, volume 13680
+  of \emph{Lecture Notes in Computer Science}, pages 390--406, 2022.
 
 \bibitem[Dosovitskiy et~al.(2021)Dosovitskiy, Beyer, Kolesnikov, Weissenborn,
   Zhai, Unterthiner, Dehghani, Minderer, Heigold, Gelly, Uszkoreit, and
@@ -74,7 +76,9 @@ Basura Fernando, Amaury Habrard, Marc Sebban, and Tinne Tuytelaars.
 Quentin Garrido, Randall Balestriero, Laurent Najman, and Yann LeCun.
 \newblock Rankme: Assessing the downstream performance of pretrained
   self-supervised representations by their rank.
-\newblock In \emph{ICML}, 2023.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, volume
+  202 of \emph{Proceedings of Machine Learning Research}, pages 10929--10974,
+  2023.
 
 \bibitem[Hamm and Lee(2008)]{hamm2008grassmann}
 Jihun Hamm and Daniel~D. Lee.
@@ -102,11 +106,12 @@ Long-Kai Huang, Junzhou Huang, Yu~Rong, Qiang Yang, and Ying Wei.
 \newblock In \emph{International Conference on Machine Learning (ICML)}, pages
   9201--9225, 2022.
 
-\bibitem[Kim et~al.(2023)Kim, Park, and Shin]{kim2023vne}
-Jaeill Kim, Suhyun Park, and Wonjong Shin.
+\bibitem[Kim et~al.(2023)Kim, Kang, Hwang, Shin, and Rhee]{kim2023vne}
+Jaeill Kim, Suhyun Kang, Duhun Hwang, Jungwook Shin, and Wonjong Rhee.
 \newblock {VNE}: An effective method for improving deep representation by
   manipulating eigenvalue distribution.
-\newblock 2023.
+\newblock In \emph{IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, 2023.
 
 \bibitem[Kornblith et~al.(2019)Kornblith, Norouzi, Lee, and
   Hinton]{kornblith2019similarity}
@@ -171,7 +176,7 @@ Michal Pandy, Andrea Agostinelli, Jasper Uijlings, Vittorio Ferrari, and Thomas
   Mensink.
 \newblock Transferability estimation using {B}hattacharyya class separability.
 \newblock In \emph{IEEE/CVF Conference on Computer Vision and Pattern
-  Recognition (CVPR)}, pages 9635--9644, 2022.
+  Recognition (CVPR)}, pages 9172--9182, 2022.
 
 \bibitem[Radford et~al.(2021)Radford, Kim, Hallacy, Ramesh, Goh, Agarwal,
   Sastry, Askell, Mishkin, Clark, Krueger, and Sutskever]{radford2021clip}
@@ -180,7 +185,9 @@ Alec Radford, Jong~Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh,
   Gretchen Krueger, and Ilya Sutskever.
 \newblock Learning transferable visual models from natural language
   supervision.
-\newblock In \emph{International Conference on Machine Learning (ICML)}, 2021.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, volume
+  139 of \emph{Proceedings of Machine Learning Research}, pages 8748--8763,
+  2021.
 
 \bibitem[Raghu et~al.(2017)Raghu, Gilmer, Yosinski, and
   Sohl-Dickstein]{raghu2017svcca}
@@ -216,37 +223,37 @@ Anh~T. Tran, Cuong~V. Nguyen, and Tal Hassner.
 \newblock In \emph{IEEE/CVF International Conference on Computer Vision
   (ICCV)}, pages 1395--1405, 2019.
 
-\bibitem[Wang et~al.(2023)Wang, Li, and Huang]{wang2023ncti}
-Zihao Wang, Yang Li, and Shao-Lun Huang.
+\bibitem[Wang et~al.(2023)Wang, Luo, Zheng, Huang, and
+  Baktashmotlagh]{wang2023ncti}
+Zijian Wang, Yadan Luo, Liang Zheng, Zi~Huang, and Mahsa Baktashmotlagh.
 \newblock How far pre-trained models are from neural collapse on the target
   dataset informs their transferability.
 \newblock In \emph{IEEE/CVF International Conference on Computer Vision
-  (ICCV)}, pages 5765--5774, 2023.
+  (ICCV)}, pages 5549--5558, 2023.
 
 \bibitem[Wightman(2019)]{wightman2019timm}
 Ross Wightman.
 \newblock {PyTorch Image Models}, 2019.
 \newblock URL \url{https://github.com/rwightman/pytorch-image-models}.
 
+\bibitem[You et~al.(2021)You, Liu, Wang, and Long]{zhang2021logme}
+Kaichao You, Yang Liu, Jianmin Wang, and Mingsheng Long.
+\newblock {LogME}: Practical assessment of pre-trained models for transfer
+  learning.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, volume
+  139 of \emph{Proceedings of Machine Learning Research}, pages 12133--12143,
+  2021.
+
 \bibitem[Zhai et~al.(2019)Zhai, Puigcerver, Kolesnikov, Ruyssen, Riquelme,
   Lucic, Djolonga, Pinto, Neumann, Dosovitskiy, Beyer, Bachem, Tschannen,
-  Uszkoreit, and Szegedy]{zhai2019large}
+  Uszkoreit, Szegedy, and Houlsby]{zhai2019large}
 Xiaohua Zhai, Joan Puigcerver, Alexander Kolesnikov, Pierre Ruyssen, Carlos
   Riquelme, Mario Lucic, Josip Djolonga, Andre~Susano Pinto, Maxim Neumann,
   Alexey Dosovitskiy, Lucas Beyer, Olivier Bachem, Michael Tschannen, Jakob
-  Uszkoreit, and Christian Szegedy.
+  Uszkoreit, Christian Szegedy, and Neil Houlsby.
 \newblock A large-scale study of representation learning with the visual task
   adaptation benchmark.
 \newblock In \emph{arXiv preprint arXiv:1910.04867}, 2019.
-
-\bibitem[Zhang et~al.(2021)Zhang, Shen, Han, Jochems, Zhang, and
-  Zhang]{zhang2021logme}
-Kaicheng Zhang, Ke~Shen, Jingkuan Han, Pieter Jochems, Xu~Zhang, and Jiliang
-  Zhang.
-\newblock {LogME}: Practical assessment of pre-trained models for transfer
-  learning.
-\newblock In \emph{International Conference on Machine Learning (ICML)}, pages
-  12133--12143, 2021.
 
 \bibitem[Zhang et~al.(2025)Zhang, Shu, Chen, Long, Guo, and
   Yang]{zhang2025disco}
