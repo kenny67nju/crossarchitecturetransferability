@@ -44,7 +44,7 @@ Nan Ding, Xi~Chen, Tomer Levinboim, Soravit Changpinyo, and Radu Soricut.
 \newblock {PACTran}: {PAC}-{B}ayesian metrics for estimating the
   transferability of pretrained models to classification tasks.
 \newblock In \emph{European Conference on Computer Vision (ECCV)}, volume 13680
-  of \emph{Lecture Notes in Computer Science}, pages 390--406, 2022.
+  of \emph{Lecture Notes in Computer Science}, pages 252--268, 2022.
 
 \bibitem[Dosovitskiy et~al.(2021)Dosovitskiy, Beyer, Kolesnikov, Weissenborn,
   Zhai, Unterthiner, Dehghani, Minderer, Heigold, Gelly, Uszkoreit, and
@@ -246,11 +246,11 @@ Kaichao You, Yang Liu, Jianmin Wang, and Mingsheng Long.
 
 \bibitem[Zhai et~al.(2019)Zhai, Puigcerver, Kolesnikov, Ruyssen, Riquelme,
   Lucic, Djolonga, Pinto, Neumann, Dosovitskiy, Beyer, Bachem, Tschannen,
-  Uszkoreit, Szegedy, and Houlsby]{zhai2019large}
+  Michalski, Bousquet, Gelly, and Houlsby]{zhai2019large}
 Xiaohua Zhai, Joan Puigcerver, Alexander Kolesnikov, Pierre Ruyssen, Carlos
   Riquelme, Mario Lucic, Josip Djolonga, Andre~Susano Pinto, Maxim Neumann,
-  Alexey Dosovitskiy, Lucas Beyer, Olivier Bachem, Michael Tschannen, Jakob
-  Uszkoreit, Christian Szegedy, and Neil Houlsby.
+  Alexey Dosovitskiy, Lucas Beyer, Olivier Bachem, Michael Tschannen, Marcin
+  Michalski, Olivier Bousquet, Sylvain Gelly, and Neil Houlsby.
 \newblock A large-scale study of representation learning with the visual task
   adaptation benchmark.
 \newblock In \emph{arXiv preprint arXiv:1910.04867}, 2019.
