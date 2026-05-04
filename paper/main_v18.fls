@@ -1009,12 +1009,6 @@ INPUT ./fig_reff_d_scatter.pdf
 INPUT fig_reff_d_scatter.pdf
 INPUT ./fig_reff_d_scatter.pdf
 INPUT ./fig_reff_d_scatter.pdf
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/adobe/times/ptmr8c.tfm
-INPUT /usr/local/texlive/2023/texmf-dist/fonts/vf/adobe/times/ptmr8c.vf
 INPUT ./checklist.tex
 INPUT ./checklist.tex
 INPUT ./checklist.tex

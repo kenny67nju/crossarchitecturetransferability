@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.22)  4 MAY 2026 14:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.22)  4 MAY 2026 17:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -758,7 +758,10 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
 al/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2023
-/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [2]
+/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
+Underfull \vbox (badness 3302) has occurred while \output is active []
+
+ [2]
 Overfull \hbox (5.03912pt too wide) in paragraph at lines 83--92
  [][] 
  []
@@ -767,16 +770,24 @@ Overfull \hbox (5.03912pt too wide) in paragraph at lines 83--92
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[4] [5]
-<fig_sigma_b_flow.pdf, id=217, 535.17482pt x 229.37842pt>
+[4]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5]
+<fig_sigma_b_flow.pdf, id=218, 535.17482pt x 229.37842pt>
 File: fig_sigma_b_flow.pdf Graphic file (type pdf)
 <use fig_sigma_b_flow.pdf>
 Package pdftex.def Info: fig_sigma_b_flow.pdf  used on input line 242.
 (pdftex.def)             Requested size: 365.68546pt x 156.73827pt.
- [6 <./fig_sigma_b_flow.pdf>]
+
+[6 <./fig_sigma_b_flow.pdf>]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 290.
- [7]
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[7]
 <fig_pareto.pdf, id=329, 652.67644pt x 343.12202pt>
 File: fig_pareto.pdf Graphic file (type pdf)
 <use fig_pareto.pdf>
@@ -787,11 +798,11 @@ File: fig_costsplit.pdf Graphic file (type pdf)
 <use fig_costsplit.pdf>
 Package pdftex.def Info: fig_costsplit.pdf  used on input line 334.
 (pdftex.def)             Requested size: 194.76982pt x 128.11143pt.
- [8 <./fig_pareto.pdf> <./fig_costsplit.pdf>] (./main_v18.bbl
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [9]
-[10] [11])
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[8] [9 <./fig_pareto.pdf> <./fig_costsplit.pdf>] (./main_v18.bbl [10] [11])
 <fig_reff_d_scatter.pdf, id=495, 321.27808pt x 241.02484pt>
 File: fig_reff_d_scatter.pdf Graphic file (type pdf)
 <use fig_reff_d_scatter.pdf>
@@ -801,16 +812,7 @@ Package pdftex.def Info: fig_reff_d_scatter.pdf  used on input line 384.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[12]
-Underfull \vbox (badness 2326) has occurred while \output is active []
-
- [13 <./fig_reff_d_scatter.pdf>] [14]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 4
-81.
-
-(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
+[12] [13 <./fig_reff_d_scatter.pdf>] [14]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
@@ -819,13 +821,13 @@ Package rerunfilecheck Info: File `main_v18.out' has not changed.
 (rerunfilecheck)             Checksum: EEA66484F63732DD3C60217BF45C8989;2090.
  ) 
 Here is how much of TeX's memory you used:
- 17888 strings out of 476025
- 288220 string characters out of 5790017
- 1876388 words of memory out of 5000000
- 37631 multiletter control sequences out of 15000+600000
- 568588 words of font info for 285 fonts, out of 8000000 for 9000
+ 17856 strings out of 476025
+ 287750 string characters out of 5790017
+ 1875388 words of memory out of 5000000
+ 37608 multiletter control sequences out of 15000+600000
+ 568152 words of font info for 281 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,77p,2639b,700s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,77p,2639b,696s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></
@@ -852,10 +854,10 @@ dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2023/texmf-dist/fo
 nts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/
 urw/times/utmr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/
 utmri8a.pfb>
-Output written on main_v18.pdf (19 pages, 504427 bytes).
+Output written on main_v18.pdf (19 pages, 505009 bytes).
 PDF statistics:
- 770 PDF objects out of 1000 (max. 8388607)
- 431 compressed objects within 5 object streams
+ 772 PDF objects out of 1000 (max. 8388607)
+ 432 compressed objects within 5 object streams
  107 named destinations out of 1000 (max. 500000)
- 55429 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 53381 words of extra memory for PDF output out of 61914 (max. 10000000)
 

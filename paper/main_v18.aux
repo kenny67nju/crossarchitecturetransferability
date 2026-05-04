@@ -87,28 +87,28 @@
 \newlabel{tab:sota_flat}{{5}{5}{MV pool SOTA flat comparison ($132$v$\times 5$t). Columns report per-task mean regret with and without the three VGG variants in the pool. Feature-spectrum scores (RankMe, LogME, H-score) all select \texttt {vgg16} when present and degrade similarly; class-distribution scores (LEEP, NCTI) and the proposed \SSRdag \ are robust.\relax }{table.caption.7}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Sensitivity of flat strategies to the presence of VGG-class features ($d{=}4096$) in MV pool. Columns report mean LP across the $5$ tasks. RankMe and the trace-spectrum label-based scores are dominated by VGG when present; \ensuremath  {\mathrm  {SSR}^{\ddagger }}\xspace  , DiSCO, and class-distribution scores (LEEP, NCTI) are robust.\relax }}{5}{table.caption.8}\protected@file@percent }
 \newlabel{tab:vgg_sensitivity}{{6}{5}{Sensitivity of flat strategies to the presence of VGG-class features ($d{=}4096$) in MV pool. Columns report mean LP across the $5$ tasks. RankMe and the trace-spectrum label-based scores are dominated by VGG when present; \SSRdag , DiSCO, and class-distribution scores (LEEP, NCTI) are robust.\relax }{table.caption.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Subspace-Corrected Ranking}{5}{section.5}\protected@file@percent }
-\newlabel{sec:ssr}{{5}{5}{Subspace-Corrected Ranking}{section.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces (a) Subspace alignment $\ensuremath  {\mathrm  {SA}_k}\xspace  $ between a candidate encoder and the reference (STL-10) is nearly perfectly anti-correlated with the fraction of class-mean variance in the architecture-specific subspace, $f_{\mathrm  {spe}}$. (b) Within-task, $f_{\mathrm  {spe}}$ predicts linear-probe accuracy.\relax }}{6}{figure.caption.9}\protected@file@percent }
 \newlabel{fig:sigma_b_flow}{{1}{6}{(a) Subspace alignment $\SAk $ between a candidate encoder and the reference (STL-10) is nearly perfectly anti-correlated with the fraction of class-mean variance in the architecture-specific subspace, $f_{\mathrm {spe}}$. (b) Within-task, $f_{\mathrm {spe}}$ predicts linear-probe accuracy.\relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Subspace-Corrected Ranking}{6}{section.5}\protected@file@percent }
+\newlabel{sec:ssr}{{5}{6}{Subspace-Corrected Ranking}{section.5}{}}
 \citation{facco2017estimating}
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Cross-pool flat-strategy evaluation. $23$ task units pooled across MV pool, VTAB, and the extended pool; task-level bootstrap CIs ($n_{\mathrm  {boot}}{=}10\,000$).\relax }}{7}{table.caption.10}\protected@file@percent }
 \newlabel{tab:crosspool}{{7}{7}{Cross-pool flat-strategy evaluation. $23$ task units pooled across MV pool, VTAB, and the extended pool; task-level bootstrap CIs ($n_{\mathrm {boot}}{=}10\,000$).\relax }{table.caption.10}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}Two-Stage and Mixed-Budget Pipelines}{7}{section.6}\protected@file@percent }
 \newlabel{sec:twostage}{{6}{7}{Two-Stage and Mixed-Budget Pipelines}{section.6}{}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Two-stage SF-MTE pipeline\relax }}{7}{algorithm.1}\protected@file@percent }
-\newlabel{alg:two_stage}{{1}{7}{Two-stage SF-MTE pipeline\relax }{algorithm.1}{}}
 \citation{bao2019hscore}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Pipelines on MV pool multi-variant ($35$ archs, $119$ variants, $5$ tasks). Mean LP, regret, $95\%$ task-level bootstrap CI on regret, and forward-pass cost (number of (variant, task) feature evaluations per task).\relax }}{8}{table.caption.11}\protected@file@percent }
-\newlabel{tab:two_stage}{{8}{8}{Pipelines on MV pool multi-variant ($35$ archs, $119$ variants, $5$ tasks). Mean LP, regret, $95\%$ task-level bootstrap CI on regret, and forward-pass cost (number of (variant, task) feature evaluations per task).\relax }{table.caption.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces (left) Cost--regret Pareto on MV pool multi-variant: S5 (green star) is the Pareto-best label-free strategy. (right) Mixed pipeline regret vs.\ stage-1 label budget $K$: at $K{=}5$ the mixed pipeline already matches the best label-free strategy; at $K{=}35$ regret falls to $+0.018$.\relax }}{8}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:budget}{{2}{8}{(left) Cost--regret Pareto on MV pool multi-variant: S5 (green star) is the Pareto-best label-free strategy. (right) Mixed pipeline regret vs.\ stage-1 label budget $K$: at $K{=}5$ the mixed pipeline already matches the best label-free strategy; at $K{=}35$ regret falls to $+0.018$.\relax }{figure.caption.12}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Two-stage SF-MTE pipeline\relax }}{8}{algorithm.1}\protected@file@percent }
+\newlabel{alg:two_stage}{{1}{8}{Two-stage SF-MTE pipeline\relax }{algorithm.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Pipelines on MV pool multi-variant ($35$ archs, $119$ variants, $5$ tasks). Mean LP, regret, $95\%$ task-level bootstrap CI on regret, and forward-pass cost (number of (variant, task) feature evaluations per task). Cost formula: label-free two-stage $= |\{a\}| + \overline  {|V_{a^*}|} = 35 + 3 = 38$; mixed pipeline $= 35 + \overline  {|V_{a^*}|-1} = 37$ (canonical of winning arch already counted in stage-1 labelled evaluations).\relax }}{8}{table.caption.11}\protected@file@percent }
+\newlabel{tab:two_stage}{{8}{8}{Pipelines on MV pool multi-variant ($35$ archs, $119$ variants, $5$ tasks). Mean LP, regret, $95\%$ task-level bootstrap CI on regret, and forward-pass cost (number of (variant, task) feature evaluations per task). Cost formula: label-free two-stage $= |\{a\}| + \overline {|V_{a^*}|} = 35 + 3 = 38$; mixed pipeline $= 35 + \overline {|V_{a^*}|-1} = 37$ (canonical of winning arch already counted in stage-1 labelled evaluations).\relax }{table.caption.11}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{8}{section.7}\protected@file@percent }
 \newlabel{sec:discussion}{{7}{8}{Discussion}{section.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces (left) Cost--regret Pareto on MV pool multi-variant: S5 (green star) is the Pareto-best label-free strategy. (right) Mixed pipeline regret vs.\ stage-1 label budget $K$: at $K{=}5$ the mixed pipeline already matches the best label-free strategy; at $K{=}35$ regret falls to $+0.018$.\relax }}{9}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:budget}{{2}{9}{(left) Cost--regret Pareto on MV pool multi-variant: S5 (green star) is the Pareto-best label-free strategy. (right) Mixed pipeline regret vs.\ stage-1 label budget $K$: at $K{=}5$ the mixed pipeline already matches the best label-free strategy; at $K{=}35$ regret falls to $+0.018$.\relax }{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{9}{section.8}\protected@file@percent }
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{achille2019task2vec}{{1}{2019}{{Achille et~al.}}{{Achille, Lam, Tewari, Ravichandran, Maji, Fowlkes, Soatto, and Perona}}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{9}{section.8}\protected@file@percent }
 \bibcite{bao2019hscore}{{2}{2019}{{Bao et~al.}}{{Bao, Li, Huang, Zhang, Zheng, Zamir, and Guibas}}}
 \bibcite{caron2021dino}{{3}{2021}{{Caron et~al.}}{{Caron, Touvron, Misra, J{\'e}gou, Mairal, Bojanowski, and Joulin}}}
 \bibcite{chen2020simclr}{{4}{2020}{{Chen et~al.}}{{Chen, Kornblith, Norouzi, and Hinton}}}
@@ -143,19 +143,19 @@
 \bibcite{zhai2019large}{{33}{2019}{{Zhai et~al.}}{{Zhai, Puigcerver, Kolesnikov, Ruyssen, Riquelme, Lucic, Djolonga, Pinto, Neumann, Dosovitskiy, Beyer, Bachem, Tschannen, Michalski, Bousquet, Gelly, and Houlsby}}}
 \bibcite{zhang2025disco}{{34}{2025}{{Zhang et~al.}}{{Zhang, Shu, Chen, Long, Guo, and Yang}}}
 \citation{marchenko1967distribution}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Marchenko--Pastur and Isotropy}{12}{appendix.A}\protected@file@percent }
+\newlabel{app:theory}{{A}{12}{Marchenko--Pastur and Isotropy}{appendix.A}{}}
+\newlabel{prop:nonrot-app}{{4}{12}{\SSRdag \ is not rotation-invariant (Appendix proof)}{lemma.4}{}}
 \citation{wightman2019timm}
 \citation{simonyan2015vgg}
 \citation{he2016resnet}
 \citation{tan2019efficientnet}
 \citation{dosovitskiy2021vit}
 \citation{liu2022convnext}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Marchenko--Pastur and Isotropy}{12}{appendix.A}\protected@file@percent }
-\newlabel{app:theory}{{A}{12}{Marchenko--Pastur and Isotropy}{appendix.A}{}}
-\newlabel{prop:nonrot-app}{{4}{12}{\SSRdag \ is not rotation-invariant (Appendix proof)}{lemma.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {B}MV Pool (Multi-Variant Pool)}{12}{appendix.B}\protected@file@percent }
-\newlabel{app:mv_pool}{{B}{12}{MV Pool (Multi-Variant Pool)}{appendix.B}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Effective rank $\ensuremath  {r_{\mathrm  {eff}}}\xspace  (H)$ vs.\ penultimate dimension $d$ on log-log axes, averaged across tasks per architecture. All three pools show $\ensuremath  {r_{\mathrm  {eff}}}\xspace  $ growing monotonically with $d$ (positive Spearman $\rho $ reported in legend), empirically confirming Lemma\nobreakspace  {}\ref {lem:mp} ($\ensuremath  {r_{\mathrm  {eff}}}\xspace  = \Theta (d)$). Dashed/dotted lines have slope\nobreakspace  {}$1$ (reference for linear scaling); the two lines reflect different $c(\gamma ) = e^{C(\gamma )}$ constants across architecture families and pooling regimes. VTAB uses $n{=}1000$ subsampled features, placing large-$d$ architectures in the $n < d$ regime where $\ensuremath  {r_{\mathrm  {eff}}}\xspace  \leq n$, hence the lower VTAB band.\relax }}{13}{figure.caption.14}\protected@file@percent }
 \newlabel{fig:reff_d}{{3}{13}{Effective rank $\reff (H)$ vs.\ penultimate dimension $d$ on log-log axes, averaged across tasks per architecture. All three pools show $\reff $ growing monotonically with $d$ (positive Spearman $\rho $ reported in legend), empirically confirming Lemma~\ref {lem:mp} ($\reff = \Theta (d)$). Dashed/dotted lines have slope~$1$ (reference for linear scaling); the two lines reflect different $c(\gamma ) = e^{C(\gamma )}$ constants across architecture families and pooling regimes. VTAB uses $n{=}1000$ subsampled features, placing large-$d$ architectures in the $n < d$ regime where $\reff \leq n$, hence the lower VTAB band.\relax }{figure.caption.14}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {B}MV Pool (Multi-Variant Pool)}{13}{appendix.B}\protected@file@percent }
+\newlabel{app:mv_pool}{{B}{13}{MV Pool (Multi-Variant Pool)}{appendix.B}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Architecture families in the MV pool with variant counts and penultimate dimensions. The $21\times $ spread in $d$ is the primary driver of the width confound.\relax }}{13}{table.caption.15}\protected@file@percent }
 \newlabel{tab:mv_families}{{9}{13}{Architecture families in the MV pool with variant counts and penultimate dimensions. The $21\times $ spread in $d$ is the primary driver of the width confound.\relax }{table.caption.15}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {C}SSL/Multimodal Pool}{14}{appendix.C}\protected@file@percent }
@@ -164,8 +164,8 @@
 \newlabel{app:vtab}{{D}{14}{VTAB Pool}{appendix.D}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {E}Extended Pool and Stage-1 Comparisons}{15}{appendix.E}\protected@file@percent }
 \newlabel{app:extended}{{E}{15}{Extended Pool and Stage-1 Comparisons}{appendix.E}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces MV pool SOTA flat comparison ($132$v$\times 5$t). RankMe, LogME, and H-score select \texttt  {vgg16} on every task and degrade to similar regret; \ensuremath  {\mathrm  {SSR}^{\ddagger }}\xspace  \ is robust.\relax }}{15}{table.caption.16}\protected@file@percent }
-\newlabel{tab:sota_flat-app}{{10}{15}{MV pool SOTA flat comparison ($132$v$\times 5$t). RankMe, LogME, and H-score select \texttt {vgg16} on every task and degrade to similar regret; \SSRdag \ is robust.\relax }{table.caption.16}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Reproduced MV-pool flat comparison (same data as Table\nobreakspace  {}\ref {tab:sota_flat}, repeated here for reader convenience). RankMe, LogME, and H-score select \texttt  {vgg16} on every task; \ensuremath  {\mathrm  {SSR}^{\ddagger }}\xspace  \ is robust.\relax }}{15}{table.caption.16}\protected@file@percent }
+\newlabel{tab:sota_flat-app}{{10}{15}{Reproduced MV-pool flat comparison (same data as Table~\ref {tab:sota_flat}, repeated here for reader convenience). RankMe, LogME, and H-score select \texttt {vgg16} on every task; \SSRdag \ is robust.\relax }{table.caption.16}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {F}Ablations and Negative Results}{15}{appendix.F}\protected@file@percent }
 \newlabel{app:ablations}{{F}{15}{Ablations and Negative Results}{appendix.F}{}}
 \citation{facco2017estimating}
