@@ -9,15 +9,14 @@ its cross-architecture use is unsound: rankings are systematically driven by the
 penultimate-layer dimension rather than representational quality, and on heterogeneous model
 pools the score performs worse than uniform random selection.
 
-We give a random-matrix explanation establishing this failure as inherent to any
-rotation-invariant score, and propose Subspace-Corrected Ranking (SCR), a family of
-label-free corrections that breaks rotation invariance via alignment with a fixed reference
-encoder.  Across three architecturally distinct pools and 23 aggregated task units, the
-proposed SSR-dagger reduces mean regret from +0.161 (RankMe) to +0.071
-(95% CI [+0.045, +0.099], p < 1e-4).  Paired with a within-family score in a two-stage
-pipeline, it matches this quality at one-third of the forward-pass cost.  Five labelled
-architecture evaluations suffice to match the best fully label-free strategy; K=35 labelled
-evaluations reduce regret to +0.018 --- a 5.7x improvement at the same forward-pass cost.
+Under an isotropic random-feature model, we show specifically that RankMe effective rank
+scales as Theta(d). We propose Subspace-Corrected Ranking (SCR), which adds the relative
+geometry between each candidate's target features and its features on a fixed reference
+dataset. On a common support of 22 pool-task units, SSR-dagger reduces mean regret from
+0.169 (RankMe) to 0.066; the paired difference is -0.1025 (target-name-clustered 95% CI
+[-0.164, -0.039], p=0.00114). SSR-dagger is intended for cross-family selection, whereas
+RankMe remains preferable within a family. A five-task two-stage result is reported as a
+proof of concept, not a general cost guarantee.
 
 Code: https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8
 
@@ -29,8 +28,8 @@ Code: https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8
 |-------------------------------|----------------|-------------|--------------------|
 | MV pool flat (132v x 5t)       | RankMe         | +0.319      | [+0.149, +0.509]   |
 | MV pool flat (132v x 5t)       | SSR-dagger     | +0.098      | [+0.048, +0.148]   |
-| Cross-pool flat (23 tasks)     | RankMe         | +0.161      | —                  |
-| Cross-pool flat (23 tasks)     | SSR-dagger     | +0.071      | [+0.045, +0.099]   |
+| Common support (22 pool-task units) | RankMe     | +0.169      | —                  |
+| Common support (22 pool-task units) | SSR-dagger | +0.066     | paired difference CI [-0.164, -0.039] |
 | MV pool two-stage (3.1x cheaper) | SSR-dagger -> RankMe | +0.102 | [+0.044, +0.153] |
 | Mixed budget K=5 (label-free equiv.) | H-score -> RankMe | ~0.089 | —          |
 | Mixed budget K=35              | H-score -> RankMe | +0.018   | —                  |

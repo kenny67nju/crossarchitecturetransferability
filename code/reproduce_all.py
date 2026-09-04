@@ -33,7 +33,7 @@ Pre-computed result CSVs are shipped in results/ so reviewers can verify
 numbers without re-extracting features.  Feature .npz files are not shipped
 (too large); see FEATURE_EXTRACTION.md for instructions.
 """
-import subprocess, sys, os, argparse
+import subprocess, sys, os, argparse, json
 from pathlib import Path
 
 ROOT  = Path(__file__).resolve().parent.parent   # repository root
@@ -53,8 +53,9 @@ STEPS = {
          f"python {CODE}/audit_C5_twostage.py"),
     5:  ("SSL/multimodal pool scoring (8 encoders × 29 tasks)",
          f"python {CODE}/audit_paper14_crossdomain.py"),
-    6:  ("Cross-pool bootstrap CI (MV + VTAB + Extended, 10 000 resamples)",
-         f"python {CODE}/cross_pool_bootstrap.py"),
+    6:  ("Audited common-support statistics and official DiSCO summaries",
+         (f"python {CODE}/summarize_official_disco.py && "
+          f"python {CODE}/build_camera_ready_results.py")),
     7:  ("Mixed-budget label sweep (H-score→RankMe, K=1..35)",
          f"python {CODE}/audit_P1_variance_decomp.py"),
     8:  ("VTAB pool scoring (25 archs × 8 tasks, flat + two-stage)",
@@ -170,12 +171,26 @@ def verify_results():
             check("Two-stage 2S SSR^‡→RankMe regret",
                   float(row.iloc[0]["mean_regret"]), 0.102)
 
-    # ── Cross-pool bootstrap ─────────────────────────────────────
-    if (RES / "cross_pool_regrets.csv").exists():
-        cp = pd.read_csv(RES / "cross_pool_regrets.csv")
-        if "ssr_regret" in cp:
-            check("Cross-pool SSR^‡ mean regret (+0.071)",
-                  float(cp["ssr_regret"].mean(skipna=True)), 0.071, tol=0.01)
+    # ── Audited common support ───────────────────────────────────
+    headline_path = RES / "camera_ready" / "headline_metrics.json"
+    if headline_path.exists():
+        headline = json.loads(headline_path.read_text())
+        common = headline["common_support"]
+        check("Common support (22 units) SSR^‡ mean regret",
+              float(common["ssr_mean_regret"]), 0.06636, tol=0.0001)
+        check("Common support (22 units) RankMe mean regret",
+              float(common["rankme_mean_regret"]), 0.16886, tol=0.0001)
+        check("Common support paired difference SSR^‡ - RankMe",
+              float(common["mean_difference_ssr_minus_rankme"]),
+              -0.1025, tol=0.0001)
+
+        disco = headline["official_label_dependent_disco"]
+        check("Official DiSCO MV G=6 regret (label-dependent)",
+              float(disco["mv_g6_regret"]), 0.146, tol=0.0001)
+        check("Official DiSCO VTAB G=8 regret (STL-10 excluded)",
+              float(disco["vtab_g8_regret"]), 0.04357, tol=0.0001)
+        check("Official DiSCO EX G=6 regret (label-dependent)",
+              float(disco["ex_g6_regret"]), 0.045, tol=0.0001)
 
     # ── Mixed budget ─────────────────────────────────────────────
     if (RES / "p2_label_budget_sweep.csv").exists():

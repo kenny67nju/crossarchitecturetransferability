@@ -117,12 +117,19 @@ number of classes. Implemented in `code/metrics/`.
 Superseded UID-based SSR and 22-variant two-stage experiments are retained
 under `archive/` and excluded from reproduction.
 
-## Key results (paper Table 2)
+## Audited camera-ready results
 
 | Method          | MV pool regret | VTAB regret | Extended regret |
 |-----------------|:--------------:|:-----------:|:---------------:|
-| RankMe (flat)   | +0.319         | +0.066      | +0.144          |
-| DiSCO (flat)    | +0.108         | +0.048      | +0.108          |
-| SSR^‡ (flat)    | **+0.098**     | **+0.034**  | **+0.060**      |
+| RankMe (flat)   | +0.319         | +0.097      | +0.144          |
+| SSR^‡ (flat, zero label) | **+0.098** | **+0.053** | **+0.060** |
+| Official DiSCO G=6 (target labels) | +0.146 | +0.061 | +0.045 |
+| Official DiSCO G=8 (target labels) | +0.146 | +0.044 | +0.049 |
 | 2S SSR^‡→RankMe | +0.102 (3.1× cheaper) | —    | —               |
 | Mixed K=35      | +0.018 (5.7× better)  | —    | —               |
+
+The primary equal-budget result uses the common support of 22 MV/VTAB/EX
+pool–task units (STL-10 excluded): SSR^‡ regret is 0.066 and RankMe regret is
+0.169, a paired difference of -0.1025. See
+`results/camera_ready/headline_metrics.json` for both unit-level and
+target-name-clustered uncertainty estimates.
