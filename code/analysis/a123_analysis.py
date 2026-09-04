@@ -168,6 +168,10 @@ print("═"*70)
 
 df_pb  = pd.read_csv(RES / "pool_b_final.csv")
 df_tr  = pd.read_csv(RES / "truncation_ablation.csv")
+df_pb["ssr_dagger"] = (
+    np.log(df_pb["reff"].clip(1e-12))
+    - np.log(df_pb["sa_k"].clip(1e-12))
+) / np.log(df_pb["n_class"])
 
 # Restrict pool_b to 35 multi-variant archs (matching paper's main experiment)
 ref_task = df_pb["task"].unique()[0]
@@ -227,19 +231,19 @@ pipelines = {
     "Oracle":              None,
     "Random":             "random",
     "Flat-RankMe":        ("rankme", None),
-    "Flat-SSR^‡":         ("ssr", None),
+    "Flat-SSR^‡":         ("ssr_dagger", None),
     "Flat-DiSCO":         ("disco", None),
     "Flat-Trunc256":      ("trunc256", None),
     "2S RankMe→RankMe":   ("rankme", "rankme"),
-    "2S SSR^‡→RankMe":    ("ssr", "rankme"),
+    "2S SSR^‡→RankMe":    ("ssr_dagger", "rankme"),
     "2S DiSCO→RankMe":    ("disco", "rankme"),
     "2S Trunc256→RankMe": ("trunc256", "rankme"),
-    "2S SSR^‡→DiSCO":     ("ssr", "disco"),
+    "2S SSR^‡→DiSCO":     ("ssr_dagger", "disco"),
 }
 
 col_map = {
     "rankme":   "rankme",
-    "ssr":      "ssr",
+    "ssr_dagger": "ssr_dagger",
     "disco":    "disco",
     "trunc256": "rankme_trunc256",
 }

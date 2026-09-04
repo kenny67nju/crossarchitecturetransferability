@@ -1,4 +1,5 @@
-"""
+"""ARCHIVED: legacy 22-variant two-stage experiment using the obsolete SSR.
+
 Two-stage pipeline comparison vs SOTA SF-MTE methods
 =====================================================
 

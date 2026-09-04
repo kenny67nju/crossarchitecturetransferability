@@ -44,6 +44,7 @@ EPS = 1e-12
 sys.path.insert(0, BASE)
 from metrics.subspace_alignment import compute_subspace_alignment
 from metrics.reff import effective_rank
+from metrics.ssr import ssr_dagger
 
 # ══════════════════════════════════════════════════════════════
 # Model Pools
@@ -166,11 +167,11 @@ def lp_accuracy(H, y, seed=SEED):
 
 
 def compute_ssr(H_tgt, H_ref, n_class, k=K):
-    """SSR = r_eff / (SA_k * UID * log C)."""
+    """Compute canonical SSR† and its diagnostic components."""
     reff = effective_rank(H_tgt)
     sa_result = compute_subspace_alignment(H_ref, H_tgt, k=k)
     sa_k = sa_result['sa_k'] if isinstance(sa_result, dict) else float(sa_result)
-    # UID via Two-NN
+    # UID is retained only as a reported diagnostic; it is not part of SSR†.
     rng = np.random.RandomState(SEED)
     U, _, _ = np.linalg.svd(H_tgt, full_matrices=False)
     Uk = U[:, :k]
@@ -185,8 +186,7 @@ def compute_ssr(H_tgt, H_ref, n_class, k=K):
         uid = float(k)
     else:
         uid = 1.0 / (np.mean(np.log(mu)) + 1e-12)
-    log_c = max(np.log(n_class), 1e-12)
-    ssr = reff / (max(sa_k, EPS) * max(uid, EPS) * log_c)
+    ssr = ssr_dagger(reff, sa_k, n_class)
     return ssr, reff, sa_k, uid
 
 
@@ -620,7 +620,7 @@ def run_analysis():
             row = {
                 'model': model, 'task': task_name, 'n_class': n_class,
                 'lp_acc': round(lp, 4),
-                'ssr': round(ssr, 4), 'rankme': round(rankme, 4),
+                'ssr_dagger': round(ssr, 4), 'rankme': round(rankme, 4),
                 'ncti': round(ncti, 6), 'disco': round(disco, 4),
                 'hscore': round(hs, 4), 'leep': round(leep, 6),
                 'logme': round(logme, 4),
@@ -657,7 +657,7 @@ def run_analysis():
 
     # ── Summary statistics ──
     print("\n─── Summary: Extended pool (Spearman rho vs LP) ───")
-    methods_lf = [('ssr', 'SSR (ours)', 'No'), ('rankme', 'RankMe', 'No')]
+    methods_lf = [('ssr_dagger', 'SSR† (ours)', 'No'), ('rankme', 'RankMe', 'No')]
     methods_lr = [('ncti', 'NCTI', 'Yes'), ('hscore', 'H-score', 'Yes'),
                   ('leep', 'LEEP', 'Yes'), ('logme', 'LogME', 'Yes'),
                   ('disco', 'DISCO', 'Yes')]

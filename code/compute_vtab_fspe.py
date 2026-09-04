@@ -2,7 +2,7 @@
 compute_vtab_fspe.py
 ====================
 Compute f_spe (fraction of between-class covariance in the architecture-specific
-subspace) and SA_k (subspace alignment with the STL-10 reference encoder) for
+subspace) and SA_k (alignment with each candidate's STL-10 reference features) for
 each (architecture, task) pair in the VTAB pool.
 
 Output
@@ -43,6 +43,7 @@ Usage
 from __future__ import annotations
 import numpy as np
 import pandas as pd
+from metrics.reff import effective_rank_from_singular_values
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -84,9 +85,7 @@ def load_features(arch: str, task: str):
 
 def reff_from_svd(H: np.ndarray) -> float:
     sv = np.linalg.svd(H, compute_uv=False)
-    p  = sv**2 / (sv**2).sum()
-    p  = p[p > 0]
-    return float(np.exp(-np.sum(p * np.log(p))))
+    return effective_rank_from_singular_values(sv)
 
 
 def sa_k_from_Vt(Vt1: np.ndarray, Vt2: np.ndarray, k: int) -> float:
@@ -131,7 +130,7 @@ def main():
         print("Run feature extraction first (see FEATURE_EXTRACTION.md).")
         return
 
-    # ── Load reference encoder (STL-10) SVD for each arch ──
+    # ── Load each candidate encoder's STL-10 reference SVD ──
     print("Computing VTAB f_spe for 18 architectures × 7 tasks …")
     rows = []
     errors = 0

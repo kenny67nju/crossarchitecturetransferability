@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy.stats import spearmanr
+from metrics.reff import effective_rank_from_singular_values
 
 ROOT = Path(__file__).resolve().parent.parent
 FEAT = ROOT / "results" / "vtab_features"
@@ -52,8 +53,7 @@ def top_k_Vt(H, k):
 
 
 def reff_sv(sv):
-    p = sv**2 / (sv**2).sum(); p = p[p > EPS]
-    return float(np.exp(-np.sum(p * np.log(p))))
+    return effective_rank_from_singular_values(sv)
 
 
 def sa_k_vt(Vt1, Vt2, k):
@@ -119,7 +119,7 @@ for arch in ARCHS:
             ssr = (log_r - np.log(sa_med + EPS)) / log_C
             results[ref_name].setdefault(target, []).append({
                 'arch': arch, 'lp_acc': lp, 'sa_med': sa_med,
-                'scr': scr, 'ssr': ssr, 'n_refs': len(sa_values),
+                'scr': scr, 'ssr_dagger': ssr, 'n_refs': len(sa_values),
             })
 
 
@@ -141,12 +141,12 @@ def compute_metrics(per_target):
 def compute_metrics_ssr(per_target):
     regs = []; rhos = []
     for t, rows in per_target.items():
-        df = pd.DataFrame(rows).dropna(subset=['lp_acc', 'ssr'])
+        df = pd.DataFrame(rows).dropna(subset=['lp_acc', 'ssr_dagger'])
         if len(df) < 5: continue
         oracle = df.lp_acc.max()
-        sel = df.loc[df.ssr.idxmax(), 'lp_acc']
+        sel = df.loc[df.ssr_dagger.idxmax(), 'lp_acc']
         regs.append(oracle - sel)
-        rho, _ = spearmanr(df.ssr, df.lp_acc)
+        rho, _ = spearmanr(df.ssr_dagger, df.lp_acc)
         rhos.append(rho)
     return float(np.mean(regs)), float(np.mean(rhos)), len(regs)
 

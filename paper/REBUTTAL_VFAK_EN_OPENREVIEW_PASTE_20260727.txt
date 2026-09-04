@@ -1,0 +1,103 @@
+We thank the reviewer for the careful technical reading and answer the concerns in order.
+
+1. Exact definition of $\\mathrm{SA}_k$ and heterogeneous dimensions
+
+The wording "fixed reference encoder" is incorrect. We fix a reference DATASET $R$ (STL-10), not one encoder shared across candidates.
+
+For each candidate encoder $m$, we extract target and reference features $H_{m,T}\\in\\mathbb{R}^{n_T\\times d_m}$ and $H_{m,R}\\in\\mathbb{R}^{n_R\\times d_m}$. Both are produced by the same candidate, so their dimensions match. The selection scores audited below use direct (uncentered) SVD, matching the submitted main scoring pipeline, and never compare subspaces from different encoders.
+
+Let $H_{m,T}=U_T\\Sigma_T V_T^\\top$ and $H_{m,R}=U_R\\Sigma_R V_R^\\top$, and let $k_m=\\min(k,n_T,n_R,d_m)$, with $k=20$ in the reported experiments. With $V_T$ and $V_R$ collecting the top-$k_m$ right-singular vectors, the implemented alignment is
+
+For display clarity, let H(m,T), H(m,R), and k(m) denote the target features, reference features, and retained rank for candidate m. Then
+
+Formula: $\\mathrm{SA}(k;H(m,T),H(m,R))=\\frac{\\cos^{2}(\\theta(1))+\\cdots+\\cos^{2}(\\theta(k(m)))}{k(m)}.$
+
+The $V$'s are directions in the candidate's own $d_m$-dimensional space. Candidates may have different $d_m$, but only scalar scores are compared; no cross-encoder projection is required.
+
+Under a consistent basis change, $(H_{m,T},H_{m,R})\\mapsto(H_{m,T}Q,H_{m,R}Q)$, both bases rotate together and $V_T^\\top V_R$ is unchanged. Thus SSR is jointly rotation-invariant, as a basis-independent score should be. We withdraw the claim that SSR "breaks rotation invariance." RankMe is a single-input function of target singular values; SSR is a two-input relational score depending on target-reference geometry. Proposition 3 should instead state that SSR is not determined by the target singular spectrum alone.
+
+2. SCR/SSR inconsistency and the score actually used
+
+The reviewer is correct: direct substitution into the submitted general SCR equation does not recover the displayed $\\mathrm{SSR}^{\\ddagger}$ equation. This is a presentation error, and the two expressions are not equivalent.
+
+The effective rank and score used to produce the reported SSR results are
+
+Formula: $p_i=\\frac{\\sigma_i}{\\sum_j\\sigma_j},\\qquad r_{\\mathrm{eff}}(H)=\\exp\\Big(-\\sum_i p_i\\log p_i\\Big),$
+
+Here effrank(H) is the effective rank and H(ref) is the reference-feature matrix.
+
+Formula: $\\mathrm{SSR}^{\\ddagger}(H,T)=\\frac{\\log\\operatorname{effrank}(H)-\\log\\mathrm{SA}(k;H,H(\\mathrm{ref}))}{\\log C(T)}.$
+
+An algebraically consistent general family is
+
+Formula: $\\mathrm{SCR}(H,T;\\beta,g)=\\frac{\\log\\operatorname{effrank}(H)+\\beta g(\\mathrm{SA}(k;H,H(\\mathrm{ref})))}{\\log C(T)}.$
+
+Choosing $g(s)=-\\log s$ and $\\beta=1$ gives the $\\mathrm{SSR}^{\\ddagger}$ expression above exactly. For a fixed target, $1/\\log C(T)$ is common to all candidates and does not alter their ranking.
+
+Alignment is clipped below at $10^{-12}$ before taking its logarithm. $C(T)$ is task metadata (class count), uses no sample labels, and only rescales candidates for a fixed target; omitting it leaves selection unchanged.
+
+3. Corrected Marchenko-Pastur derivation
+
+We agree that the submitted derivation is incorrect as written: it mixes normalized squared singular values with RankMe's singular-value normalization, omits the size-biased term identified by the reviewer, and incorrectly claims that the MP support is always bounded away from zero.
+
+Let $H$ be an $n\\times d$ matrix with i.i.d. isotropic rows, and use the standard MP aspect ratio $\\rho=d/n$ (the submission uses the reciprocal convention $\\gamma=n/d$). Let $\\lambda_i=\\sigma_i^2/(n\\sigma_0^2)$, where $\\sigma_0^2$ is the entry variance. We use all $d$ eigenvalues of $H^\\top H/(n\\sigma_0^2)$, including zeros when $d>n$. Their empirical distribution converges almost surely to the MP law $\\mu_\\rho$. Define
+
+Formula: $m_{1/2}=\\int\\sqrt{x}\\,d\\mu_\\rho(x).$
+
+The common scale $\\sqrt{n}\\,\\sigma_0$ cancels in RankMe, so $p_i=\\sqrt{\\lambda_i}\\big/\\sum_j\\sqrt{\\lambda_j}$. With $S_d=\\frac{1}{d}\\sum_j\\sqrt{\\lambda_j}$, we have $S_d\\to m_{1/2}$, and the exact finite-$d$ identity is
+
+Formula: $H(\\mathbf{p})=\\log d+\\log S_d-\\frac{1}{2S_d}\\cdot\\frac{1}{d}\\sum_i\\sqrt{\\lambda_i}\\log\\lambda_i.$
+
+Taking the MP limit gives
+
+Formula: $H(\\mathbf{p})=\\log d+\\log m_{1/2}-\\frac{1}{2m_{1/2}}\\int\\sqrt{x}\\log x\\,d\\mu_\\rho(x)+o(1).$
+
+This contains the required size-biased spectral term. Under the convention $\\sqrt{0}\\log 0=0$, the integral is finite even when the MP support reaches zero or has an atom at zero, and $m_{1/2}>0$ for every fixed $0<\\rho<\\infty$. Therefore
+
+Formula: $\\frac{r_{\\mathrm{eff}}(H)}{d}\\longrightarrow\\exp\\Big(\\log m_{1/2}-\\frac{1}{2m_{1/2}}\\int\\sqrt{x}\\log x\\,d\\mu_\\rho(x)\\Big)=c(\\rho)>0.$
+
+Hence $r_{\\mathrm{eff}}(H)=\\Theta(d)$ for fixed $\\rho$; in the submission's notation the constant is $c(1/\\gamma)$. This also covers $d>n$, where $c(\\rho)\\le 1/\\rho$ because $r_{\\mathrm{eff}}\\le n$.
+
+4. Scope of Corollary 2
+
+We agree that general Corollary 2 is unsupported and withdraw it. Rotation invariance alone does not imply monotonicity in $d$. The corrected formal consequence is specific to RankMe: under the stated isotropic Gaussian model and fixed aspect ratio, $r_{\\mathrm{eff}}(H)=\\Theta(d)$. This lemma does not establish the same result for arbitrary rotation-invariant scores, VNE, or H-score; those require separate analyses.
+
+5. DiSCO protocol and corrected evaluation
+
+The review correctly identifies an evaluation-protocol problem. Official DiSCO uses target GROUND-TRUTH labels to form class-conditional covariance and posterior quantities. It does not use pseudo-labels or unlabeled clustering in our evaluation. Therefore DiSCO is a label-dependent comparator, not a label-free baseline, and it is not directly comparable to RankMe or $\\mathrm{SSR}^{\\ddagger}$ under the same label budget.
+
+Our audit also found that the earlier implementation did not faithfully reproduce the official class-conditional Mahalanobis-posterior algorithm. We implemented the official procedure with PCA-128 preprocessing, recovered all failed model-task feature extractions, and completed the 22 previously missing LP cells. The final MV and EX tables contain 660/660 and 510/510 cells, respectively.
+
+Here $G$ is the number of consecutive, near-equal spectral groups after PCA-128. For consistency with the common support used below, VTAB excludes STL-10; other pools use complete target sets. Corrected DiSCO regrets ($G=6$ / $G=8$) are:
+
+- MV: 0.146 / 0.146
+- VTAB (7 targets; STL-10 excluded): 0.061 / 0.044
+- SSL: 0.045 / 0.042
+- EX: 0.045 / 0.049
+
+These results invalidate the submitted DiSCO aggregate and its associated significance comparison. $\\mathrm{SSR}^{\\ddagger}$ remains stronger on MV ($0.098$ versus $0.146$), but DiSCO is stronger on EX ($0.045$-$0.049$ versus $0.060$) and highly competitive on VTAB and SSL. We therefore withdraw any claim that $\\mathrm{SSR}^{\\ddagger}$ generally outperforms DiSCO, as well as the proposed $d_{\\max}/d_{\\min}\\approx 7$ rule for deciding between them.
+
+6. STL-10 reference/target accounting
+
+The reviewer is correct that the submitted 23-task accounting is inconsistent. STL-10 was treated as an ordinary VTAB target for methods that do not require a reference, whereas $\\mathrm{SSR}^{\\ddagger}$ is undefined when STL-10 is simultaneously the target and reference. There is no valid way to claim that unit as an independent $\\mathrm{SSR}^{\\ddagger}$ evaluation.
+
+The fair common-support analysis excludes STL-10 from ALL methods: $5$ MV $+\\,7$ VTAB $+\\,10$ EX $=22$ pool-task units. Our audit found that the shipped VTAB table had inadvertently restored legacy squared-singular-value effective ranks. After recomputing VTAB with RankMe's stated $p_i=\\sigma_i/\\sum_j\\sigma_j$, the aggregate results on this 22-unit support are:
+
+- $\\mathrm{SSR}^{\\ddagger}$ mean regret $0.066$;
+- RankMe mean regret $0.169$; and
+- paired difference $-0.1025$, with unit-bootstrap 95% CI $[-0.167,-0.045]$ and two-sided $p=0.00012$.
+
+The 22 observations contain 10 unique target names, eight repeated across pools. Resampling all rows sharing a target name as one cluster gives 95% CI $[-0.164,-0.039]$ and $p=0.00114$ (100,000 resamples); paired Wilcoxon gives $p=0.00254$. Thus the conclusion survives dependence-aware analysis, while Table 7's 23-unit wording and legacy VTAB values require correction.
+
+7. Two-stage claim and evidence strength
+
+We agree that the one-third-cost statement was expressed too broadly. The direct multi-variant evidence consists of five MV tasks. On that benchmark:
+
+- flat $\\mathrm{SSR}^{\\ddagger}$: regret $0.098$, mean cost $118.8$ forward evaluations;
+- $\\mathrm{SSR}^{\\ddagger}\\to$RankMe: regret $0.102$, mean cost $38.0$.
+
+This shows that the pipeline preserved the point-estimate quality at approximately one-third cost ON THIS BENCHMARK. It is a proof of concept, not a general cost-quality guarantee for arbitrary heterogeneous model zoos. Additional multi-variant pools and tasks are required.
+
+Finally, there is no formal bound connecting $\\mathrm{SA}_k$ to linear-probe accuracy. The supporting mechanism is empirical: on 126 VTAB architecture-task pairs, $\\mathrm{SA}_k$ correlates at $-0.964$ with the fraction of between-class variance outside the generic reference subspace, which in turn positively predicts LP accuracy. This is mechanistic evidence, not a theorem about downstream performance.
+
+In summary, RankMe is strongly width-confounded in heterogeneous pools, while $\\mathrm{SSR}^{\\ddagger}$ is a label-free cross-family correction that significantly improves over RankMe on common support. We do not claim universal superiority over label-dependent methods or general performance guarantees.

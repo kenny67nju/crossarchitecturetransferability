@@ -1,0 +1,2 @@
+variant,task,lp_acc,n_samples,feature_dim
+efficientnet_b2.ra_in1k,cifar10,0.85,1000,1408

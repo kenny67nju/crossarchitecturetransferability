@@ -10,6 +10,7 @@ repository/
 │   ├── metrics/                   # Core metric implementations
 │   │   ├── subspace_alignment.py  # SA_k: subspace alignment (principal angles)
 │   │   ├── reff.py                # r_eff: effective rank (RankMe)
+│   │   ├── ssr.py                 # Canonical SSR† definition
 │   │   ├── grassmann.py           # Grassmann geometry utilities
 │   │   └── direction_gain.py      # Direction-gain auxiliary metric
 │   ├── analysis/
@@ -25,8 +26,6 @@ repository/
 │   ├── audit_paper14_crossdomain.py # SSL/multimodal pool → paper14_crossdomain.csv
 │   ├── cross_pool_bootstrap.py    # Cross-pool CI bootstrap → cross_pool_regrets.csv
 │   ├── audit_P1_variance_decomp.py  # Mixed-budget sweep → p2_label_budget_sweep.csv
-│   ├── score_within_arch_baselines.py  # Within-arch baselines → within_arch_baselines.csv
-│   ├── experiment_two_stage_sota.py    # Two-stage vs SOTA comparison
 │   ├── multi_reference_sa_k.py    # Multi-reference SA_k → multi_ref_sa_k.csv
 │   ├── extract_phase_b_features.py  # Feature extraction: MV pool (timm variants)
 │   ├── extract_phase_d_features.py  # Feature extraction: VTAB / extended pool
@@ -44,8 +43,6 @@ repository/
 │   ├── vtab_ssr_results.csv       # VTAB pool: SSR^‡ details
 │   ├── extended_full_sota.csv     # Extended pool: all methods
 │   ├── truncation_ablation.csv    # Truncation ablation
-│   ├── two_stage_sota_eval.csv    # Two-stage pipeline per-task
-│   ├── two_stage_sota_summary.csv # Two-stage pipeline summary
 │   ├── c5_twostage_pipeline.csv   # MV pool two-stage details
 │   ├── paper14_crossdomain.csv    # SSL/multimodal pool
 │   ├── cross_pool_regrets.csv     # Cross-pool bootstrap CIs
@@ -111,9 +108,14 @@ See `FEATURE_EXTRACTION.md` for detailed GPU setup instructions.
 SSR^‡(H, H_ref) = [log r_eff(H) - log SA_k(H, H_ref)] / log C
 ```
 
-where `r_eff` is the spectral effective rank (RankMe), `SA_k` is the
-top-`k` subspace alignment with a fixed reference encoder `H_ref`, and
-`C` is the number of classes.  Implemented in `code/metrics/`.
+where `r_eff` is RankMe effective rank with
+`p_i = sigma_i / sum_j sigma_j`. `SA_k` compares the target features with
+features extracted by the same candidate encoder on a fixed reference
+dataset; no cross-encoder feature-space projection is performed. `C` is the
+number of classes. Implemented in `code/metrics/`.
+
+Superseded UID-based SSR and 22-variant two-stage experiments are retained
+under `archive/` and excluded from reproduction.
 
 ## Key results (paper Table 2)
 

@@ -1,0 +1,11 @@
+task,pools,n_pool_task_units
+cifar10,"Extended,Pool B,VTAB",3
+cifar100,"Extended,Pool B,VTAB",3
+dtd,"Extended,Pool B,VTAB",3
+eurosat,"Extended,Pool B",2
+fashion_mnist,"Extended,VTAB",2
+fgvc_aircraft,Extended,1
+flowers102,"Extended,VTAB",2
+food101,Extended,1
+pets,"Extended,VTAB",2
+svhn,"Extended,Pool B,VTAB",3

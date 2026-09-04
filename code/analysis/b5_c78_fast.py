@@ -6,12 +6,16 @@ C7: SA_k with 3 reference tasks (stl10, cifar10, flowers102)
 C8: SA_k at k ∈ {5, 10, 20, 50, 100}
 """
 from __future__ import annotations
+import sys
 import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy.stats import spearmanr
 
 ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT / "code"))
+from metrics.reff import effective_rank_from_singular_values
+
 FEAT = ROOT / "results" / "vtab_features"
 OUT  = Path(__file__).resolve().parent
 EPS  = 1e-12
@@ -43,8 +47,7 @@ def load_Hy(arch, task):
 
 def reff_from_H(H):
     sv = np.linalg.svd(H, compute_uv=False)
-    p  = sv**2 / (sv**2).sum(); p = p[p > 0]
-    return float(np.exp(-np.sum(p * np.log(p))))
+    return effective_rank_from_singular_values(sv)
 
 
 def sa_k_from_Vt(Vt1, Vt2, k):

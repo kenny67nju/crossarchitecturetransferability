@@ -13,7 +13,7 @@ We give a random-matrix explanation establishing this failure as inherent to any
 rotation-invariant score, and propose Subspace-Corrected Ranking (SCR), a family of
 label-free corrections that breaks rotation invariance via alignment with a fixed reference
 encoder.  Across three architecturally distinct pools and 23 aggregated task units, the
-proposed SSR-dagger reduces mean regret from +0.165 (RankMe) to +0.071
+proposed SSR-dagger reduces mean regret from +0.161 (RankMe) to +0.071
 (95% CI [+0.045, +0.099], p < 1e-4).  Paired with a within-family score in a two-stage
 pipeline, it matches this quality at one-third of the forward-pass cost.  Five labelled
 architecture evaluations suffice to match the best fully label-free strategy; K=35 labelled
@@ -29,7 +29,7 @@ Code: https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8
 |-------------------------------|----------------|-------------|--------------------|
 | MV pool flat (132v x 5t)       | RankMe         | +0.319      | [+0.149, +0.509]   |
 | MV pool flat (132v x 5t)       | SSR-dagger     | +0.098      | [+0.048, +0.148]   |
-| Cross-pool flat (23 tasks)     | RankMe         | +0.165      | —                  |
+| Cross-pool flat (23 tasks)     | RankMe         | +0.161      | —                  |
 | Cross-pool flat (23 tasks)     | SSR-dagger     | +0.071      | [+0.045, +0.099]   |
 | MV pool two-stage (3.1x cheaper) | SSR-dagger -> RankMe | +0.102 | [+0.044, +0.153] |
 | Mixed budget K=5 (label-free equiv.) | H-score -> RankMe | ~0.089 | —          |

@@ -1,4 +1,5 @@
-"""
+"""ARCHIVED: legacy UID-based SCR/SSR experiment; not used by paper v18.
+
 Compute SOTA baselines for within-architecture variant selection
 =================================================================
 

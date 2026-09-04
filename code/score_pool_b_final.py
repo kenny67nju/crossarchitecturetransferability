@@ -29,6 +29,7 @@ warnings.filterwarnings('ignore')
 sys.path.insert(0, '.')
 from run_final_benchmark import compute_rankme, compute_ncti, compute_disco, compute_leep
 from baselines import LogME, compute_hscore
+from metrics.ssr import ssr_dagger
 
 CACHE = Path("results/vtab_features")
 OUT = Path("results/pool_b_final.csv")
@@ -184,7 +185,7 @@ def main():
         for task in TASKS:
             H, y = load_feat(v, task)
             if H is None: continue
-            n_c = N_CLASS[task]; log_c = np.log(max(n_c, 2))
+            n_c = N_CLASS[task]
             try:
                 lp = linear_probe(H, y)
                 reff = effective_rank(H); uid = uid_twonn(H); sak = sa_k(H_ref, H)
@@ -193,12 +194,11 @@ def main():
                 ncti = compute_ncti(H, y); disco = compute_disco(H, y)
             except Exception as e:
                 print(f"  err {v}/{task}: {e}"); continue
-            ssr = reff / (max(sak,1e-12)*max(uid,1e-12)*log_c)
-            scr = reff / (max(uid,1e-12)*log_c)
+            ssr = ssr_dagger(reff, sak, n_c)
             rows.append({
                 'arch': arch, 'variant': v, 'task': task, 'n_class': n_c,
                 'lp_acc': lp, 'reff': reff, 'uid': uid, 'sa_k': sak,
-                'ssr': ssr, 'scr': scr,
+                'ssr_dagger': ssr,
                 'rankme': rankme, 'logme': logme, 'hscore': hscore,
                 'leep': leep, 'ncti': ncti, 'disco': disco,
             })
@@ -215,7 +215,7 @@ def main():
 
     print("\n=== Within-arch joint ρ vs LP ===")
     print(f"{'metric':12s}  joint_ρ   pos    sig_pos")
-    for m in ['scr','ssr','rankme','reff','uid','logme','hscore','leep','ncti','disco']:
+    for m in ['ssr_dagger','rankme','reff','uid','logme','hscore','leep','ncti','disco']:
         rhos=[]; sigs=[]
         for (a,t),g in df.groupby(['arch','task']):
             if g[m].nunique()<=1: continue

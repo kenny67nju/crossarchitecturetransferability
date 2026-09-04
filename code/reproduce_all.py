@@ -11,7 +11,7 @@ Steps
   1  Score MV pool (132v × 5t)          → results/pool_b_final.csv
   2  Truncation ablation                 → results/truncation_ablation.csv
   3  Extended 51v × 10t pool             → results/extended_full_sota.csv
-  4  Two-stage pipeline (MV pool)        → results/two_stage_sota_eval.csv
+  4  Two-stage pipeline (MV pool)        → results/c5_twostage_pipeline.csv
   5  SSL/multimodal pool (8 encoders)    → results/paper14_crossdomain.csv
   6  Cross-pool bootstrap CI             → results/cross_pool_regrets.csv
   7  Mixed-budget label sweep            → results/p2_label_budget_sweep.csv
@@ -163,20 +163,19 @@ def verify_results():
     check("Extended pool  Flat-SSR^‡ regret",   np.mean(regs), 0.060)
 
     # ── Two-stage pipeline ───────────────────────────────────────
-    if (RES / "two_stage_sota_summary.csv").exists():
-        ts = pd.read_csv(RES / "two_stage_sota_summary.csv")
-        row = ts[ts.strategy.str.contains("SSR", na=False)]
+    if (RES / "c5_twostage_pipeline.csv").exists():
+        ts = pd.read_csv(RES / "c5_twostage_pipeline.csv")
+        row = ts[ts.strategy == "S5_twostage_ssr"]
         if len(row):
             check("Two-stage 2S SSR^‡→RankMe regret",
-                  float(row.iloc[0]["regret"]), 0.102)
+                  float(row.iloc[0]["mean_regret"]), 0.102)
 
     # ── Cross-pool bootstrap ─────────────────────────────────────
     if (RES / "cross_pool_regrets.csv").exists():
         cp = pd.read_csv(RES / "cross_pool_regrets.csv")
-        row = cp[cp.method == "SSR_dagger"]
-        if len(row):
+        if "ssr_regret" in cp:
             check("Cross-pool SSR^‡ mean regret (+0.071)",
-                  float(row.iloc[0]["mean_regret"]), 0.071, tol=0.01)
+                  float(cp["ssr_regret"].mean(skipna=True)), 0.071, tol=0.01)
 
     # ── Mixed budget ─────────────────────────────────────────────
     if (RES / "p2_label_budget_sweep.csv").exists():

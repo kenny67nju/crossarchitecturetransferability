@@ -1,0 +1,12 @@
+{
+  "n_pool_task_units": 22,
+  "n_unique_targets": 10,
+  "n_bootstrap": 100000,
+  "seed": 42,
+  "mean_difference_ssr_minus_rankme": -0.1025,
+  "clustered_ci_95_low": -0.1635,
+  "clustered_ci_95_high": -0.03909090909090909,
+  "clustered_two_sided_sign_p": 0.00114,
+  "ssr_mean_regret_pool_task_weighted": 0.0663636363636363,
+  "rankme_mean_regret_pool_task_weighted": 0.16886363636363633
+}
