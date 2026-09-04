@@ -10,6 +10,16 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
 DISCO = RESULTS / "disco"
+SSL_MODELS = (
+    "clip_vit_l14",
+    "convnext_base",
+    "dinov2_vit_b14",
+    "dino_vit_s16",
+    "mocov3_resnet50",
+    "resnet101",
+    "resnet50",
+    "vit_b16",
+)
 
 
 def load_scores(pool: str, groups: int, key: str) -> pd.DataFrame:
@@ -26,6 +36,27 @@ def load_scores(pool: str, groups: int, key: str) -> pd.DataFrame:
     return scores[[key, "task", "disco"]].rename(
         columns={"disco": "official_disco"}
     )
+
+
+def load_ssl_scores(groups: int) -> pd.DataFrame:
+    """Parse ``<task>_<model>_N1000.npz`` SSL score filenames."""
+    path = RESULTS / f"ssl_official_pca128_g{groups}.csv"
+    scores = pd.read_csv(path)
+    rows = []
+    for row in scores.itertuples(index=False):
+        stem = row.file.removesuffix("_N1000.npz")
+        for model in SSL_MODELS:
+            suffix = f"_{model}"
+            if stem.endswith(suffix):
+                rows.append(
+                    {
+                        "model": model,
+                        "task": stem[: -len(suffix)],
+                        "official_disco": row.disco,
+                    }
+                )
+                break
+    return pd.DataFrame(rows)
 
 
 def regret(
@@ -65,12 +96,23 @@ def main() -> None:
             "variant",
             set(),
         ),
+        (
+            "ssl",
+            pd.read_csv(RESULTS / "paper14_crossdomain.csv"),
+            "model",
+            set(),
+        ),
     ]
     rows = []
     for pool, truth, key, excluded in pools:
         for groups in (6, 8):
+            scores = (
+                load_ssl_scores(groups)
+                if pool == "ssl"
+                else load_scores(pool, groups, key)
+            )
             value, tasks, cells = regret(
-                truth, load_scores(pool, groups, key), key, excluded
+                truth, scores, key, excluded
             )
             rows.append(
                 {

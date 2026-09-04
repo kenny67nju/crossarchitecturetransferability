@@ -1,0 +1,51 @@
+{
+  "common_support": {
+    "mean_difference_ssr_minus_rankme": -0.1025,
+    "n_pool_task_units": 22,
+    "n_unique_targets": 10,
+    "paired_wilcoxon_p": 0.0025431154240612964,
+    "paired_wilcoxon_statistic": 20.0,
+    "pool_counts": {
+      "Extended": 10,
+      "Pool B": 5,
+      "VTAB": 7
+    },
+    "rankme_mean_regret": 0.16886363636363633,
+    "ssr_mean_regret": 0.0663636363636363,
+    "target_clustered_ci_95": [
+      -0.1635,
+      -0.03909090909090909
+    ],
+    "target_clustered_two_sided_sign_p": 0.00114,
+    "unit_bootstrap_ci_95": [
+      -0.16681818181818184,
+      -0.04500000000000001
+    ],
+    "unit_bootstrap_two_sided_sign_p": 0.00012
+  },
+  "official_label_dependent_disco": {
+    "ex_g6_regret": 0.0449999999999999,
+    "ex_g8_regret": 0.0489999999999999,
+    "mv_g6_regret": 0.1459999999999999,
+    "mv_g8_regret": 0.1459999999999999,
+    "ssl_g6_regret": 0.0446761858830824,
+    "ssl_g8_regret": 0.0422780667608253,
+    "vtab_g6_regret": 0.0607142857142857,
+    "vtab_g8_regret": 0.0435714285714285
+  },
+  "protocol": {
+    "common_support_excludes": [
+      "STL-10"
+    ],
+    "effective_rank_probabilities": "p_i = sigma_i / sum_j sigma_j",
+    "reference_dataset": "STL-10",
+    "ssr": "(log(r_eff) - log(max(SA_k, 1e-12))) / log(C)",
+    "subspace_k": 20,
+    "svd_centered": false
+  },
+  "vtab_reference_ablation": {
+    "four_reference_loo_regret": 0.05142857142857142,
+    "n_tasks": 7,
+    "stl10_single_reference_regret": 0.052857142857142846
+  }
+}

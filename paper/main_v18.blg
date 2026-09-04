@@ -5,45 +5,45 @@ The style file: plainnat.bst
 Database file #1: references.bib
 Warning--entry type for "wightman2019timm" isn't style-file defined
 --line 167 of file references.bib
-You've used 34 entries,
+You've used 33 entries,
             2773 wiz_defined-function locations,
-            762 strings with 12184 characters,
-and the built_in function-call counts, 24135 in all, are:
-= -- 2105
-> -- 1701
-< -- 35
-+ -- 568
-- -- 534
-* -- 1988
-:= -- 3449
-add.period$ -- 102
-call.type$ -- 34
-change.case$ -- 279
-chr.to.int$ -- 34
-cite$ -- 68
-duplicate$ -- 1045
-empty$ -- 1742
-format.name$ -- 580
-if$ -- 5230
+            757 strings with 12014 characters,
+and the built_in function-call counts, 23407 in all, are:
+= -- 2038
+> -- 1662
+< -- 33
++ -- 555
+- -- 522
+* -- 1927
+:= -- 3353
+add.period$ -- 99
+call.type$ -- 33
+change.case$ -- 272
+chr.to.int$ -- 33
+cite$ -- 66
+duplicate$ -- 1009
+empty$ -- 1684
+format.name$ -- 567
+if$ -- 5067
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 33
-newline$ -- 178
-num.names$ -- 136
-pop$ -- 638
+missing$ -- 32
+newline$ -- 173
+num.names$ -- 132
+pop$ -- 622
 preamble$ -- 1
-purify$ -- 245
+purify$ -- 239
 quote$ -- 0
-skip$ -- 971
+skip$ -- 939
 stack$ -- 0
-substring$ -- 1083
-swap$ -- 327
-text.length$ -- 28
+substring$ -- 1041
+swap$ -- 312
+text.length$ -- 26
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 374
+type$ -- 363
 warning$ -- 0
-while$ -- 178
+while$ -- 172
 width$ -- 0
-write$ -- 447
+write$ -- 433
 (There was 1 warning)
