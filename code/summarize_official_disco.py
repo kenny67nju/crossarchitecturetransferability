@@ -38,9 +38,10 @@ def load_scores(pool: str, groups: int, key: str) -> pd.DataFrame:
     )
 
 
-def load_ssl_scores(groups: int) -> pd.DataFrame:
+def load_ssl_scores(groups: int, path: Path | None = None) -> pd.DataFrame:
     """Parse ``<task>_<model>_N1000.npz`` SSL score filenames."""
-    path = RESULTS / f"ssl_official_pca128_g{groups}.csv"
+    if path is None:
+        path = RESULTS / f"ssl_official_pca128_g{groups}.csv"
     scores = pd.read_csv(path)
     rows = []
     for row in scores.itertuples(index=False):
@@ -80,19 +81,21 @@ def main() -> None:
     pools = [
         (
             "mv",
-            pd.read_csv(DISCO / "pool_b_final_lp_complete.csv"),
+            pd.read_csv(RESULTS / "camera_ready" / "pool_b_final_score_complete.csv"),
             "variant",
             set(),
         ),
         (
             "vtab",
-            pd.read_csv(RESULTS / "vtab_25arch_8tasks.csv"),
+            pd.read_csv(
+                RESULTS / "camera_ready" / "vtab_24arch_8tasks_lp_complete.csv"
+            ),
             "arch",
             {"stl10"},
         ),
         (
             "ex",
-            pd.read_csv(DISCO / "extended_full_sota_lp_complete.csv"),
+            pd.read_csv(RESULTS / "camera_ready" / "extended_full_sota_score_complete.csv"),
             "variant",
             set(),
         ),

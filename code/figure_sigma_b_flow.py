@@ -31,7 +31,8 @@ mpl.rcParams.update({
 })
 
 # 读取已生成的数据
-df_vtab = pd.read_csv(ROOT / "analysis" / "fisher_validation.csv")
+df_vtab = pd.read_csv(ROOT / "results" / "camera_ready" / "vtab_fspe_24arch_uncentered.csv")
+df_vtab = df_vtab.rename(columns={"sa_k": "SA"})
 
 # 7 任务，颜色
 TASK_COLORS = {

@@ -1,0 +1,28 @@
+{
+  "centered": false,
+  "k": 20,
+  "n_cached_svd": 192,
+  "n_scored_cells": 168,
+  "scores": [
+    {
+      "score": "rankme_score",
+      "mean_regret": 0.11,
+      "n_tasks": 7
+    },
+    {
+      "score": "stl10_only_ssr",
+      "mean_regret": 0.06142857142857143,
+      "n_tasks": 7
+    },
+    {
+      "score": "four_reference_loo_ssr",
+      "mean_regret": 0.05500000000000001,
+      "n_tasks": 7
+    },
+    {
+      "score": "five_reference_loo_ssr",
+      "mean_regret": 0.06285714285714286,
+      "n_tasks": 7
+    }
+  ]
+}

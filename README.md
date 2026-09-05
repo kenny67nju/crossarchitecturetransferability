@@ -51,7 +51,7 @@ repository/
 │   ├── within_arch_baselines.csv  # Within-arch baselines (Phase A+B)
 │   ├── baselines_raw.csv          # Raw baseline scores
 │   ├── p1_variance_decomp.csv     # Variance decomposition
-│   └── vtab_fspe_analysis.csv     # VTAB f_spe: 126 arch-task pairs (§5 geometric premise)
+│   └── camera_ready/vtab_fspe_24arch_uncentered.csv # VTAB f_spe: complete 168-pair audit
 ├── features/                      # Feature .npz files (NOT shipped, see below)
 ├── paper/                         # LaTeX source + compiled PDFs
 │   ├── main_v18.tex / main_v18.pdf
@@ -121,15 +121,15 @@ under `archive/` and excluded from reproduction.
 
 | Method          | MV pool regret | VTAB regret | Extended regret |
 |-----------------|:--------------:|:-----------:|:---------------:|
-| RankMe (flat)   | +0.319         | +0.097      | +0.144          |
-| SSR^‡ (flat, zero label) | **+0.098** | **+0.053** | **+0.060** |
-| Official DiSCO G=6 (target labels) | +0.146 | +0.061 | +0.045 |
-| Official DiSCO G=8 (target labels) | +0.146 | +0.044 | +0.049 |
+| RankMe (flat)   | +0.319         | +0.110      | +0.144          |
+| SSR^‡ (flat, zero label) | **+0.098** | **+0.061** | **+0.060** |
+| Official DiSCO G=6 (target labels) | +0.146 | +0.067 | +0.045 |
+| Official DiSCO G=8 (target labels) | +0.146 | +0.040 | +0.049 |
 | 2S SSR^‡→RankMe | +0.102 (3.1× cheaper) | —    | —               |
-| Mixed K=35      | +0.018 (5.7× better)  | —    | —               |
+| Mixed K=35      | +0.018 (observed on five MV tasks) | — | — |
 
 The primary equal-budget result uses the common support of 22 MV/VTAB/EX
-pool–task units (STL-10 excluded): SSR^‡ regret is 0.066 and RankMe regret is
-0.169, a paired difference of -0.1025. See
+pool–task units (STL-10 excluded): SSR^‡ regret is 0.069 and RankMe regret is
+0.173, a paired difference of -0.1043. See
 `results/camera_ready/headline_metrics.json` for both unit-level and
 target-name-clustered uncertainty estimates.

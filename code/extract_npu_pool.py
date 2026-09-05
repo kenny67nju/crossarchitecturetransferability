@@ -52,6 +52,7 @@ DATASET_NAMES = {
     "food101": "Food101",
     "pets": "OxfordIIITPet",
     "svhn": "SVHN",
+    "stl10": "STL10",
 }
 
 
@@ -122,6 +123,8 @@ def make_dataset(
         return datasets.OxfordIIITPet(root, split="trainval", transform=transform, download=True)
     if task == "svhn":
         return datasets.SVHN(root, split="train", transform=transform, download=True)
+    if task == "stl10":
+        return datasets.STL10(root, split="train", transform=transform, download=True)
     raise ValueError(f"unsupported task: {task}")
 
 

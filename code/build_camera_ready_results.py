@@ -17,7 +17,6 @@ from scipy.stats import wilcoxon
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
-AUDIT = RESULTS / "rebuttal_audit_20260727"
 OUTPUT = RESULTS / "camera_ready"
 N_BOOT = 100_000
 SEED = 42
@@ -28,7 +27,57 @@ def sign_p(samples: np.ndarray) -> float:
 
 
 def main() -> None:
-    source = pd.read_csv(AUDIT / "cross_pool_regrets_rankme_corrected.csv")
+    source_rows = []
+    for pool, filename in [
+        ("MV", "pool_b_final_score_complete.csv"),
+        ("EX", "extended_full_sota_score_complete.csv"),
+    ]:
+        table = pd.read_csv(OUTPUT / filename)
+        if pool == "MV":
+            variant_counts = table.groupby("arch")["variant"].nunique()
+            table = table[table["arch"].isin(variant_counts[variant_counts >= 2].index)]
+        if table[["lp_acc", "rankme", "ssr_dagger"]].isna().any().any():
+            raise RuntimeError(f"{filename} is not score-complete")
+        for task, group in table.groupby("task"):
+            oracle = float(group["lp_acc"].max())
+            rankme_lp = float(group.loc[group["rankme"].idxmax(), "lp_acc"])
+            ssr_lp = float(group.loc[group["ssr_dagger"].idxmax(), "lp_acc"])
+            random_mean = float(group["lp_acc"].mean())
+            source_rows.append(
+                {
+                    "pool": pool,
+                    "task": task,
+                    "oracle": oracle,
+                    "random_mean": random_mean,
+                    "random_regret": oracle - random_mean,
+                    "rankme_regret": oracle - rankme_lp,
+                    "ssr_regret": oracle - ssr_lp,
+                }
+            )
+    source = pd.DataFrame(source_rows)
+    vtab_lp = pd.read_csv(OUTPUT / "vtab_24arch_8tasks_lp_complete.csv")
+    vtab_rankme = pd.read_csv(
+        OUTPUT / "vtab_reference_24arch_uncentered" / "rankme_score_per_task.csv"
+    ).set_index("task")
+    vtab_ssr = pd.read_csv(
+        OUTPUT / "vtab_reference_24arch_uncentered" / "stl10_only_ssr_per_task.csv"
+    ).set_index("task")
+    vtab_rows = []
+    for task, group in vtab_lp[vtab_lp["task"] != "stl10"].groupby("task"):
+        oracle = float(group["lp_acc"].max())
+        random_mean = float(group["lp_acc"].mean())
+        vtab_rows.append(
+            {
+                "pool": "VTAB",
+                "task": task,
+                "oracle": oracle,
+                "random_mean": random_mean,
+                "random_regret": oracle - random_mean,
+                "rankme_regret": float(vtab_rankme.loc[task, "regret"]),
+                "ssr_regret": float(vtab_ssr.loc[task, "regret"]),
+            }
+        )
+    source = pd.concat([source, pd.DataFrame(vtab_rows)], ignore_index=True)
     source["task"] = source["task"].str.lower()
     common = source[source["task"] != "stl10"].dropna(
         subset=["ssr_regret", "rankme_regret"]
@@ -54,7 +103,11 @@ def main() -> None:
 
     disco = pd.read_csv(RESULTS / "disco" / "official_disco_regret_summary.csv")
     reference = json.loads(
-        (AUDIT / "vtab_rankme_raw" / "vtab_reference_audit_summary.json").read_text()
+        (
+            OUTPUT
+            / "vtab_reference_24arch_uncentered"
+            / "vtab_reference_audit_summary.json"
+        ).read_text()
     )
     reference_scores = {
         row["score"]: row["mean_regret"] for row in reference["scores"]
@@ -87,6 +140,7 @@ def main() -> None:
             "paired_wilcoxon_p": float(wilcoxon_result.pvalue),
         },
         "vtab_reference_ablation": {
+            "n_architectures": 24,
             "n_tasks": 7,
             "stl10_single_reference_regret": reference_scores["stl10_only_ssr"],
             "four_reference_loo_regret": reference_scores[

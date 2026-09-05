@@ -33,12 +33,12 @@ ax.scatter(119, 0, s=420, marker='^', c='#d62728', edgecolors='black',
            label='Flat-RankMe (regret 0.319, biased)', alpha=0.7)
 
 # Annotate key crossover
-ax.annotate('K=5: matches\nbest label-free\n(regret 0.089)',
+ax.annotate('K=5: observed regret 0.089\n(five-task MV benchmark)',
             xy=(9, 5), xytext=(50, 8),
             arrowprops=dict(arrowstyle='->', color='black', lw=1.0),
             fontsize=10, ha='left',
             bbox=dict(boxstyle='round,pad=0.4', fc='lightyellow', ec='black'))
-ax.annotate('K=35: regret 0.018,\n5.7$\\times$ better\nthan label-free',
+ax.annotate('K=35: observed\nregret 0.018',
             xy=(39, 35), xytext=(70, 28),
             arrowprops=dict(arrowstyle='->', color='black', lw=1.0),
             fontsize=10, ha='left',

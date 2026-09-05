@@ -1,4 +1,4 @@
-"""v1.7 Pareto: cost-regret with DiSCO + mixed pipeline reference."""
+"""Camera-ready MV cost-regret figure using audited strategy definitions."""
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -10,10 +10,7 @@ strategies = [
     ('S1 Random',                          0.194,   1.0, 'gray',    's', 'Random',                       'ref'),
     ('S2 Flat-RankMe',                     0.319, 118.8, '#d62728', '^', 'Flat-RankMe ⚠ <Random',       'lf'),
     ('S3 Flat-SSR$^\\ddagger$',            0.098, 118.8, '#1f77b4', 'D', 'Flat-SSR$^\\ddagger$',        'lf'),
-    ('Flat-DiSCO',                         0.108, 118.8, '#17becf', 'p', 'Flat-DiSCO~\\citep{}',        'lf'),
     ('S4 2S RankMe→RankMe',                0.144,  38.0, '#9467bd', 'v', '2S RankMe$\\to$RankMe',       'lf'),
-    ('2S DiSCO→RankMe',                    0.138,  38.0, '#bcbd22', 'X', '2S DiSCO$\\to$RankMe',         'lf'),
-    ('2S DiSCO→DiSCO',                     0.118,  38.0, '#8c564b', 'h', '2S DiSCO$\\to$DiSCO',          'lf'),
     ('S5 2S SSR$^\\ddagger$→RankMe',       0.102,  38.0, '#2ca02c', '*', '2S SSR$^\\ddagger\\to$RankMe (proposed)', 'lf'),
     ('2S H-score→RankMe (mixed)',          0.018,  37.0, '#e377c2', '*', '2S H-score$\\to$RankMe (mixed budget)',     'mb'),
 ]
@@ -37,12 +34,12 @@ for name, regret, cost, color, marker, label, group in strategies:
 
 ax.axhline(0, color='gray', lw=0.7, ls='--', alpha=0.5)
 
-ax.annotate('Pareto-best label-free:\n3.1$\\times$ cost saving,\nsame regret as Flat-SSR$^\\ddagger$',
+ax.annotate('Observed on five MV tasks:\n3.1$\\times$ fewer evaluations,\nsimilar regret to Flat-SSR$^\\ddagger$',
             xy=(38, 0.102), xytext=(60, 0.180),
             arrowprops=dict(arrowstyle='->', color='black', lw=1.0),
             fontsize=9.5, ha='center',
             bbox=dict(boxstyle='round,pad=0.4', fc='lightyellow', ec='black'))
-ax.annotate('Mixed budget SOTA:\n5.7$\\times$ better with\n35 labeled evals',
+ax.annotate('Mixed budget result:\nregret 0.018 with\n35 labeled evals',
             xy=(37, 0.018), xytext=(55, -0.025),
             arrowprops=dict(arrowstyle='->', color='black', lw=1.0),
             fontsize=9.5, ha='center',
@@ -55,8 +52,8 @@ ax.annotate('Flat-RankMe is\nworse than random!\n(VGG bias)',
 
 ax.set_xlabel('Forward-pass cost per task', fontsize=12)
 ax.set_ylabel('Regret = Oracle$-$Strategy (LP-acc)', fontsize=12)
-ax.set_title('Cost--regret Pareto (Pool B, 35 multi-variant archs $\\times$ 5 tasks)\n'
-             'Label-free + mixed-budget pipelines, 95\\% CI on subset',
+ax.set_title('Cost--regret comparison (MV, 35 multi-variant archs $\\times$ 5 tasks)\n'
+             'Label-free and mixed-budget pipelines; 95\\% task-bootstrap CI',
              fontsize=11)
 ax.set_xlim(-5, 130)
 ax.set_ylim(-0.06, 0.55)

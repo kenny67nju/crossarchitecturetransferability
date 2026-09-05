@@ -64,7 +64,7 @@ STEPS = {
          f"python {CODE}/multi_reference_sa_k.py"),
     10: ("A1/A2/A3 analysis (extended pool flat, trunc stage-1, MP validation)",
          f"python {CODE}/analysis/a123_analysis.py"),
-    11: ("VTAB f_spe analysis (rho(SA_k, f_spe)=-0.964, 126 pairs)",
+    11: ("VTAB f_spe analysis (rho(SA_k, f_spe)=-0.959, 168 pairs)",
          f"python {CODE}/compute_vtab_fspe.py"),
     12: ("Generate figures (Pareto, cost-split, sigma-b flow)",
          (f"python {CODE}/figures_pareto.py && "
@@ -130,9 +130,7 @@ def verify_results():
         print(f"  {label:55s}  {got:.3f}  (paper: {expected:.3f})  {flag}")
 
     # ── MV pool flat regrets ─────────────────────────────────────
-    pb = pd.read_csv(RES / "pool_b_final.csv")
-    pb["ssr_dagger"] = (np.log(np.maximum(pb["reff"], EPS)) -
-                        np.log(np.maximum(pb["sa_k"], EPS))) / np.log(pb["n_class"])
+    pb = pd.read_csv(RES / "camera_ready" / "pool_b_final_score_complete.csv")
     multi = pb.groupby("arch")["variant"].nunique()
     pb_m  = pb[pb.arch.isin(multi[multi > 1].index)].copy()
     tasks = sorted(pb_m.task.unique())
@@ -146,7 +144,7 @@ def verify_results():
     check("MV pool  Flat-SSR^‡ regret",   ssr_reg, 0.098)
 
     # ── Extended pool ────────────────────────────────────────────
-    df_ext = pd.read_csv(RES / "extended_full_sota.csv")
+    df_ext = pd.read_csv(RES / "camera_ready" / "extended_full_sota_score_complete.csv")
     taus = []
     for t in df_ext.task.unique():
         sub = df_ext[df_ext.task == t].dropna(subset=["rankme", "feat_dim"])
@@ -177,18 +175,18 @@ def verify_results():
         headline = json.loads(headline_path.read_text())
         common = headline["common_support"]
         check("Common support (22 units) SSR^‡ mean regret",
-              float(common["ssr_mean_regret"]), 0.06636, tol=0.0001)
+              float(common["ssr_mean_regret"]), 0.06886, tol=0.0001)
         check("Common support (22 units) RankMe mean regret",
-              float(common["rankme_mean_regret"]), 0.16886, tol=0.0001)
+              float(common["rankme_mean_regret"]), 0.17318, tol=0.0001)
         check("Common support paired difference SSR^‡ - RankMe",
               float(common["mean_difference_ssr_minus_rankme"]),
-              -0.1025, tol=0.0001)
+              -0.10432, tol=0.0001)
 
         disco = headline["official_label_dependent_disco"]
         check("Official DiSCO MV G=6 regret (label-dependent)",
               float(disco["mv_g6_regret"]), 0.146, tol=0.0001)
         check("Official DiSCO VTAB G=8 regret (STL-10 excluded)",
-              float(disco["vtab_g8_regret"]), 0.04357, tol=0.0001)
+              float(disco["vtab_g8_regret"]), 0.04000, tol=0.0001)
         check("Official DiSCO EX G=6 regret (label-dependent)",
               float(disco["ex_g6_regret"]), 0.045, tol=0.0001)
 
@@ -200,13 +198,13 @@ def verify_results():
             check("Mixed budget K=35 regret", float(k35.iloc[0]["regret"]), 0.018, tol=0.003)
 
     # ── VTAB f_spe geometric premise ─────────────────────────────
-    if (RES / "vtab_fspe_analysis.csv").exists():
+    if (RES / "camera_ready" / "vtab_fspe_24arch_uncentered.csv").exists():
         from scipy.stats import spearmanr as _sp
-        fspe = pd.read_csv(RES / "vtab_fspe_analysis.csv")
+        fspe = pd.read_csv(RES / "camera_ready" / "vtab_fspe_24arch_uncentered.csv")
         valid = fspe.dropna(subset=["sa_k", "frac_spe"])
         if len(valid) >= 100:
             rho, _ = _sp(valid["sa_k"], valid["frac_spe"])
-            check("VTAB rho_Sp(SA_k, f_spe)  (n=126)", rho, -0.964, tol=0.01)
+            check("VTAB rho_Sp(SA_k, f_spe)  (n=168)", rho, -0.959, tol=0.01)
 
     print()
     print("All checks passed ✓" if ok else "Some checks FAILED — see ✗ above")

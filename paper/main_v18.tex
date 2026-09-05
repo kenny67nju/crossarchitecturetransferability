@@ -42,7 +42,7 @@
 \maketitle
 
 \begin{abstract}
-Selecting a pretrained encoder without target labels is a standard preprocessing step in transfer learning. RankMe, a widely used label-free score, was validated primarily within architecture families. We show that its effective-rank score is strongly confounded by penultimate-layer width when heterogeneous architecture families are compared: under an isotropic random-feature model, RankMe effective rank scales as $\Theta(d)$, and empirically its cross-family rankings track width rather than transfer quality. We propose Subspace-Corrected Ranking (SCR), which augments target spectral information with the relative geometry between each candidate's target features and its features on a fixed reference dataset. Its parameter-free member \SSRdag\ subtracts log subspace alignment from log effective rank. On a common support of $22$ pool--task units from MV, VTAB, and EX, \SSRdag\ reduces mean regret from $+0.169$ (RankMe) to $+0.066$; the paired difference is $-0.1025$ (target-name-clustered $95\%$ CI $[-0.164,-0.039]$, $p=0.00114$). \SSRdag\ is intended for cross-family selection, not as a universal replacement for RankMe: RankMe remains preferable within a family. A five-task MV experiment further shows that \SSRdag$\to$RankMe can retain similar regret while reducing forward evaluations, which we treat as a proof of concept rather than a general cost guarantee.
+Selecting a pretrained encoder without target labels is a standard preprocessing step in transfer learning. RankMe, a widely used label-free score, was validated primarily within architecture families. We show that its effective-rank score is strongly confounded by penultimate-layer width when heterogeneous architecture families are compared: under an isotropic random-feature model, RankMe effective rank scales as $\Theta(d)$, and empirically its cross-family rankings track width rather than transfer quality. We propose Subspace-Corrected Ranking (SCR), which augments target spectral information with the relative geometry between each candidate's target features and its features on a fixed reference dataset. Its parameter-free member \SSRdag\ subtracts log subspace alignment from log effective rank. On a common support of $22$ pool--task units from MV, VTAB, and EX, \SSRdag\ reduces mean regret from $0.173$ (RankMe) to $0.069$; the paired difference is $-0.1043$ (target-name-clustered $95\%$ CI $[-0.167,-0.040]$, $p=0.00118$). \SSRdag\ is intended for cross-family selection, not as a universal replacement for RankMe: RankMe remains preferable within a family. A five-task MV experiment further shows that \SSRdag$\to$RankMe can retain similar regret while reducing forward evaluations, which we treat as a proof of concept rather than a general cost guarantee.
 \end{abstract}
 
 \section{Introduction}
@@ -54,11 +54,11 @@ The realistic deployment setting is different. A practitioner faced with the tim
 
 The mechanism is a consequence of RankMe's target-only spectral form under feature isotropy. A corrected Marchenko--Pastur argument shows that RankMe effective rank scales as $\Theta(d)$ at fixed positive aspect ratio, so $\log\reff$ equals $\log d$ plus an aspect-ratio-dependent constant asymptotically. This formal statement is specific to RankMe; rotation invariance alone is insufficient to conclude that an arbitrary score is monotone in $d$.
 
-The correction is relational rather than target-spectral. We propose \emph{Subspace-Corrected Ranking} (SCR), which compares each candidate encoder's target features with reference-dataset features extracted by that same encoder. The score is invariant to a common change of representation basis, but unlike RankMe it is not determined by the target singular spectrum alone. Across the candidate pool, $\mathrm{SA}_k$ correlates strongly negatively ($\rhoSp=-0.964$) with the fraction of class-mean variance outside the reference subspace. This is mechanistic evidence, not a formal guarantee of downstream accuracy. The default member, \SSRdag\ $=[\log\reff-\log\SAk]/\log C$, is designed for cross-family selection; RankMe is retained for within-family variant selection.
+The correction is relational rather than target-spectral. We propose \emph{Subspace-Corrected Ranking} (SCR), which compares each candidate encoder's target features with reference-dataset features extracted by that same encoder. The score is invariant to a common change of representation basis, but unlike RankMe it is not determined by the target singular spectrum alone. Across the candidate pool, $\mathrm{SA}_k$ correlates strongly negatively ($\rhoSp=-0.959$) with the fraction of class-mean variance outside the reference subspace. This is mechanistic evidence, not a formal guarantee of downstream accuracy. The default member, \SSRdag\ $=[\log\reff-\log\SAk]/\log C$, is designed for cross-family selection; RankMe is retained for within-family variant selection.
 
 \paragraph{Contributions.}
 \textbf{(i) Diagnosis.} We establish RankMe's $\Theta(d)$ scaling under an isotropic random-feature model and document strong width confounding across heterogeneous model pools.
-\textbf{(ii) Correction.} We propose SCR, a family of label-free relational scores that incorporate within-candidate target--reference subspace geometry, with empirical mechanistic support on $126$ architecture--task pairs.
+\textbf{(ii) Correction.} We propose SCR, a family of label-free relational scores that incorporate within-candidate target--reference subspace geometry, with empirical mechanistic support on $168$ architecture--task pairs.
 \textbf{(iii) Scope-aware pipeline.} We use \SSRdag\ for cross-family selection and RankMe within a family; the resulting five-task MV cost--quality result is a proof of concept.
 \textbf{(iv) Benchmark.}  Four reproducible evaluation pools covering $52$ task units across supervised and SSL/multimodal pretraining paradigms, with backbone widths spanning $d\in[192,4096]$.  The pools are deliberately calibrated at three distinct $d_{\max}/d_{\min}$ ratios ($5.3\times$, $10.7\times$, $21.3\times$), exposing the regimes in which existing corrections succeed or fail and providing a diagnostic testbed for future label-free transferability scores.  Pre-computed features, all result tables, and scoring code are released for community use.
 
@@ -69,12 +69,12 @@ The correction is relational rather than target-spectral. We propose \emph{Subsp
 
 \textbf{Subspace alignment and random matrix theory.}  Subspace alignment \citep{fernando2013sa} was introduced for unsupervised domain adaptation via principal-angle geometry on the Grassmann manifold \citep{hamm2008grassmann}.  Neural network representation similarity via CKA and SVCCA \citep{kornblith2019similarity,raghu2017svcca} uses related geometric ideas to compare layers; we use it differently here, as a label-free measure of generic-vs-specific feature structure relative to a fixed reference dataset encoded by each candidate.  The Marchenko--Pastur law \citep{marchenko1967distribution} has been applied to characterise weight matrices in deep networks \citep{martin2021implicit}; we apply it directly to feature matrices to derive the width-confound mechanism.
 
-\textbf{Two-stage and budgeted model selection.}  Staged screening followed by precise evaluation is a standard design in neural architecture search and Bayesian hyper-parameter optimisation.  In source-free transferability estimation \citep{zhang2021logme,wang2023ncti}, the same logic supports a cross-architecture stage at low cost followed by a within-family stage; our contribution is the formal cost--quality analysis of such pipelines and the mixed-budget variant in which a small label budget is allocated only to the architecture-selection stage.
+\textbf{Two-stage and budgeted model selection.}  Staged screening followed by precise evaluation is a standard design in neural architecture search and Bayesian hyper-parameter optimisation.  In source-free transferability estimation \citep{zhang2021logme,wang2023ncti}, the same logic supports a cross-architecture stage at low cost followed by a within-family stage; we evaluate this design and a mixed-budget extension as five-task proofs of concept.
 
 \section{Setup}
 \label{sec:setup}
 
-\textbf{Pools.}  We use four architecturally distinct pools whose descriptions are summarised in Table~\ref{tab:pool_setup} (full per-pool details in Appendices~B--E).  \textbf{MV pool} (multi-variant pool; $132$ timm \citep{wightman2019timm} variants, $35$ multi-variant architectures, $5$ tasks) is the only pool with multiple variants per architecture and is therefore the only pool on which two-stage pipelines are evaluated.  \textbf{VTAB pool} \citep{zhai2019large} ($25$ architectures, $8$ tasks) is single-variant and broader in target diversity.  \textbf{SSL pool} ($8$ SSL/multimodal encoders including CLIP \citep{radford2021clip}, DINOv2 \citep{oquab2023dinov2}, DINO \citep{caron2021dino}, and MoCo \citep{he2020moco}; $29$ tasks) uses pretraining-objective diversity on a smaller set of backbones.  \textbf{EX pool} (extended supervised pool; $51$ timm variants from $35$ canonical architectures including VGG-16, $d{=}4096$; $10$ tasks: CIFAR-10/100, DTD, EuroSAT, Fashion-MNIST, FGVC-Aircraft, Flowers-102, Food-101, Oxford-Pets, SVHN) covers the same $d_{\max}/d_{\min}{=}21.3\times$ width span as MV pool with a single canonical variant per architecture and broader task coverage; all variants are ImageNet-1k supervised, features extracted on the full dataset.  Across the four pools we cover $52$ task units and architectures with penultimate dimensions $d \in [192, 4096]$.
+\textbf{Pools.}  We use four architecturally distinct pools whose descriptions are summarised in Table~\ref{tab:pool_setup} (full per-pool details in Appendices~B--E).  \textbf{MV pool} (multi-variant pool; $132$ timm \citep{wightman2019timm} variants, $35$ multi-variant architectures, $5$ tasks) is the only pool with multiple variants per architecture and is therefore the only pool on which two-stage pipelines are evaluated.  \textbf{VTAB pool} \citep{zhai2019large} uses the $24$ architectures with complete cached features and LP values across all $8$ tasks; STL-10 is used only as the reference in the common-support evaluation, leaving $7$ targets.  \textbf{SSL pool} ($8$ SSL/multimodal encoders including CLIP \citep{radford2021clip}, DINOv2 \citep{oquab2023dinov2}, DINO \citep{caron2021dino}, and MoCo \citep{he2020moco}; $29$ tasks) uses pretraining-objective diversity on a smaller set of backbones.  \textbf{EX pool} (extended supervised pool; $51$ timm variants from $35$ canonical architectures including VGG-16, $d{=}4096$; $10$ tasks) covers the same $d_{\max}/d_{\min}{=}21.3\times$ width span as MV pool with broader task coverage. Across the four pools we cover $52$ task units and widths $d\in[192,4096]$.
 
 \begin{table}[h]
 \centering\small
@@ -86,7 +86,7 @@ The correction is relational rather than target-spectral. We propose \emph{Subsp
 Pool & Archs & Variants & Tasks & $d$ range & $d_{\max}/d_{\min}$ \\
 \midrule
 MV pool (multi-variant)  & $35$ & $119$ (multi-var.) / $132$ (full) & $5$  & $[192, 4096]$ & $21.3\times$ \\
-VTAB pool                & $25$ & $25$                               & $8$  & $[192, 2048]$ & $10.7\times$ \\
+VTAB pool                & $24$ & $24$                               & $8$  & $[192, 2048]$ & $10.7\times$ \\
 SSL/multimodal pool      & $8$  & $8$                                & $29$ & $[384, 2048]$ & $5.3\times$  \\
 EX pool (supv.)          & $35$ & $51$                               & $10$ & $[192, 4096]$ & $21.3\times$ \\
 \bottomrule
@@ -115,7 +115,7 @@ For candidate encoder $m$ and $Q\in O(d_m)$, jointly replacing $(H_{m,T},H_{m,R}
 
 Lemma~\ref{lem:mp} is a RankMe-specific statement; rotation invariance alone does not imply monotonicity in $d$ for an arbitrary score. Proposition~\ref{prop:nonrot} explains how \SSRdag\ adds information absent from the target spectrum while remaining independent of an arbitrary common basis choice. Empirically, on EX the mean Kendall correlation between RankMe and $d$ is $\tau=+0.617$ across $10$ tasks, confirming strong width concordance.
 
-\textbf{Empirical confound across pools.}  On MV pool the per-task Spearman correlation $\rhoSp(\mathrm{RankMe}, d)$ has mean $+0.61$ across the $5$ tasks; on the VTAB pool the mean is $+0.882$ (Table~\ref{tab:pool_diagnosis} uses full-dataset VTAB features; the cross-pool aggregation in Table~\ref{tab:crosspool} uses $n{=}1000$ subsampled features for SA$_k$ computation consistency); on the SSL pool the mean is $+0.815$.  Crucially, $d$ itself does \emph{not} predict linear-probe accuracy: $\rhoSp(d, \mathrm{lp\_acc})$ is $-0.10$ on MV pool, $-0.45$ on the SSL pool, and nominally $+0.20$ on VTAB---elevated by SVHN (a digit-recognition task where capacity genuinely helps, $\rho{=}{+}0.856$); excluding STL-10 (reference task) and SVHN, the VTAB median falls to $+0.02$, consistent with the other pools.  Across all three pools, $d$ acts as a pure confound rather than a quality signal.  Flat-RankMe regret exceeds uniform random regret in all four pools (Table~\ref{tab:pool_diagnosis}; EX pool: Appendix~E).  On MV pool, RankMe selects \texttt{vgg16} ($d{=}4096$) on every one of the $5$ tasks, yielding regret $0.125$ LP points worse than random.  MV pool's CNN-only sub-pool reproduces this behaviour (\texttt{vgg16} chosen on $4/5$ tasks, Appendix~B), confirming that the confound is not a ViT-vs-CNN artefact.
+\textbf{Empirical confound across pools.}  RankMe remains strongly aligned with width: mean per-task $\rhoSp(\mathrm{RankMe},d)$ is $0.61$ on MV, $0.879$ on the complete $24$-architecture VTAB pool, and $0.815$ on SSL. Width itself is not a reliable quality proxy: its mean correlation with LP accuracy is $-0.10$, $+0.23$, and $-0.45$, respectively. On MV, RankMe selects \texttt{vgg16} ($d{=}4096$) on all five tasks and has regret $0.125$ worse than random. On VTAB, its mean regret ($0.110$) is also slightly worse than random ($0.106$), despite the positive average width--accuracy correlation. Thus width can dominate RankMe without reliably identifying the best transferable representation.
 
 \begin{table}[h]
 \centering\small
@@ -126,37 +126,36 @@ Lemma~\ref{lem:mp} is a RankMe-specific statement; rotation invariance alone doe
 Pool & Arch., tasks & $\rhoSp(\mathrm{RankMe}, d)$ & $\rhoSp(d, \mathrm{lp\_acc})$ & RankMe regret & Random regret \\
 \midrule
 MV pool           & $35$, $5$  & $+0.61$  & $-0.10$          & $+0.319$ & $+0.194$ \\
-VTAB              & $25$, $8$  & $+0.882$ & $+0.20$            & $+0.083$ & $+0.064$ \\
+VTAB              & $24$, $7$  & $+0.879$ & $+0.23$            & $+0.110$ & $+0.106$ \\
 SSL               & $8$,  $29$ & $+0.815$ & $-0.45$          & $+0.103$ & $+0.066$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{VTAB per-task breakdown.}  On the VTAB pool the width confound is equally systematic: Table~\ref{tab:vtab_pertask} shows that Flat-RankMe selects the highest-$d$ available architecture on \emph{all} $8$ VTAB tasks without exception.  Despite the absence of VGG-class encoders (maximum $d{=}2048$), the per-task Spearman correlation $\rhoSp(\mathrm{RankMe},d)$ ranges from $+0.838$ to $+0.915$, and per-task regret ranges from $+0.020$ (Fashion-MNIST, near-uniform pixel data where feature quality matters little) to $+0.200$ (Flowers-102, fine-grained texture).
+\textbf{VTAB per-task breakdown.}  Table~\ref{tab:vtab_pertask} uses the same $24$ candidates for every non-reference target. The RankMe--width correlation ranges from $0.838$ to $0.915$, while regret varies substantially by task.
 
 \begin{table}[h]
 \centering\small
-\caption{VTAB per-task width confound.  Flat-RankMe regret $+0.083$ (mean), suboptimal on all $8/8$ tasks; $\rhoSp(\mathrm{RankMe},d)$ is large and positive on every task.}
+\caption{VTAB per-task width confound on the complete $24$-architecture support. STL-10 is excluded because it is the reference dataset.}
 \label{tab:vtab_pertask}
 \begin{tabular}{lrrl}
 \toprule
 Task & $\rhoSp(\mathrm{RankMe}, d)$ & Regret & RankMe pick \\
 \midrule
-CIFAR-10       & $+0.874$ & $+0.050$ & efficientnet\_b3 ($d{=}1536$) \\
-CIFAR-100      & $+0.869$ & $+0.155$ & efficientnet\_b3 ($d{=}1536$) \\
-DTD            & $+0.877$ & $+0.085$ & resnet101 ($d{=}2048$) \\
-Fashion-MNIST  & $+0.886$ & $+0.020$ & wide\_resnet50\_2 ($d{=}2048$) \\
-Flowers-102    & $+0.838$ & $+0.200$ & efficientnet\_b3 ($d{=}1536$) \\
-Pets           & $+0.902$ & $+0.030$ & mobilenetv3\_large ($d{=}1280$) \\
-STL-10         & $+0.892$ & $+0.025$ & efficientnet\_b2 ($d{=}1408$) \\
-SVHN           & $+0.915$ & $+0.100$ & efficientnet\_b3 ($d{=}1536$) \\
+CIFAR-10       & $+0.865$ & $+0.050$ & efficientnet\_b3 ($d{=}1536$) \\
+CIFAR-100      & $+0.869$ & $+0.235$ & efficientnet\_b3 ($d{=}1536$) \\
+DTD            & $+0.877$ & $+0.095$ & resnet101 ($d{=}2048$) \\
+Fashion-MNIST  & $+0.886$ & $+0.045$ & wide\_resnet50\_2 ($d{=}2048$) \\
+Flowers-102    & $+0.838$ & $+0.165$ & efficientnet\_b3 ($d{=}1536$) \\
+Pets           & $+0.902$ & $+0.070$ & mobilenetv3\_large ($d{=}1280$) \\
+SVHN           & $+0.915$ & $+0.110$ & efficientnet\_b3 ($d{=}1536$) \\
 \midrule
-\textbf{Mean}  & $\mathbf{+0.882}$ & $\mathbf{+0.083}$ & --- \\
+\textbf{Mean}  & $\mathbf{+0.879}$ & $\mathbf{+0.110}$ & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Severity is driven by inter-architecture width variance.}  The MV pool failure is sharpest because the pool spans $d \in [192, 4096]$, with VGG-16 occupying the high-$d$ tail.  Removing the three VGG variants ($\sim 3\%$ of the pool) shifts Flat-RankMe regret by $-0.175$ LP, bringing it close to random (Table~\ref{tab:vgg_sensitivity}); the same removal does not change \SSRdag's behaviour because subspace alignment is approximately invariant to which architectures occupy the wide-feature tail.  This robustness contrast generalises: rotation-invariant scorers (RankMe, LogME, H-score) all collapse onto a single architecture when a wide outlier is present, while $\SSRdag$ and DiSCO continue to choose task-appropriate variants.  At a per-task level (Table~\ref{tab:main_pertask}), Flat-RankMe selects \texttt{vgg16} on every MV pool task while \SSRdag\ selects the task-appropriate variant within $0.07$ LP of the oracle on $4/5$ tasks.
+\textbf{Severity is driven by inter-architecture width variance.}  The MV pool failure is sharpest because the pool spans $d \in [192, 4096]$, with VGG-16 occupying the high-$d$ tail.  Removing the three VGG variants ($\sim 3\%$ of the pool) shifts Flat-RankMe regret by $-0.175$ LP, bringing it close to random (Table~\ref{tab:vgg_sensitivity}); the same removal does not change \SSRdag's observed regret.  At a per-task level (Table~\ref{tab:main_pertask}), Flat-RankMe selects \texttt{vgg16} on every MV pool task while \SSRdag\ selects a candidate within $0.07$ LP of the oracle on $4/5$ tasks.
 
 \begin{table}[h]
 \centering\small
@@ -183,7 +182,7 @@ SVHN      & $0.615$ & $0.430$ & $0.570$ & $0.450$ & vgg16 & efficientnet\_b3  & 
 
 \begin{table}[h]
 \centering\small
-\caption{MV pool SOTA flat comparison ($132$v$\times 5$t).  Columns report per-task mean regret with and without the three VGG variants in the pool.  Feature-spectrum scores (RankMe, LogME, H-score) all select \texttt{vgg16} when present and degrade similarly; class-distribution scores (LEEP, NCTI) and the proposed \SSRdag\ are robust.}
+\caption{MV multi-variant-support flat comparison ($119$v$\times 5$t).  Columns report per-task mean regret with and without the three VGG variants in the pool.  Feature-spectrum scores (RankMe, LogME, H-score) all select \texttt{vgg16} when present and degrade similarly; class-distribution scores (LEEP, NCTI) and the proposed \SSRdag\ are robust.}
 \label{tab:sota_flat}
 \begin{tabular}{lrrrl}
 \toprule
@@ -194,7 +193,6 @@ Flat-RankMe       & $+0.319$ & $+0.144$ & $-0.175$ & label-free \\
 Flat-LogME        & $+0.319$ & $+0.550$ & $+0.231$ & label-based \\
 Flat-H-score      & $+0.319$ & $+0.470$ & $+0.151$ & label-based \\
 Flat-NCTI         & $+0.162$ & $+0.155$ & $-0.007$ & label-based \\
-Flat-DiSCO        & $+0.108$ & $+0.108$ & $\phantom{+}0.000$  & label-based \\
 \textbf{Flat-\SSRdag} & $\mathbf{+0.098}$ & $\mathbf{+0.098}$ & $\mathbf{0.000}$ & \textbf{label-free} \\
 Flat-LEEP         & $+0.038$ & $+0.038$ & $\phantom{+}0.000$  & label-based \\
 \bottomrule
@@ -203,7 +201,7 @@ Flat-LEEP         & $+0.038$ & $+0.038$ & $\phantom{+}0.000$  & label-based \\
 
 \begin{table}[h]
 \centering\small
-\caption{Sensitivity of flat strategies to the presence of VGG-class features ($d{=}4096$) in MV pool.  Columns report mean LP across the $5$ tasks.  RankMe and the trace-spectrum label-based scores are dominated by VGG when present; \SSRdag, DiSCO, and class-distribution scores (LEEP, NCTI) are robust.}
+\caption{Sensitivity of flat strategies to the presence of VGG-class features ($d{=}4096$) in MV pool.  Columns report mean LP across the $5$ tasks.  RankMe and the trace-spectrum label-based scores are dominated by VGG when present; \SSRdag\ and class-distribution scores (LEEP, NCTI) are robust.}
 \label{tab:vgg_sensitivity}
 \begin{tabular}{lrrrr}
 \toprule
@@ -228,7 +226,7 @@ Flat-NCTI     & $0.659$ & $0.666$ & $+0.007$ & label-based \\
 \[
   f_{\mathrm{spe}}(H, H_{\mathrm{ref}}) := \frac{\mathrm{tr}(Q\Sigma_B Q)}{\mathrm{tr}(\Sigma_B)},
 \]
-the fraction of between-class covariance lying outside the reference subspace.  $f_{\mathrm{spe}}$ measures how much of a candidate's discriminative variance is architecture-specific rather than shared with a generic encoder.  On the VTAB pool ($126$ architecture--task pairs), the subspace alignment $\SAk(H, H_{\mathrm{ref}})$ is nearly perfectly anti-correlated with $f_{\mathrm{spe}}$ ($\rhoSp = -0.964$, all $7$ tasks $\rho < -0.86$, Figure~\ref{fig:sigma_b_flow}).  Within each task, $f_{\mathrm{spe}}$ predicts LP accuracy with mean Spearman $\rho = +0.435$.  Subtracting subspace alignment is therefore a label-free way to penalise candidates whose discriminative variance is absorbed by the generic subspace.  The analysis covers $126$ of the $25{\times}7{=}175$ non-reference architecture--task pairs: \texttt{resnet152} has a numerical SA$_k$ failure (rank-deficient under $n{=}1000$ sampling), leaving $168$ valid SA$_k$ pairs; $f_{\mathrm{spe}}$ further requires full between-class covariance matrices, available for $18$ of the $25$ architectures ($126 = 18{\times}7$ pairs; see \texttt{results/vtab\_fspe\_analysis.csv}).
+the fraction of between-class covariance lying outside the reference subspace.  $f_{\mathrm{spe}}$ measures how much of a candidate's discriminative variance is architecture-specific rather than shared with a generic encoder.  On the complete VTAB support ($24{\times}7=168$ architecture--task pairs), the subspace alignment $\SAk(H, H_{\mathrm{ref}})$ is nearly perfectly anti-correlated with $f_{\mathrm{spe}}$ ($\rhoSp = -0.959$, Figure~\ref{fig:sigma_b_flow}).  Within each task, $f_{\mathrm{spe}}$ predicts LP accuracy with mean Spearman $\rho = +0.420$.  Subtracting subspace alignment is therefore an empirically motivated, label-free penalty for candidates whose class-mean variance is absorbed by the generic subspace; this observation is mechanistic evidence rather than a downstream guarantee.  We exclude \texttt{resnet152} uniformly because reference and target features are available for only one of the eight VTAB datasets; all $168$ pairs on the resulting $24$-architecture support are computed successfully (see \texttt{results/camera\_ready/vtab\_fspe\_24arch\_uncentered.csv}).
 
 \begin{figure}[t]
 \centering
@@ -257,11 +255,11 @@ where $g$ is a monotonically decreasing function and $\beta \geq 0$.  Choosing $
 \]
 and $g(s)=1-s$ gives an additive variant. For per-task ranking, the common positive factor $1/\log C(T)$ may be omitted without changing the selected model. Both forms use target--reference relational geometry and are jointly basis-invariant as in Proposition~\ref{prop:nonrot}. We adopt \SSRdag\ as the default because $g(s)=-\log s$ and $\beta=1$ introduce no tuned correction weight.
 
-\textbf{Choice of reference dataset.} All main experiments use STL-10 as a practical, not theoretically optimal, reference. It is small, contains diverse natural objects, is supported by every candidate, and is disjoint from the seven evaluated VTAB targets. We recommend one generic, target-disjoint reference by default. Under the corrected RankMe normalization, STL-10 gives VTAB regret $+0.053$. A target-disjoint leave-one-target-out median over four predetermined references gives $+0.051$: whenever an evaluated target appears in the reference set, it is removed before aggregation. The submitted Flowers-102 self-reference result is withdrawn. Because the ensemble improvement is small and its reference-side feature extraction and alignment cost grows approximately linearly with the number of references, we retain a single reference as the default.
+\textbf{Choice of reference dataset.} All main experiments use STL-10 as a practical, not theoretically optimal, reference. It is small, contains diverse natural objects, is supported by every candidate, and is disjoint from the seven evaluated VTAB targets. We recommend one generic, target-disjoint reference by default. On the complete $24$-architecture support, STL-10 gives VTAB regret $0.061$, while a target-disjoint leave-one-target-out median over four predetermined references gives $0.055$. The submitted Flowers-102 self-reference result is withdrawn. Because the modest ensemble difference is based on seven tasks and incurs approximately linear reference-side cost, we retain a single reference as the default.
 
-\textbf{Cross-pool evaluation.} We use common support across the zero-label methods: MV ($5$ tasks), VTAB ($7$ non-reference tasks), and EX ($10$ tasks), for $22$ pool--task units in total. STL-10 is excluded from every method because it is the reference for \SSRdag. On this support, \SSRdag\ has mean regret $+0.066$, versus $+0.169$ for RankMe and $+0.133$ for uniform random selection. The paired \SSRdag-minus-RankMe difference is $-0.1025$ (unit bootstrap $95\%$ CI $[-0.167,-0.045]$, $p=0.00012$). Official classification DiSCO is reported separately because it uses target labels.
+\textbf{Cross-pool evaluation.} We use common support across the zero-label methods: MV ($5$ tasks), VTAB ($7$ non-reference tasks), and EX ($10$ tasks), for $22$ pool--task units in total. STL-10 is excluded from every method because it is the reference for \SSRdag. On this support, \SSRdag\ has mean regret $0.069$, versus $0.173$ for RankMe and $0.137$ for uniform random selection. The paired \SSRdag-minus-RankMe difference is $-0.1043$ (unit bootstrap $95\%$ CI $[-0.169,-0.046]$, $p=0.00016$). Official classification DiSCO is reported separately because it uses target labels.
 
-\textbf{Dependence-aware uncertainty.} The $22$ observations contain $10$ unique target names, eight repeated across pools. Resampling all rows sharing a target name as one cluster gives $95\%$ CI $[-0.164,-0.039]$ and two-sided $p=0.00114$ ($100{,}000$ resamples); paired Wilcoxon gives $p=0.00254$. Thus the result is not an artefact of treating repeated target names as independent.
+\textbf{Dependence-aware uncertainty.} The $22$ observations contain $10$ unique target names, eight repeated across pools. Resampling all rows sharing a target name as one cluster gives $95\%$ CI $[-0.167,-0.040]$ and two-sided $p=0.00118$ ($100{,}000$ resamples); paired Wilcoxon gives $p=0.00254$. Thus the conclusion remains supported after grouping repeated target names.
 
 \begin{table}[h]
 \centering\small
@@ -271,11 +269,11 @@ and $g(s)=1-s$ gives an additive variant. For per-task ranking, the common posit
 \toprule
 Method & Mean regret & Label budget & Role \\
 \midrule
-Random          & $+0.133$ & zero & reference \\
-Flat-RankMe     & $+0.169$ & zero & target spectrum \\
-\textbf{Flat-\SSRdag} & $\mathbf{+0.066}$ & zero & target--reference geometry \\
+Random          & $+0.137$ & zero & reference \\
+Flat-RankMe     & $+0.173$ & zero & target spectrum \\
+\textbf{Flat-\SSRdag} & $\mathbf{+0.069}$ & zero & target--reference geometry \\
 \midrule
-\multicolumn{4}{l}{\small Paired \SSRdag\ vs.\ RankMe: $\Delta=-0.1025$; target-clustered $95\%$ CI $[-0.164,-0.039]$, $p=0.00114$.} \\
+\multicolumn{4}{l}{\small Paired \SSRdag\ vs.\ RankMe: $\Delta=-0.1043$; target-clustered $95\%$ CI $[-0.167,-0.040]$, $p=0.00118$.} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -297,11 +295,11 @@ Flat-RankMe     & $+0.169$ & zero & target spectrum \\
 \end{algorithmic}
 \end{algorithm}
 
-\textbf{Cost and quality.}  On the five MV tasks, flat scoring evaluates all $\sim119$ variants, whereas the two-stage pipeline evaluates $|\{a\}| + \overline{|V_{a^*}|}=35+3=38$ candidates on average (range $37$--$39$).  Table~\ref{tab:two_stage} compares strategies.  The label-free pipeline (S5: \SSRdag$\to$RankMe) has regret $+0.102$, close to flat \SSRdag\ ($+0.098$), at approximately one third of its forward-pass evaluations.  Its comparison with the label-dependent $2$S DiSCO$\to$RankMe baseline does not reach significance for $n{=}5$.  We therefore treat the cost--quality result as a proof of concept on this benchmark, not as a general performance or cost guarantee.
+\textbf{Cost and quality.}  On the five MV tasks, flat scoring evaluates all $\sim119$ variants, whereas the two-stage pipeline evaluates $|\{a\}| + \overline{|V_{a^*}|}=35+3=38$ candidates on average (range $37$--$39$).  Table~\ref{tab:two_stage} compares strategies.  The label-free pipeline (S5: \SSRdag$\to$RankMe) has regret $+0.102$, close to flat \SSRdag\ ($+0.098$), at approximately one third of its forward-pass evaluations.  We treat this as a proof of concept on five tasks, not as a general performance or cost guarantee.
 
 \begin{table}[h]
 \centering\small
-\caption{Pipelines on MV pool multi-variant ($35$ archs, $119$ variants, $5$ tasks).  Mean LP, regret, $95\%$ task-level bootstrap CI on regret, and forward-pass cost (number of (variant, task) feature evaluations per task).  Cost formula: label-free two-stage $= |\{a\}| + \overline{|V_{a^*}|} = 35 + 3 = 38$; mixed pipeline $= 35 + \overline{|V_{a^*}|-1} = 37$ (canonical of winning arch already counted in stage-1 labelled evaluations).}
+\caption{Pipelines on MV pool multi-variant ($35$ archs, $119$ variants, $5$ tasks).  Mean LP, regret, $95\%$ task-level bootstrap CI on regret, and forward-pass cost (number of (variant, task) feature evaluations per task).  The evaluated label-free two-stage pipeline costs $35+3=38$ forward evaluations on average; the mixed $K{=}35$ sweep uses the recorded $K+4=39$ accounting.}
 \label{tab:two_stage}
 \setlength{\tabcolsep}{4pt}
 \resizebox{\linewidth}{!}{%
@@ -313,15 +311,14 @@ S1 Random                                    & $0.627$ & $+0.194$ & $[+0.118, +0
 S2 Flat-RankMe                               & $0.502$ & $+0.319$ & $[+0.149, +0.509]$ & $118.8$ \\
 S3 Flat-\SSRdag                              & $0.723$ & $+0.098$ & $[+0.048, +0.148]$ & $118.8$ \\
 S4 $2$S RankMe$\to$RankMe                    & $0.677$ & $+0.144$ & $[+0.093, +0.220]$ & $38.0$  \\
-$\quad$ $2$S DiSCO$\to$RankMe                & $0.683$ & $+0.138$ & $[+0.042, +0.259]$ & $38.0$  \\
 \textbf{S5 $2$S \SSRdag$\to$RankMe (proposed, label-free)} & $\mathbf{0.719}$ & $\mathbf{+0.102}$ & $\mathbf{[+0.044, +0.153]}$ & $\mathbf{38.0}$ \\
 \midrule
-\textbf{$2$S H-score$\to$RankMe (mixed, $K{=}35$ labels at stage~1)} & $\mathbf{0.803}$ & $\mathbf{+0.018}$ & --- & $\mathbf{37.0}$ \\
+\textbf{$2$S H-score$\to$RankMe (mixed, $K{=}35$ labels at stage~1)} & $\mathbf{0.803}$ & $\mathbf{+0.018}$ & --- & $\mathbf{39.0}$ \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-\textbf{Mixed-budget variant.}  Stage~1 evaluates only $|\mathrm{archs}|$ candidates---an order of magnitude fewer than the full variant pool---so allocating a small label budget to stage~1 alone is practical even when the deployment scenario forbids labelled evaluation at stage~2.  Replacing \SSRdag\ at stage~1 with H-score \citep{bao2019hscore} on $K$ labelled architectures (one canonical variant each), and keeping RankMe at stage~2, gives a mixed pipeline whose regret--budget profile is shown in Figure~\ref{fig:budget}.  At $K = 5$ labelled evaluations, mixed-pipeline regret is $+0.089$, already matching the best fully label-free strategy ($+0.098$).  At $K = 35$ (full architecture coverage), regret falls to $+0.018$---a $5.7\times$ improvement over the label-free pipeline at the same forward-pass cost (at $K{=}35$ all architectures are labelled, H-score selects deterministically, and bootstrap variance is zero; no CI is reported).  The mixed-budget pipeline is appropriate whenever a small validation set is available for the candidate architectures but exhaustive labelled evaluation of all variants is infeasible, the typical practical scenario for production model selection.  On the single-variant EX pool, label-free \SSRdag\ ($+0.060$) already beats mixed H-score up to $K\approx 18$; full labelling ($K{=}30$) reaches $+0.045$, confirming that label budgets add most value where within-family variant selection---absent from single-variant pools---is the bottleneck.
+\textbf{Mixed-budget variant.}  As an exploratory extension on the same five MV tasks, we replace \SSRdag\ at stage~1 with H-score \citep{bao2019hscore} on $K$ labelled architecture representatives and retain RankMe at stage~2.  The observed regrets are $0.089$ at $K{=}5$ and $0.018$ at $K{=}35$ (Figure~\ref{fig:budget}).  These points illustrate a possible label--compute trade-off on this benchmark; the small task set does not support a general deployment recommendation.
 
 \begin{figure}[h]
 \centering
@@ -334,22 +331,22 @@ $\quad$ $2$S DiSCO$\to$RankMe                & $0.683$ & $+0.138$ & $[+0.042, +0
 \centering
 \includegraphics[width=\linewidth]{fig_costsplit.pdf}
 \end{minipage}
-\caption{(left) Cost--regret Pareto on MV pool multi-variant: S5 (green star) is the Pareto-best label-free strategy.  (right) Mixed pipeline regret vs.\ stage-1 label budget $K$: at $K{=}5$ the mixed pipeline already matches the best label-free strategy; at $K{=}35$ regret falls to $+0.018$.}
+\caption{Five-task MV proof of concept. (left) Observed regret versus forward evaluations for the evaluated flat and two-stage strategies. (right) Observed mixed-pipeline regret versus stage-1 label budget $K$.}
 \label{fig:budget}
 \end{figure}
 
 \section{Discussion}
 \label{sec:discussion}
 
-\textbf{When does \SSRdag\ apply?}  The geometric premise of Subspace-Corrected Ranking is that subspace alignment with a generic reference dataset negatively predicts the fraction of class-mean variance in the architecture-specific subspace.  This premise holds robustly across $126$ architecture--task pairs of the VTAB pool ($\rhoSp = -0.96$) and across the architecture-selection subsets described in Appendices~B--E.  It does not, however, hold within a single architecture family: pretraining recipes within ViT or within ResNet do not differ enough in their top-$k$ subspaces for $\SAk$ variation to track linear-probe accuracy.  The two-stage pipeline addresses this directly by using \SSRdag\ only at the architecture-selection stage and a within-family rotation-invariant score (RankMe) for variant selection.
+\textbf{When does \SSRdag\ apply?}  The geometric premise of Subspace-Corrected Ranking is that subspace alignment with a generic reference dataset negatively predicts the fraction of class-mean variance in the architecture-specific subspace.  This premise holds robustly across all $168$ architecture--task pairs on the complete VTAB support ($\rhoSp = -0.959$) and across the architecture-selection subsets described in Appendices~B--E.  It does not, however, hold within a single architecture family: pretraining recipes within ViT or within ResNet do not differ enough in their top-$k$ subspaces for $\SAk$ variation to track linear-probe accuracy.  The two-stage pipeline addresses this directly by using \SSRdag\ only at the architecture-selection stage and a within-family rotation-invariant score (RankMe) for variant selection.
 
 \textbf{Pool dependence and DiSCO.}  The relative performance of \SSRdag\ and official DiSCO is pool-dependent, particularly on SSL and EX.  This comparison must also be interpreted with care: \SSRdag\ uses no target labels, whereas official DiSCO forms class-conditional covariances from target ground-truth labels.  We therefore use DiSCO as a label-dependent comparator rather than evidence that one method uniformly dominates the other.
 
-\textbf{Limitations.}  \SSRdag\ has no formal bound linking subspace alignment to downstream accuracy, and reference selection remains heuristic.  The default STL-10 reference gives regret $0.053$ on the audited VTAB support, while a target-disjoint leave-one-target-out four-reference ensemble gives $0.051$; this small difference does not establish a universally optimal reference or make an ensemble the default.  Performance is pool-dependent, and official DiSCO uses target labels.  Finally, the two-stage experiment contains only five MV tasks, so its approximately three-fold cost reduction is benchmark-specific evidence rather than a general guarantee.
+\textbf{Limitations.}  \SSRdag\ has no formal bound linking subspace alignment to downstream accuracy, and reference selection remains heuristic. On the complete VTAB support, the default STL-10 reference has regret $0.061$ and the target-disjoint four-reference ensemble $0.055$; seven tasks do not establish a better default, especially given the ensemble's added cost. Performance is pool-dependent, and official DiSCO uses target labels. Finally, the two-stage experiment contains only five MV tasks, so its approximately three-fold cost reduction is benchmark-specific evidence rather than a general guarantee.
 
 \section{Conclusion}
 
-RankMe is seriously confounded by feature width in heterogeneous architecture pools: under the stated isotropic model its effective rank scales as $\Theta(d)$ and can rank width rather than transfer quality.  \SSRdag\ addresses this specific failure by augmenting the target spectrum with the target--reference subspace relation computed through the same candidate encoder.  On the corrected common support of $22$ pool--task units, it reduces mean regret from $0.169$ to $0.066$ (difference $-0.1025$; target-clustered $95\%$ CI $[-0.164,-0.039]$, $p=0.00114$).  The result supports \SSRdag\ for cross-family zero-label selection and RankMe for within-family selection, while leaving reference design, downstream guarantees, pool-dependent behavior, and broader two-stage validation as open problems.
+RankMe is seriously confounded by feature width in heterogeneous architecture pools: under the stated isotropic model its effective rank scales as $\Theta(d)$ and can rank width rather than transfer quality. \SSRdag\ addresses this specific failure by augmenting the target spectrum with the target--reference subspace relation computed through the same candidate encoder. On the complete common support of $22$ pool--task units, it reduces mean regret from $0.173$ to $0.069$ (difference $-0.1043$; target-clustered $95\%$ CI $[-0.167,-0.040]$, $p=0.00118$). The result supports \SSRdag\ for cross-family zero-label selection and RankMe for within-family selection, while leaving reference design, downstream guarantees, pool-dependent behavior, and broader two-stage validation as open problems.
 
 \clearpage
 \bibliographystyle{plainnat}
@@ -378,19 +375,19 @@ The required moments are finite for every fixed positive aspect ratio, including
 
 \textbf{Empirical near-isotropy diagnostic.}  On the VTAB architecture--task pairs for which the diagnostic is available, the class-covariance statistic $\eta_\Sigma = \mathrm{Var}_c[\mathrm{tr}(\Sigma_c)]/(\mathbb{E}_c[\mathrm{tr}(\Sigma_c)])^2$ is small for most pairs (median $0.022$, mean $0.035$, and $93.3\%$ below $0.1$).  This is descriptive evidence that the isotropic approximation is relevant to these representations; it is not a bound on RankMe's ordering or a theorem for other rotation-invariant scores.
 
-\textbf{Empirical $r_{\mathrm{eff}} = \Theta(d)$ verification.}  Figure~\ref{fig:reff_d} shows the per-architecture mean $\reff$ plotted against $d$ on log-log axes for MV, VTAB, and EX pools.  In the MV pool and the EX pool (both using full-dataset features), the Spearman rank correlation between $\reff$ and $d$ is $\rhoSp = +0.69$ and $+0.86$ respectively, with points lying close to two parallel lines of slope~$1$ (the two lines correspond to different architecture families with different $c(\gamma)$ constants, consistent with Lemma~\ref{lem:mp}).  The VTAB pool uses $n{=}1000$ subsampled features; for large-$d$ architectures ($d > n$) the effective rank is capped by $n$, so the VTAB points lie on a lower band ($\rhoSp = +0.58$) but retain the positive monotone trend.
+\textbf{Empirical width association.}  Figure~\ref{fig:reff_d} shows the per-architecture mean $\reff$ plotted against $d$ on log-log axes for MV, VTAB, and EX pools.  In MV and EX (both using full-dataset features), the Spearman rank correlation between $\reff$ and $d$ is $\rhoSp = +0.70$ and $+0.86$ respectively.  VTAB uses $n{=}1000$ subsampled features; for large-$d$ architectures ($d > n$), $\reff$ is capped by $n$, producing a lower band ($\rhoSp = +0.41$). These finite-pool observations are consistent with, but do not by themselves prove, the asymptotic lemma.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.62\linewidth]{fig_reff_d_scatter.pdf}
-\caption{Effective rank $\reff(H)$ vs.\ penultimate dimension $d$ on log-log axes, averaged across tasks per architecture.  All three plotted pools (MV, VTAB, EX) show $\reff$ growing monotonically with $d$ (positive Spearman $\rho$ reported in legend), empirically confirming Lemma~\ref{lem:mp} ($\reff = \Theta(d)$).  Dashed/dotted lines have slope~$1$ (reference for linear scaling); the two lines reflect different $c(\gamma) = e^{C(\gamma)}$ constants across architecture families and pooling regimes.  VTAB uses $n{=}1000$ subsampled features, placing large-$d$ architectures in the $n < d$ regime where $\reff \leq n$, hence the lower VTAB band.}
+\caption{Effective rank $\reff(H)$ vs.\ penultimate dimension $d$ on log-log axes, averaged across tasks per architecture. All three pools show positive rank association between $\reff$ and $d$, consistent with Lemma~\ref{lem:mp}. Dashed/dotted slope-$1$ lines are visual references, not fitted asymptotic laws. VTAB uses $n{=}1000$ subsampled features, so $\reff\leq n$ creates the lower band when $d>n$.}
 \label{fig:reff_d}
 \end{figure}
 
 \section{MV Pool (Multi-Variant Pool)}
 \label{app:mv_pool}
 
-\textbf{Setup.}  The MV pool contains $132$ ImageNet-1k pretrained variants from $35$ canonical architecture families sourced from timm \citep{wightman2019timm} and torchvision, evaluated on $5$ target tasks (CIFAR-10, CIFAR-100, DTD, EuroSAT, SVHN).  Architecture families span four broad classes: (i) VGG \citep{simonyan2015vgg} ($3$ variants, $d{=}4096$), ResNets \citep{he2016resnet} ($8$ variants, $d\in\{512, 2048\}$), DenseNets ($4$ variants, $d\in\{1024,2208\}$); (ii) EfficientNet \citep{tan2019efficientnet} ($4$ variants, $d\in\{1280,1408,1536\}$), MobileNet/RegNet ($d\in\{960,1512\}$); (iii) ViT \citep{dosovitskiy2021vit}/DeiT ($6$ variants each, $d\in\{192,384,768\}$); (iv) ConvNeXt \citep{liu2022convnext}/Swin ($4$ variants, $d{=}768$) and others.  Penultimate dimensions range from $d{=}192$ (ViT-tiny, DeiT-tiny) to $d{=}4096$ (VGG-16), a $21\times$ spread.  LP ground truth uses $\ell_2$-regularised logistic regression ($C{=}1$) on an $80/20$ split, identical to the VTAB protocol.
+\textbf{Setup.}  The MV inventory contains $132$ ImageNet-1k pretrained variants; the reported architecture-selection and two-stage comparisons use the fixed $119$-variant support belonging to $35$ families with at least two variants. All are sourced from timm \citep{wightman2019timm} and torchvision and evaluated on $5$ target tasks (CIFAR-10, CIFAR-100, DTD, EuroSAT, SVHN).  Architecture families span four broad classes: (i) VGG \citep{simonyan2015vgg} ($3$ variants, $d{=}4096$), ResNets \citep{he2016resnet} ($8$ variants, $d\in\{512, 2048\}$), DenseNets ($4$ variants, $d\in\{1024,2208\}$); (ii) EfficientNet \citep{tan2019efficientnet} ($4$ variants, $d\in\{1280,1408,1536\}$), MobileNet/RegNet ($d\in\{960,1512\}$); (iii) ViT \citep{dosovitskiy2021vit}/DeiT ($6$ variants each, $d\in\{192,384,768\}$); (iv) ConvNeXt \citep{liu2022convnext}/Swin ($4$ variants, $d{=}768$) and others.  Penultimate dimensions range from $d{=}192$ (ViT-tiny, DeiT-tiny) to $d{=}4096$ (VGG-16), a $21\times$ spread.  LP ground truth uses $\ell_2$-regularised logistic regression ($C{=}1$) on an $80/20$ split, identical to the VTAB protocol.
 
 \textbf{Architecture families and variant counts.}
 
@@ -418,9 +415,9 @@ Other (MnasNet, etc.) & CNN / hybrid & $5$ & $1280$--$1984$ \\
 \end{tabular}
 \end{table}
 
-\textbf{Width confound detail.}  Per-task $\rhoSp(\mathrm{RankMe}, d)$ ranges from $+0.50$ to $+0.72$ (mean $+0.61$; all $5/5$ tasks positive), confirming strong width--score correlation even within this single pool.  RankMe selects \texttt{vgg16} ($d{=}4096$) on all $5$ target tasks; the oracle is \texttt{convnext\_base} or \texttt{densenet201} depending on the task.  Mean RankMe regret is $+0.319$, which is $+0.125$ worse than uniform random selection ($+0.194$).  Removing the $3$ VGG variants (about $2.3\%$ of the pool) drops Flat-RankMe regret to $+0.144$, illustrating how a single high-$d$ outlier family drives the confound.  \SSRdag\ is unaffected by the VGG removal (regret $+0.098$ with or without VGG) because its subspace-alignment penalty is approximately invariant to which architecture occupies the high-$d$ tail.
+\textbf{Width confound detail.}  Per-task $\rhoSp(\mathrm{RankMe}, d)$ ranges from $+0.50$ to $+0.72$ (mean $+0.61$; all $5/5$ tasks positive), confirming strong width--score correlation even within this single pool.  RankMe selects \texttt{vgg16} ($d{=}4096$) on all $5$ target tasks; the oracle is \texttt{convnext\_base} or \texttt{densenet201} depending on the task.  Mean RankMe regret is $+0.319$, which is $+0.125$ worse than uniform random selection ($+0.194$).  Removing the $3$ VGG variants (about $2.3\%$ of the pool) drops Flat-RankMe regret to $+0.144$, illustrating how a single high-$d$ outlier family drives the confound.  The observed \SSRdag\ regret is $+0.098$ both with and without the VGG variants; we treat this as an empirical robustness check rather than a general invariance claim.
 
-\textbf{Multi-variant structure and two-stage evaluation.}  The pool contains $35$ architecture families with a mean of $3.8$ variants per family (range $1$--$8$).  The $35$ families $\times 5$ tasks multi-variant subset (using the $119$ variants belonging to families with $\geq 2$ members) is the only subset on which the two-stage pipeline can be evaluated: stage~1 selects the best architecture family using one canonical variant per family, and stage~2 searches within the selected family.  The $3.1\times$ forward-pass cost saving relative to flat evaluation (Sec.~\ref{sec:twostage}) follows from $\lvert\text{architectures}\rvert + \lvert V_{a^*}\rvert \approx 35 + 4 \ll 119$.
+\textbf{Multi-variant structure and two-stage evaluation.}  The pool contains $35$ architecture families with a mean of $3.8$ variants per family (range $1$--$8$).  The $35$ families $\times 5$ tasks multi-variant subset (using the $119$ variants belonging to families with $\geq 2$ members) is the only subset on which the two-stage pipeline can be evaluated: stage~1 selects the best architecture family using one canonical variant per family, and stage~2 searches within the selected family.  The observed $3.1\times$ forward-pass reduction relative to flat evaluation (Sec.~\ref{sec:twostage}) follows from the recorded mean cost $35+3=38$ versus $118.8$.
 
 \textbf{CNN-only sub-pool.}  To confirm the width confound is not a ViT-vs-CNN artefact, we evaluate the $78$ CNN-class variants (removing all ViT, DeiT, Swin families).  RankMe selects \texttt{vgg16} on $4/5$ tasks (on DTD it selects \texttt{densenet201}, $d{=}2208$, the next-highest $d$), and $\rhoSp(\mathrm{RankMe}, d) = +0.57$ on the CNN-only pool.  The confound therefore persists within a homogeneous architecture class, ruling out the hypothesis that it is driven by the qualitative ViT/CNN feature-structure difference rather than width itself.
 
@@ -431,16 +428,32 @@ Other (MnasNet, etc.) & CNN / hybrid & $5$ & $1280$--$1984$ \\
 
 \textbf{Width confound.}  Per-task $\rhoSp(\mathrm{RankMe}, d)$ averages $+0.815$ (range $[+0.45, +0.95]$; $27/29$ tasks positive).  Flat-RankMe selects a $d{=}2048$ ResNet-class encoder on $25/29$ tasks while the oracle is CLIP-ViT-L/14 on $11/29$ tasks and ConvNeXt-B on $8/29$.  Mean RankMe regret is $+0.103$ vs.\ random $+0.066$ ($26/29$ tasks suboptimal).
 
-\textbf{Label-dependent comparison.}  Replacing the submission's proxy implementation with official PCA-128 DiSCO gives regret $0.045$ for $G{=}6$ and $0.042$ for $G{=}8$ on the available $29$ SSL tasks.  These values supersede the submitted DiSCO result.  Because official classification DiSCO uses target ground-truth labels to form class-conditional covariances, we report it separately from the zero-label \SSRdag--RankMe comparison and make no general superiority claim.
+\textbf{Label-dependent comparison.}  Replacing the submission's proxy implementation with official PCA-128 DiSCO gives regret $0.045$ for $G{=}6$ and $0.042$ for $G{=}8$ on the available $29$ SSL tasks.  The withdrawn proxy gives $0.026$, while official full-feature scoring gives $0.057/0.047$; these are different algorithms or dimensionality settings, not reruns of one protocol.  The values $0.077/0.071$ in an early response draft match no retained output and were a transcription error. Because official classification DiSCO uses target ground-truth labels to form class-conditional covariances, we report it separately from the zero-label \SSRdag--RankMe comparison and make no general superiority claim.
+
+\begin{table}[h]
+\centering\small
+\caption{Official PCA-128 classification DiSCO on each pool. $G$ is the number of consecutive, near-equal spectral groups. DiSCO uses target labels and is therefore not included in the zero-label comparison.}
+\label{tab:official_disco}
+\begin{tabular}{lrrr}
+\toprule
+Pool & Tasks & $G{=}6$ regret & $G{=}8$ regret \\
+\midrule
+MV   & $5$  & $0.146$ & $0.146$ \\
+VTAB (STL-10 excluded) & $7$ & $0.067$ & $0.040$ \\
+EX   & $10$ & $0.045$ & $0.049$ \\
+SSL  & $29$ & $0.045$ & $0.042$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{VTAB Pool}
 \label{app:vtab}
 
-\textbf{Setup.}  $25$ timm-pretrained architectures and $8$ VTAB tasks (CIFAR-10/100, DTD, Fashion-MNIST, Flowers-102, Pets, STL-10, SVHN); architecture families include ResNets ($d \in \{512, 2048\}$), EfficientNets ($d \in \{1280, 1408, 1536\}$), ViTs/DeiTs ($d \in \{192, 384, 768\}$), ConvNeXt/Swin ($d{=}768$), MobileNet/RegNet ($d \in \{1008, 1024, 1280, 1512\}$).  No VGG-class architectures; maximum $d = 2048$.  STL-10 features serve as the reference for $\SAk$ (excluded from target tasks for the STL-10 reference condition).  The per-task width-confound breakdown is reported in Table~\ref{tab:vtab_pertask} in \S\ref{sec:theory}.
+\textbf{Setup.}  The final common pool contains the $24$ timm-pretrained architectures with complete features and LP values on all $8$ VTAB tasks (CIFAR-10/100, DTD, Fashion-MNIST, Flowers-102, Pets, STL-10, SVHN). The original manifest also listed ResNet-152, but only one of its eight feature files was available, so it is excluded uniformly rather than allowing the candidate set to vary by task. STL-10 features serve as the reference for $\SAk$ and are excluded as a target in the common-support analysis.
 
-\textbf{Reference-task and $k$ ablation.}  The audited protocol uses uncentred SVD, RankMe's singular-value normalisation, and excludes STL-10 as a target.  With $k{=}20$, STL-10 as the single reference gives regret $0.053$ over the remaining seven tasks.  The submitted Flowers-102 self-reference result is withdrawn because the reference coincided with a target.  Earlier ablations place the stable range near $k\in[10,50]$; we use the midpoint $k{=}20$ without tuning on target labels.
+\textbf{Reference-task and $k$ ablation.}  The audited protocol uses uncentred SVD, RankMe's singular-value normalisation, and excludes STL-10 as a target. With $k{=}20$, STL-10 as the single reference gives regret $0.061$ over the remaining seven tasks on the complete $24$-architecture support. The submitted Flowers-102 self-reference result is withdrawn because the reference coincided with a target. Earlier ablations place the stable range near $k\in[10,50]$; we use the midpoint $k{=}20$ without tuning on target labels.
 
-\textbf{Multi-reference robustness.}  For a target-disjoint evaluation, we omit any reference whose dataset name equals the current target and take the median alignment across the remaining members of the predetermined set (STL-10, CIFAR-10, Flowers-102, Pets).  This leave-one-target-out ensemble gives regret $0.051$, only slightly below the STL-10 single-reference result $0.053$.  An ensemble incurs approximately $M$ times the reference-side feature-extraction and SVD cost, while target features are unchanged; thus we retain one generic target-disjoint reference as the default and view reference design as an open problem.
+\textbf{Multi-reference robustness.}  For a target-disjoint evaluation, we omit any reference whose dataset name equals the current target and take the median alignment across the remaining members of the predetermined set (STL-10, CIFAR-10, Flowers-102, Pets). This leave-one-target-out ensemble gives regret $0.055$, versus $0.061$ for STL-10 alone. The modest seven-task difference does not offset the ensemble's approximately $M$-fold reference-side cost, so we retain one generic target-disjoint reference as the default and view reference design as an open problem.
 
 \section{EX Pool and Stage-1 Comparisons}
 \label{app:extended}
@@ -466,32 +479,12 @@ Flat-LEEP         & $+0.038$ & $+0.038$ & label-based \\
 \end{tabular}
 \end{table}
 
-\textbf{Spectral truncation as a stage-1 alternative.}  Recomputing $\reff$ on the top-$D$ truncated singular spectrum eliminates the width confound at $D{=}256$ on MV pool (Spearman $\rhoSp(r_{\mathrm{eff},256}, d) = +0.06$ vs.\ $+0.63$ at full spectrum) and reduces Flat-RankMe regret to $+0.094$.  As a stage-1 score on the $35$-architecture multi-variant subset, however, Trunc256 is substantially worse than \SSRdag: small-$d$ architectures (ViT-tiny $d{=}192$, DeiT-tiny $d{=}192$) are not truncated and retain the width ordering.  The two-stage pipeline $2$S Trunc256$\to$RankMe yields regret $+0.136$ vs.\ \SSRdag's $+0.078$ ($\Delta = -0.058$, $95\%$ CI $[-0.094, -0.016]$, $p = 0.008$, paired bootstrap).
+\textbf{Spectral truncation.}  Recomputing $\reff$ on the top-$D$ singular values is a useful diagnostic: at $D{=}256$ on MV, the width correlation decreases and flat regret approaches that of \SSRdag. We do not promote truncation as a stage-1 alternative because candidates with $d<D$ remain untruncated and the cutoff introduces an additional design choice.
 
 \section{Ablations and Negative Results}
 \label{app:ablations}
 
-\textbf{$d_{\max}/d_{\min}$ threshold: controlled sub-pool ablation.}  To move beyond the four-pool calibration of $\tau\approx 7\times$, we construct a controlled experiment on the EX pool ($35$ architectures, $d\in[192,4096]$, $10$ tasks): starting from the full pool ($d_{\max}/d_{\min}=21.3\times$), we iteratively remove the widest architecture and re-evaluate \SSRdag\ and DiSCO regret after each removal.  \SSRdag\ leads throughout the range $[21.3\times, 7.9\times]$ (advantage $\Delta = +0.03$ to $+0.05$); the first reversal occurs at $6.7\times$ (DiSCO advantage $\Delta=-0.004$); DiSCO leads consistently at $\leq 5.3\times$.  The mirror experiment (removing the narrowest architecture) yields a crossover at $\approx 3.2\times$, consistent with the asymmetric influence of the widest outlier on \SSRdag.  Together these results bracket the empirical threshold at $\tau\in[6.7\times,7.9\times]$, in good agreement with the four-pool heuristic $\tau\approx 7\times$.
-
-\textbf{$\beta$ scan for the additive SCR variant.}  We scan $\beta \in [0, 50]$ for $\mathrm{SCR}(H, T; \beta) = \log\reff(H) + \beta(1 - \SAk(H, H_{\mathrm{ref}}))$ on three pools.  The optimal $\beta^*$ lies in the same plateau $[10, 30]$ on MV pool, VTAB, and the EX pool, indicating cross-pool transferability of the correction.
-
-\begin{table}[h]
-\centering\small
-\caption{Cross-pool $\beta$-scan for the additive SCR variant $\log\reff + \beta(1-\SAk)$.  $\beta=0$ recovers Flat-RankMe.  Optimal $\beta^*$ lies in $[10, 30]$ on MV, VTAB, and EX pools.}
-\label{tab:scr_beta_scan}
-\begin{tabular}{lrrrrrr}
-\toprule
-$\beta$ & MV reg & MV $\rho$ & VTAB reg & VTAB $\rho$ & Ext reg & Ext $\rho$ \\
-\midrule
-$0$ (RankMe)        & $+0.319$ & $+0.345$ & $+0.105$ & $+0.402$ & $+0.144$ & $+0.085$ \\
-$5$                 & $+0.108$ & $+0.516$ & $+0.098$ & $+0.444$ & $+0.117$ & $+0.263$ \\
-$\mathbf{15}$       & $\mathbf{+0.094}$ & $\mathbf{+0.534}$ & $\mathbf{+0.069}$ & $+0.445$ & $\mathbf{+0.063}$ & $+0.331$ \\
-$30$                & $+0.093$ & $+0.530$ & $+0.068$ & $+0.433$ & $+0.067$ & $+0.338$ \\
-\midrule
-\SSRdag\ (reference) & $+0.098$ & $+0.506$ & $+0.066$ & $+0.454$ & $+0.060$ & $+0.311$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+\textbf{Withdrawn exploratory rules.}  We do not retain the earlier $d_{\max}/d_{\min}$ threshold for choosing between \SSRdag\ and DiSCO: the latter is label-dependent, and the apparent crossover was computed with the superseded proxy implementation.  We likewise omit cross-pool tuning claims for the additive SCR variant because they are unnecessary for the parameter-free score evaluated in the main result.
 
 \textbf{Algebraic form of the correction.}  Within the $-\alpha\log\SAk$ family on MV pool, $\alpha \in [0.5, 2]$ all yield similar regret ($+0.093$ to $+0.162$); the inverted-direction control $-\log(1-\SAk)$ produces regret $+0.366$, confirming that the subtraction direction matters.  We adopt $\alpha = 1$ for parsimony.
 

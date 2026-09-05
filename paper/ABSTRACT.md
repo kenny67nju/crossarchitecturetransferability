@@ -13,8 +13,8 @@ Under an isotropic random-feature model, we show specifically that RankMe effect
 scales as Theta(d). We propose Subspace-Corrected Ranking (SCR), which adds the relative
 geometry between each candidate's target features and its features on a fixed reference
 dataset. On a common support of 22 pool-task units, SSR-dagger reduces mean regret from
-0.169 (RankMe) to 0.066; the paired difference is -0.1025 (target-name-clustered 95% CI
-[-0.164, -0.039], p=0.00114). SSR-dagger is intended for cross-family selection, whereas
+0.173 (RankMe) to 0.069; the paired difference is -0.1043 (target-name-clustered 95% CI
+[-0.167, -0.040], p=0.00118). SSR-dagger is intended for cross-family selection, whereas
 RankMe remains preferable within a family. A five-task two-stage result is reported as a
 proof of concept, not a general cost guarantee.
 
@@ -26,10 +26,10 @@ Code: https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8
 
 | Setting                        | Score          | Mean regret | 95% CI             |
 |-------------------------------|----------------|-------------|--------------------|
-| MV pool flat (132v x 5t)       | RankMe         | +0.319      | [+0.149, +0.509]   |
-| MV pool flat (132v x 5t)       | SSR-dagger     | +0.098      | [+0.048, +0.148]   |
-| Common support (22 pool-task units) | RankMe     | +0.169      | —                  |
-| Common support (22 pool-task units) | SSR-dagger | +0.066     | paired difference CI [-0.164, -0.039] |
+| MV pool flat (119v x 5t)       | RankMe         | +0.319      | [+0.149, +0.509]   |
+| MV pool flat (119v x 5t)       | SSR-dagger     | +0.098      | [+0.048, +0.148]   |
+| Common support (22 pool-task units) | RankMe     | +0.173      | —                  |
+| Common support (22 pool-task units) | SSR-dagger | +0.069     | paired difference CI [-0.167, -0.040] |
 | MV pool two-stage (3.1x cheaper) | SSR-dagger -> RankMe | +0.102 | [+0.044, +0.153] |
 | Mixed budget K=5 (label-free equiv.) | H-score -> RankMe | ~0.089 | —          |
 | Mixed budget K=35              | H-score -> RankMe | +0.018   | —                  |
