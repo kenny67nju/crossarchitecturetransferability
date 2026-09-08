@@ -31,7 +31,11 @@
 }{\par\end{quote}\vskip 1ex}
 
 \title{跨架构迁移性受到特征宽度混淆：诊断与子空间校正}
-\author{匿名作者（中文翻译稿）}
+\author{%
+  Qin Liu \quad Chen Zhong \quad Fengshan ZHAO\thanks{通讯作者：Fengshan Zhao，\texttt{fs.zhao@nju.edu.cn}}\\
+  南京大学新型软件技术国家重点实验室\\
+  中国南京
+}
 \date{}
 
 \begin{document}
@@ -194,6 +198,10 @@ SSL & $29$ & $0.045$ & $0.042$ \\
 
 \section{结论}
 在异构架构池中，RankMe 会受到特征宽度的严重混淆：在给定各向同性模型下，其有效秩按 $\Theta(d)$ 缩放，因此可能按宽度而非迁移质量排序。\SSRdag 使用同一候选编码器内部的目标--参考子空间关系，补充目标谱所缺少的信息。在 $22$ 个完整共同支持单元上，它将平均遗憾从 $0.173$ 降至 $0.069$（差值 $-0.1043$；目标聚类 $95\%$ CI $[-0.167,-0.040]$，$p=0.00118$）。结果支持跨架构族零标签选择使用 \SSRdag、同架构族选择使用 RankMe，同时把参考设计、下游保证、模型池依赖性和更广泛的两阶段验证留作未来工作。
+
+\section*{致谢}
+
+本工作得到“111 中心”（编号 B26023）和教育部基础学科与交叉学科突破计划（编号 JYB2025XDXM118）的支持。
 
 \appendix
 \section{Marchenko--Pastur 推导}

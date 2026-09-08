@@ -4,7 +4,7 @@
 \documentclass{article}
 
 \PassOptionsToPackage{numbers,sort&compress}{natbib}
-\usepackage{neurips_2026}
+\usepackage[final,main]{neurips_2026}
 
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{booktabs,multirow,array,tabularx}
@@ -35,7 +35,11 @@
 \title{Cross-Architecture Transferability is Width-Confounded:\\
        Diagnosis and Subspace Correction}
 
-\author{Anonymous Author(s)}
+\author{%
+  Qin Liu \quad Chen Zhong \quad Fengshan ZHAO\thanks{Corresponding author: Fengshan Zhao, \texttt{fs.zhao@nju.edu.cn}}\\
+  State Key Laboratory of Novel Software Technology\\
+  Nanjing University, Nanjing, China
+}
 \date{}
 
 \begin{document}
@@ -348,6 +352,10 @@ S4 $2$S RankMe$\to$RankMe                    & $0.677$ & $+0.144$ & $[+0.093, +0
 
 RankMe is seriously confounded by feature width in heterogeneous architecture pools: under the stated isotropic model its effective rank scales as $\Theta(d)$ and can rank width rather than transfer quality. \SSRdag\ addresses this specific failure by augmenting the target spectrum with the target--reference subspace relation computed through the same candidate encoder. On the complete common support of $22$ pool--task units, it reduces mean regret from $0.173$ to $0.069$ (difference $-0.1043$; target-clustered $95\%$ CI $[-0.167,-0.040]$, $p=0.00118$). The result supports \SSRdag\ for cross-family zero-label selection and RankMe for within-family selection, while leaving reference design, downstream guarantees, pool-dependent behavior, and broader two-stage validation as open problems.
 
+\section*{Acknowledgments}
+
+This work was supported by the ``111 Center'' (No.~B26023) and the Fundamental and Interdisciplinary Disciplines Breakthrough Plan of the Ministry of Education of China (No.~JYB2025XDXM118).
+
 \clearpage
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -509,8 +517,7 @@ SVHN      & $0.615$ & $0.430$ & $0.570$ & $0.450$ & vgg16 & efficientnet\_b3  & 
 
 \textbf{Negative result 2: \SSRdag\ degenerates on ViT-only sub-pools.}  When candidates are restricted to ViT-family architectures (ViT, DeiT, Swin variants on a $33$-model $\times$ $10$-task benchmark), $\SAk$ profiles are similar across pretraining recipes but uncorrelated with LP accuracy; \SSRdag\ underperforms RankMe by $\Delta\rho = -0.26$ ($95\%$ CI $[-0.43, -0.07]$, $p = 0.010$, task-paired bootstrap).  In mixed pools containing both ViT and CNN architectures (the deployment scenario), \SSRdag\ correctly identifies the better architecture.
 
+\enlargethispage{3\baselineskip}
 \textbf{Within-family ranking and the $\log C$ scaler.}  Within any single architecture family, $\SSRdag$ provides no additional ranking signal over RankMe ($\Delta\rho \in [-0.48, -0.07]$ across the $6$ families on MV pool).  The $\log C$ task scaler is convenient but not principled: an oracle scaler $1/(1-\overline{\mathrm{LP}})$ achieves Spearman $\rho = +0.82$ vs.\ \SSRdag's $+0.49$, and a random per-task scaler achieves $+0.39$.  We retain $\log C$ for cross-task aggregation while noting that other per-task scalers would work comparably.
-
-\input{checklist}
 
 \end{document}

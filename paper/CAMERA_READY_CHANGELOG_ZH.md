@@ -82,6 +82,8 @@
 
 ## 7. 论文、代码与复现材料
 
+- 将作者信息更新为 Qin Liu、Chen Zhong 和 Fengshan Zhao，单位为南京大学新型软件技术国家重点实验室，并标注 Fengshan Zhao 为通讯作者。
+- 增加基金致谢，删除投稿阶段使用的 NeurIPS paper checklist。
 - 更新摘要、正文、附录、表格、图注和结论，使方法符号、实验支持和统计数字保持一致。
 - 更新主结果构建、VTAB 缺失单元补齐、参考选择审计、目标聚类 bootstrap、DiSCO 汇总及 SSL 历史审计脚本。
 - 新增 camera-ready 一致性检查，核对论文中的关键数字、结果文件和评分定义。
