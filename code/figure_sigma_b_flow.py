@@ -16,6 +16,8 @@ OUT  = ROOT / "paper"
 
 # 论文样式
 mpl.rcParams.update({
+    'pdf.fonttype': 42,
+    'ps.fonttype': 42,
     'font.size': 9,
     'axes.labelsize': 10,
     'axes.titlesize': 10,

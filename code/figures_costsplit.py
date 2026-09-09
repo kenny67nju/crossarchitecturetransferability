@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
 p2 = pd.read_csv('results/p2_label_budget_sweep.csv')
 
 fig, ax = plt.subplots(figsize=(7.5, 5.0))

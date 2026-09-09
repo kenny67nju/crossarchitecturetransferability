@@ -4,6 +4,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
 # Strategies (regret, cost, color, marker, label, group)
 strategies = [
     ('S0 Oracle',                          0.000, 118.8, 'gray',    'o', 'Oracle (upper bound)',         'ref'),
