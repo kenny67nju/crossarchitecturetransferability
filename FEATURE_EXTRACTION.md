@@ -8,6 +8,17 @@ the variant name is replaced by `_dot_` (e.g.
 
 ## Requirements
 
+The requirements below describe the CUDA reproduction path. The corrected
+MV/EX DiSCO feature-extraction reruns also used Huawei Ascend NPUs through
+PyTorch, `torch_npu`, and the Ascend toolkit. The retained launcher
+`scripts/run_disco_feature_shard.sh` configures four independent model shards
+on NPU devices 0--3, one process per device, with batch size 64. Features are
+cached as float32 arrays. `scripts/finalize_disco_experiments.sh` then scores
+the MV/EX caches on CPU with 16 workers. See the paper's Experimental
+Environment and Compute Accounting appendix for the scope and limitations
+of the retained resource records; these settings do not identify the hardware
+used for every historical cache or establish a wall-clock speedup.
+
 - CUDA GPU with ≥16 GB VRAM (tested on V100/A100)
 - `pip install -r requirements.txt`  (includes torch, timm, open_clip)
 - Dataset downloads (see below)

@@ -112,7 +112,7 @@
 \item {\bf Experiments compute resources}
     \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
     \item[] Answer: \answerNo{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: The repository documents a CUDA GPU with at least 16~GB memory for feature extraction and CPU-only scoring from cached features, including approximate end-to-end runtimes. Exact compute for every preliminary or failed experiment was not recorded, so a complete project-wide compute accounting is unavailable.
+    \item[] Justification: Appendix~\ref{app:environment} describes the Huawei Ascend NPU extraction reruns, the four-device sharding configuration, and CPU-based cached-feature analyses. Exact hardware specifications, software-version snapshots, and complete per-run runtimes were not consistently retained across historical runs, so the available information does not constitute full compute-resource reporting. Forward-evaluation counts are distinguished from wall-clock speedups.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.

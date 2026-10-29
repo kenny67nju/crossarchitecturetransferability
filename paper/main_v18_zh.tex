@@ -30,7 +30,7 @@
   \vskip 0.075in\centerline{\large\bf 摘要}\vspace{0.5ex}\begin{quote}%
 }{\par\end{quote}\vskip 1ex}
 
-\title{跨架构迁移性受到特征宽度混淆：诊断与子空间校正}
+\title{无标签跨架构模型选择中的宽度混淆：诊断与子空间校正}
 \author{%
   Qin Liu \quad Chen Zhong \quad Fengshan ZHAO\thanks{通讯作者：Fengshan Zhao，\texttt{fs.zhao@nju.edu.cn}}\\
   南京大学新型软件技术国家重点实验室\\
@@ -308,7 +308,6 @@ S4 两阶段 RankMe$\to$RankMe & $0.677$ & $+0.144$ & $[+0.093,+0.220]$ & $38.0$
 
 \begin{ack}
 本工作得到“111 中心”（编号 B26023）和教育部基础学科与交叉学科突破计划（编号 JYB2025XDXM118）的支持。
-\textbf{利益冲突：}无。
 \end{ack}
 
 \bibliographystyle{plainnat}
@@ -455,6 +454,15 @@ SVHN & $0.615$ & $0.430$ & $0.570$ & $0.450$ & vgg16 & efficientnet\_b3 & densen
 \textbf{负结果 2：\SSRdag 在仅 ViT 子池中退化。}当候选限制为 ViT 族架构（ViT、DeiT 和 Swin 变体，共 $33$ 个模型 $\times10$ 个任务）时，不同预训练方案的 $\SAk$ 轮廓相似但与 LP 准确率无关；\SSRdag 比 RankMe 低 $\Delta\rho=-0.26$（$95\%$ CI $[-0.43,-0.07]$，$p=0.010$，任务配对 bootstrap）。在同时含 ViT 与 CNN 的混合池中，\SSRdag 能识别更好的架构。
 
 \textbf{同族排序与 $\log C$ 缩放器。}在任一单独架构族内，\SSRdag 相比 RankMe 不提供额外排序信号（MV 六个架构族上的 $\Delta\rho\in[-0.48,-0.07]$）。$\log C$ 任务缩放器方便但并非原则性选择：oracle 缩放器 $1/(1-\overline{\mathrm{LP}})$ 的 Spearman $\rho=+0.82$，\SSRdag 为 $+0.49$，随机逐任务缩放器为 $+0.39$。我们保留 $\log C$ 用于跨任务聚合，同时指出其他逐任务缩放器可能同样可行。
+
+\section{实验环境与计算资源核算}
+\label{app:environment}
+
+\textbf{加速特征提取。}为修正后的 DiSCO 评估补跑 MV 和 EX 特征提取时，使用华为昇腾 NPU，通过 PyTorch 的 \texttt{torch\_npu} 扩展及 Ascend 工具链运行。留存的启动脚本把候选模型划分为四个独立分片，分配到编号 0--3 的四个 NPU 设备，每个设备运行一个提取进程，配置批大小为 64。模型在推理模式下运行，特征以 float32 数组缓存。这一说明对应有记录的补跑配置，并不意味着全部历史特征缓存都在同一硬件上生成。仓库还保留了建议至少 16\,GB 加速器内存的 CUDA 复现指南。
+
+\textbf{缓存特征分析。}修正后的 DiSCO 评分、VTAB 线性探测补齐、参考子空间审计及 bootstrap 分析使用缓存特征，通过 NumPy、SciPy 和 scikit-learn 等基于 CPU 的 Python 例程完成。留存的 MV/EX DiSCO 评分脚本配置了 16 个工作进程。特征缓存将编码器推理与后续评分分离，使重复评估指标时无需重新提取特征。
+
+\textbf{报告范围。}第 6 节的成本比较统计候选模型--任务的前向评估次数，并非实测运行时间加速比、节能比例或 NPU 与 GPU 的硬件对比。参考特征提取及缓存另有初始化成本。历史运行未一致保留加速器具体型号与内存、主机 CPU 与内存、软件版本快照，以及完整的逐次运行时间。因此，本文报告有记录的配置，不声称提供完整的项目级计算预算，并在计算资源 checklist 项中保留“否”的回答。
 
 \clearpage
 \input{checklist_zh}

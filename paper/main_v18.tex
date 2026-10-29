@@ -32,7 +32,7 @@
 \newtheorem{remark}{Remark}
 \newtheorem{definition}{Definition}
 
-\title{Cross-Architecture Transferability is Width-Confounded:\\
+\title{Width Confounding in Label-Free Cross-Architecture Model Selection:\\
        Diagnosis and Subspace Correction}
 
 \author{%
@@ -342,11 +342,11 @@ S4 $2$S RankMe$\to$RankMe                    & $0.677$ & $+0.144$ & $[+0.093, +0
 \section{Discussion}
 \label{sec:discussion}
 
-\textbf{When does \SSRdag\ apply?}  The geometric premise of Subspace-Corrected Ranking is that subspace alignment with a generic reference dataset negatively predicts the fraction of class-mean variance in the architecture-specific subspace.  This premise holds robustly across all $168$ architecture--task pairs on the complete VTAB support ($\rhoSp = -0.959$) and across the architecture-selection subsets described in Appendices~B--E.  It does not, however, hold within a single architecture family: pretraining recipes within ViT or within ResNet do not differ enough in their top-$k$ subspaces for $\SAk$ variation to track linear-probe accuracy.  The two-stage pipeline addresses this directly by using \SSRdag\ only at the architecture-selection stage and a within-family rotation-invariant score (RankMe) for variant selection.
+\textbf{Applicability.} On the complete VTAB support ($168$ architecture--task pairs), $\SAk$ negatively correlates with the fraction of class-mean variance outside the reference subspace ($\rhoSp=-0.959$). Within a family, however, subspace variation across pretraining recipes does not reliably track linear-probe accuracy. We therefore use \SSRdag\ for cross-family selection, RankMe for within-family selection, and \SSRdag$\to$RankMe for mixed multi-variant pools.
 
-\textbf{Pool dependence and DiSCO.}  The relative performance of \SSRdag\ and official DiSCO is pool-dependent, particularly on SSL and EX.  This comparison must also be interpreted with care: \SSRdag\ uses no target labels, whereas official DiSCO forms class-conditional covariances from target ground-truth labels.  We therefore use DiSCO as a label-dependent comparator rather than evidence that one method uniformly dominates the other.
+\textbf{Pool dependence and DiSCO.} Relative performance varies by pool, particularly on SSL and EX. Official DiSCO uses target ground-truth labels for class-conditional covariances, whereas \SSRdag\ uses no target labels. We report DiSCO as a label-dependent comparator without claiming uniform superiority.
 
-\textbf{Limitations.}  \SSRdag\ has no formal bound linking subspace alignment to downstream accuracy, and reference selection remains heuristic. On the complete VTAB support, the default STL-10 reference has regret $0.061$ and the target-disjoint four-reference ensemble $0.055$; seven tasks do not establish a better default, especially given the ensemble's added cost. Performance is pool-dependent, and official DiSCO uses target labels. Finally, the two-stage experiment contains only five MV tasks, so its approximately three-fold cost reduction is benchmark-specific evidence rather than a general guarantee.
+\textbf{Limitations.} Reference selection is heuristic, and subspace alignment has no formal downstream-accuracy guarantee. On seven VTAB targets, STL-10 and the target-disjoint ensemble yield regrets $0.061$ and $0.055$; this limited evidence and the added reference cost do not establish a better default. The two-stage cost reduction is a five-task MV proof of concept, not a general guarantee.
 
 \section{Conclusion}
 
@@ -354,7 +354,6 @@ RankMe is seriously confounded by feature width in heterogeneous architecture po
 
 \begin{ack}
 This work was supported by the ``111 Center'' (No.~B26023) and the Fundamental and Interdisciplinary Disciplines Breakthrough Plan of the Ministry of Education of China (No.~JYB2025XDXM118).
-\textbf{Competing interests:} None declared.
 \end{ack}
 
 \bibliographystyle{plainnat}
@@ -519,6 +518,15 @@ SVHN      & $0.615$ & $0.430$ & $0.570$ & $0.450$ & vgg16 & efficientnet\_b3  & 
 
 \enlargethispage{3\baselineskip}
 \textbf{Within-family ranking and the $\log C$ scaler.}  Within any single architecture family, $\SSRdag$ provides no additional ranking signal over RankMe ($\Delta\rho \in [-0.48, -0.07]$ across the $6$ families on MV pool).  The $\log C$ task scaler is convenient but not principled: an oracle scaler $1/(1-\overline{\mathrm{LP}})$ achieves Spearman $\rho = +0.82$ vs.\ \SSRdag's $+0.49$, and a random per-task scaler achieves $+0.39$.  We retain $\log C$ for cross-task aggregation while noting that other per-task scalers would work comparably.
+
+\section{Experimental Environment and Compute Accounting}
+\label{app:environment}
+
+\textbf{Accelerated feature extraction.} The MV and EX feature-extraction reruns supporting the corrected DiSCO evaluation used Huawei Ascend NPUs through PyTorch's \texttt{torch\_npu} extension and the Ascend toolkit. The retained launch script assigns independent candidate-model shards to four NPU devices (indices 0--3), with one extraction process per device and a configured batch size of 64. Models are evaluated in inference mode and features are cached as float32 arrays. This describes the documented rerun configuration; it does not imply that every historical feature cache was generated on the same hardware. The repository also contains a CUDA reproduction guide recommending at least 16\,GB of accelerator memory.
+
+\textbf{Cached-feature analysis.} The corrected DiSCO scoring, VTAB linear-probe completion, reference-subspace audit, and bootstrap analyses operate on cached features using CPU-based Python routines with NumPy, SciPy, and scikit-learn. The retained MV/EX DiSCO scoring launcher configures 16 worker processes. Caching separates encoder inference from subsequent scoring and allows repeated metric evaluation without repeating feature extraction.
+
+\textbf{Reporting scope.} The cost comparisons in Section~\ref{sec:twostage} count candidate--task forward evaluations; they are not measured wall-clock speedups, energy savings, or comparisons between NPU and GPU hardware. Reference-feature extraction and caching contribute additional setup cost. Exact accelerator model and memory, host CPU and RAM, software-version snapshots, and complete per-run runtimes were not consistently preserved across the historical runs. We therefore report the retained configuration without claiming a complete project-wide compute budget, and retain a ``No'' answer to the compute-resources checklist item.
 
 \clearpage
 \input{checklist}
