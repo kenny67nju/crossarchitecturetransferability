@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering\small
+\caption{辅助方法的完整共同支持：剔除一个缺项变体后为 118 个候选，再移除三个 VGG 变体后为 115 个。数值为五任务平均遗憾。}
+\label{tab:sota_flat_zh}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+方法 & 含 VGG & 不含 VGG & $\Delta$ & 类型 \\
+\midrule
+随机 & $0.192$ & $0.191$ & $-0.001$ & 参照 \\
+RankMe & $0.144$ & $0.144$ & $0.000$ & 无标签 \\
+RankMe $(-\log d)$ & $0.200$ & $0.200$ & $0.000$ & 无标签 \\
+LogME & $0.219$ & $0.550$ & $0.331$ & 有标签 \\
+H-score & $0.470$ & $0.470$ & $0.000$ & 有标签 \\
+NCTI & $0.155$ & $0.155$ & $0.000$ & 有标签 \\
+\SSRdag & $0.098$ & $0.098$ & $0.000$ & 无标签 \\
+LEEP 聚类代理 & $0.038$ & $0.038$ & $0.000$ & 有标签 \\
+\bottomrule
+\end{tabular}}
+\end{table}

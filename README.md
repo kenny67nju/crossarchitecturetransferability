@@ -1,135 +1,87 @@
-# Cross-Architecture Transferability is Width-Confounded: Diagnosis and Subspace Correction
+# Width Confounding in Label-Free Cross-Architecture Model Selection: Diagnosis and Subspace Correction
 
-Reproduction package for the NeurIPS 2026 submission.
+Camera-ready code and analysis release for NeurIPS 2026, submission 14729.
 
-## Repository layout
+Qin Liu, Chen Zhong, and Fengshan Zhao. State Key Laboratory of Novel Software Technology, Nanjing University. Correspondence: fs.zhao@nju.edu.cn.
 
-```
-repository/
-├── code/
-│   ├── metrics/                   # Core metric implementations
-│   │   ├── subspace_alignment.py  # SA_k: subspace alignment (principal angles)
-│   │   ├── reff.py                # r_eff: effective rank (RankMe)
-│   │   ├── ssr.py                 # Canonical SSR† definition
-│   │   ├── grassmann.py           # Grassmann geometry utilities
-│   │   └── direction_gain.py      # Direction-gain auxiliary metric
-│   ├── analysis/
-│   │   ├── a123_analysis.py       # A1/A2/A3: extended pool, truncation, MP check
-│   │   └── b5_c78_fast.py         # B5/C7/C8: VTAB ref-task & k ablations
-│   ├── baselines.py               # LogME, H-score, TransRate, linear probe
-│   ├── run_final_benchmark.py     # Compute all baselines on a feature cache
-│   ├── score_pool_b_final.py      # MV pool (132v × 5t) scoring → pool_b_final.csv
-│   ├── analyze_n0_truncation.py   # Truncation ablation → truncation_ablation.csv
-│   ├── score_extended_pool.py     # Extended 51v × 10t → extended_full_sota.csv
-│   ├── audit_C5_twostage.py       # Two-stage pipeline (MV pool) → two_stage_sota_*.csv
-│   ├── twostage_extended.py       # Extended two-stage & 3-way comparison
-│   ├── audit_paper14_crossdomain.py # SSL/multimodal pool → paper14_crossdomain.csv
-│   ├── cross_pool_bootstrap.py    # Cross-pool CI bootstrap → cross_pool_regrets.csv
-│   ├── audit_P1_variance_decomp.py  # Mixed-budget sweep → p2_label_budget_sweep.csv
-│   ├── multi_reference_sa_k.py    # Multi-reference SA_k → multi_ref_sa_k.csv
-│   ├── extract_phase_b_features.py  # Feature extraction: MV pool (timm variants)
-│   ├── extract_phase_d_features.py  # Feature extraction: VTAB / extended pool
-│   ├── extract_phase_e_torchvision.py # Feature extraction: torchvision variants
-│   ├── extract_phase_f_dino_clip.py   # Feature extraction: SSL encoders
-│   ├── figures_pareto.py          # Figure: cost-regret Pareto
-│   ├── figures_costsplit.py       # Figure: compute vs label budget
-│   ├── figure_sigma_b_flow.py     # Figure: SA_k vs frac_spe scatter
-│   ├── config.py                  # Shared constants
-│   ├── datasets.py                # Dataset loaders
-│   └── reproduce_all.py           # Master reproduction script
-├── results/                       # Pre-computed result CSVs (shipped)
-│   ├── pool_b_final.csv           # MV pool: all scores + LP accuracy
-│   ├── vtab_25arch_8tasks.csv     # VTAB pool: flat comparison
-│   ├── vtab_ssr_results.csv       # VTAB pool: SSR^‡ details
-│   ├── extended_full_sota.csv     # Extended pool: all methods
-│   ├── truncation_ablation.csv    # Truncation ablation
-│   ├── c5_twostage_pipeline.csv   # MV pool two-stage details
-│   ├── paper14_crossdomain.csv    # SSL/multimodal pool
-│   ├── cross_pool_regrets.csv     # Cross-pool bootstrap CIs
-│   ├── p2_label_budget_sweep.csv  # Mixed-budget K=1..35 sweep
-│   ├── c8_k_ablation.csv          # VTAB k ablation
-│   ├── within_arch_baselines.csv  # Within-arch baselines (Phase A+B)
-│   ├── baselines_raw.csv          # Raw baseline scores
-│   ├── p1_variance_decomp.csv     # Variance decomposition
-│   └── camera_ready/vtab_fspe_24arch_uncentered.csv # VTAB f_spe: complete 168-pair audit
-├── features/                      # Feature .npz files (NOT shipped, see below)
-├── paper/                         # LaTeX source + compiled PDFs
-│   ├── main_v18.tex / main_v18.pdf
-│   ├── main_v18_zh.tex / main_v18_zh.pdf
-│   ├── references.bib
-│   └── fig_*.pdf                  # All paper figures
-├── config.yaml                    # Path / hyperparameter configuration
-└── requirements.txt               # Python dependencies
+This repository provides scoring and analysis code, final result tables, provenance records, verification scripts, and bilingual paper sources. It supports verification from the retained numerical results; it is **not a complete public raw-feature or end-to-end historical reproduction package**.
+
+## Method and scope
+
+RankMe uses singular-value probabilities `p_i = sigma_i / sum_j sigma_j`, not squared singular values. Subspace-Corrected Ranking (SCR) is our relational score family; SSR‡ is its default member:
+
+```text
+SSR‡(H,T) = [log r_eff(H) - log SA_k(H,H_ref)] / log C(T)
 ```
 
-## Quick start: verify numbers without GPU
+For each candidate encoder, target and fixed-reference images are encoded by that same candidate. Alignment is the mean squared cosine of the principal angles between their top right-singular subspaces. We never compare feature subspaces from different encoders. The main protocol uses uncentered SVD, fixed k=20, and a 1e-12 lower clip before logarithms. C(T) is the target class count; for a fixed target it does not affect the ranking. Target labels are used to evaluate linear probes, not to select models with RankMe or SSR‡.
 
-All result CSVs are pre-computed and shipped. Run the verifier:
+SSR‡ is invariant to a common orthogonal basis change of target and reference features. Its distinction from RankMe is dependence on target-reference geometry, not “breaking rotation invariance.” The formal width-scaling result is for RankMe under an isotropic random-feature model at fixed aspect ratio, not for arbitrary rotation-invariant scores.
 
-```bash
-cd repository
-pip install -r requirements.txt
-python code/reproduce_all.py --verify
+## Final results and exact supports
+
+Canonical VGG extraction arm: `single_preprocess_4096` in `results/p0_vgg_pair_20261104/p0_aggregate_v2/`. This replaces the two torchvision VGG models' target rows using 4096-dimensional hidden fully connected features and one official weights transform. It does not re-extract every candidate.
+
+| Headline pool | Candidates | Target tasks | RankMe regret | SSR‡ regret |
+|---|---:|---:|---:|---:|
+| MV | 119 variants in 35 groups | 5 | 0.1440 | 0.0980 |
+| VTAB | 24 architectures | 7 | 0.1100 | 0.0614 |
+| EX | 51 variants in 35 groups | 10 | 0.1445 | 0.0595 |
+
+Across 22 pool-task units (10 unique target names), mean regret is **0.133409 for RankMe and 0.068864 for SSR‡**; paired difference −0.064545, target-name-clustered 95% CI [−0.121905, −0.019750], two-sided bootstrap p=0.00194. Exact random-selection mean regret is 0.136836. Statistics and input hashes are recorded in [`paper_values.json`](results/camera_ready_p0_20261104/paper_values.json).
+
+- STL-10 is the fixed reference and is excluded from all methods in the common target-selection aggregate.
+- SSL/multimodal results cover 209 available model-task cells across 29 tasks, not a complete 8×29 rectangle. Missing historical reference manifests prevent a verified main-protocol SSR comparison, so SSL is excluded from the 22-unit headline.
+- Official classification DiSCO uses target ground-truth labels. Its per-pool diagnostics are separate from the zero-label comparison; old surrogate DiSCO columns are not the official baseline.
+- Auxiliary MV comparisons use 118 candidates (one missing-score variant excluded), and 115 after removing VGG. These differ from the headline 119 and the full 132-variant inventory. Random LP rounds to 0.630 on 119 candidates and 0.629 on 118 candidates.
+- The five-task SSR‡→RankMe pipeline has regret 0.102 at 38 candidate evaluations, or 37 with canonical-feature reuse, excluding reference setup. It is not the best-performing zero-label pipeline tested. Evaluation counts are not measured wall-clock speedups; K counts labeled architecture evaluations, not labeled samples.
+
+## Reproduce the retained-result analysis
+
+Run from the repository root in a Python environment with NumPy, pandas, SciPy, and Matplotlib:
+
+```sh
+python3 code/build_p0_camera_assets.py
+python3 code/figure_sigma_b_flow.py
+python3 code/audit_p0_manuscript.py
+python3 code/audit_dataset_citations.py
 ```
 
-Expected output:
-```
-MV pool  Flat-RankMe regret               0.319  (paper: 0.319)  ✓
-MV pool  Flat-SSR^‡ regret                0.098  (paper: 0.098)  ✓
-Extended pool  mean Kendall τ(RankMe, d)  0.617  (paper: 0.617)  ✓
-Extended pool  Flat-SSR^‡ regret          0.060  (paper: 0.060)  ✓
-Mixed budget K=35 regret                  0.018  (paper: 0.018)  ✓
-```
+These commands regenerate manuscript tables/figures and verify retained numerical inputs. They do not download datasets, extract all features, or rerun all linear probes. Only final analysis inputs and the helper/source snapshots needed by these commands are published from the P0 bundle; their hashes are listed in `results/p0_vgg_pair_20261104/PUBLIC_RELEASE_MANIFEST.json`. Intermediate runs, caches, logs, and backup archives remain local. Generated manuscript derivatives go to `results/camera_ready_p0_20261104/` and `paper/`.
 
-## Full reproduction (GPU required for feature extraction)
+The statistical reference configuration is 100,000 bootstrap resamples, seed 42; target-name resampling retains every corresponding pool unit and uses a unit-weighted mean. Wilcoxon uses paired differences rounded to 10 decimals, `zero_method='wilcox'`, `method='approx'`, two-sided, no continuity correction. The recorded reference SciPy version is 1.15.3; the audit was also run with SciPy 1.17.1, NumPy 2.4.4, and pandas 3.0.2.
 
-```bash
-# Step 0: extract features (one-time, ~6h on a V100 for all three pools)
-python code/reproduce_all.py --extract-mv    # MV pool (132 models × 6 tasks)
-python code/reproduce_all.py --extract-vtab  # VTAB pool (25 models × 8 tasks)
-python code/reproduce_all.py --extract-ssl   # SSL pool (8 encoders × 6 tasks)
+## Build the complete papers
 
-# Steps 1-11: scoring, analysis, figures
-python code/reproduce_all.py --all
+Install XeLaTeX, BibTeX, Poppler, and Python `pypdf`; make their executables available on PATH. The Chinese source also requires its configured Chinese fonts.
+
+```sh
+python3 code/build_camera_ready_pdfs.py --language both
+python3 code/audit_camera_ready_pdfs.py
 ```
 
-Or run individual steps:
-```bash
-python code/reproduce_all.py --step 1   # MV pool scoring
-python code/reproduce_all.py --step 6   # Cross-pool bootstrap CI
-python code/reproduce_all.py --step 11  # Figures
-```
+The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The `combined` PDFs are byte-identical compatibility aliases. The supplement PDFs are optional appendix extracts, not required companion files. `main_v18.pdf` is a historical filename and is not rebuilt by this pipeline.
 
-See `FEATURE_EXTRACTION.md` for detailed GPU setup instructions.
+## Release map and provenance
 
-## SSR^‡ formula
+| Location | Role |
+|---|---|
+| `paper/main_v18.tex`, `paper/main_v18_zh.tex` | Current bilingual camera-ready sources |
+| `paper/references.bib`, `docs/DATASET_SOURCES.md` | Dataset publications/releases and task-name mapping |
+| `results/p0_vgg_pair_20261104/` | Selected final P0 score/support tables, helper/source snapshots, and public-release hash manifest; not the complete experimental bundle |
+| `results/camera_ready_p0_20261104/` | Final manuscript derivatives, numeric/PDF audits, installation hashes |
+| `results/camera_ready_review_20261104/` | Stage-specific and within-family diagnostics |
+| `results/camera_ready/` | Retained VTAB/EX inputs and earlier audits; consult final input hashes rather than assuming every file is current |
+| `code/metrics/` | Effective-rank, subspace-alignment, SSR, and DiSCO implementations |
+| `docs/CAMERA_READY_FINAL_ACCEPTANCE_20261104.md` | Acceptance checks and remaining limitations |
+| `archive/` | Earlier sources and results preserved for provenance |
 
-```
-SSR^‡(H, H_ref) = [log r_eff(H) - log SA_k(H, H_ref)] / log C
-```
+Historical scripts such as `reproduce_all.py` and old top-level result CSVs are not the canonical camera-ready reproduction entry point. Use the final input hashes and commands above; do not mix historical scores with final LP/support tables.
 
-where `r_eff` is RankMe effective rank with
-`p_i = sigma_i / sum_j sigma_j`. `SA_k` compares the target features with
-features extracted by the same candidate encoder on a fixed reference
-dataset; no cross-encoder feature-space projection is performed. `C` is the
-number of classes. Implemented in `code/metrics/`.
+## Data access, attribution, and limitations
 
-Superseded UID-based SSR and 22-variant two-stage experiments are retained
-under `archive/` and excluded from reproduction.
+The [dataset-source inventory](docs/DATASET_SOURCES.md) covers all 29 distinct evaluated task names, aliases, underlying sources for derived tasks, and ImageNet pretraining/reference provenance. Obtain images and pretrained weights from their original providers, subject to their terms. This repository does not redistribute those original images, model weights, or raw VGG feature caches.
 
-## Audited camera-ready results
+Reference choice remains heuristic, final-protocol k sensitivity is not established, and performance is pool-dependent. Preprocessing is heterogeneous across retained candidates; the VGG controls do not validate every historical feature cache. Some historical environments and per-run reference records are unavailable. There is no formal guarantee from subspace alignment to downstream accuracy.
 
-| Method          | MV pool regret | VTAB regret | Extended regret |
-|-----------------|:--------------:|:-----------:|:---------------:|
-| RankMe (flat)   | +0.319         | +0.110      | +0.144          |
-| SSR^‡ (flat, zero label) | **+0.098** | **+0.061** | **+0.060** |
-| Official DiSCO G=6 (target labels) | +0.146 | +0.067 | +0.045 |
-| Official DiSCO G=8 (target labels) | +0.146 | +0.040 | +0.049 |
-| 2S SSR^‡→RankMe | +0.102 (3.1× cheaper) | —    | —               |
-| Mixed K=35      | +0.018 (observed on five MV tasks) | — | — |
-
-The primary equal-budget result uses the common support of 22 MV/VTAB/EX
-pool–task units (STL-10 excluded): SSR^‡ regret is 0.069 and RankMe regret is
-0.173, a paired difference of -0.1043. See
-`results/camera_ready/headline_metrics.json` for both unit-level and
-target-name-clustered uncertainty estimates.
+Source attribution is not a complete license audit. The release does not yet contain a separate explicit software-license file or a complete asset-by-asset license/terms inventory; the paper's Checklist retains No for these documentation gaps. No clinical use is claimed for biomedical task diagnostics.

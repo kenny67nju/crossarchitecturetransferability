@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Per-task LP on 119 MV candidates. Random is the exact expectation. \SSRdag improves over RankMe on four tasks, but is worse on SVHN. EuroSAT also has a tied ViT-large oracle (LP 0.955).}
+\label{tab:main_pertask}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Task & Oracle & Random & RM & \SSRdag & RM group & \SSRdag group & Oracle group \\
+\midrule
+CIFAR-10 & $0.970$ & $0.787$ & $0.845$ & $0.870$ & resnext50 & resnet50 & convnext\_base \\
+CIFAR-100 & $0.825$ & $0.486$ & $0.535$ & $0.670$ & resnext50 & resnet152 & convnext\_base \\
+DTD & $0.740$ & $0.564$ & $0.625$ & $0.720$ & resnext50 & convnext\_base & convnext\_base \\
+EuroSAT & $0.955$ & $0.882$ & $0.880$ & $0.905$ & resnext50 & efficientnet\_b3 & densenet201 (tie) \\
+SVHN & $0.615$ & $0.428$ & $0.500$ & $0.450$ & inception\_v3 & efficientnet\_b3 & densenet169 \\
+\bottomrule
+\end{tabular}}
+\end{table}

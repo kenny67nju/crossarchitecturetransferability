@@ -1,0 +1,150 @@
+{
+  "completed_utc": "2026-11-04T00:55:33.271978+00:00",
+  "primary_arm": "single_preprocess_4096",
+  "primary_choice_reason": "One official weights transform, chosen by protocol correctness rather than performance",
+  "repaired_variants": [
+    "vgg16.torchvision_tv_v1",
+    "vgg16_bn.torchvision_tv_v1"
+  ],
+  "common22": {
+    "frozen_original": {
+      "n_units": 22,
+      "n_unique_targets": 10,
+      "pool_counts": {
+        "EX": 10,
+        "MV": 5,
+        "VTAB": 7
+      },
+      "ssr_mean_regret": 0.06886363636363632,
+      "rankme_mean_regret": 0.17318181818181813,
+      "mean_difference": -0.10431818181818181,
+      "wins": 15,
+      "ties": 3,
+      "losses": 4,
+      "unit_bootstrap": {
+        "ci95": [
+          -0.16863636363636358,
+          -0.046363636363636364
+        ],
+        "two_sided_sign_p": 0.00016
+      },
+      "target_cluster_bootstrap": {
+        "ci95": [
+          -0.1666,
+          -0.03954545454545455
+        ],
+        "two_sided_sign_p": 0.0012
+      },
+      "wilcoxon_statistic": 20.5,
+      "wilcoxon_p": 0.0027117896798273377,
+      "statistical_protocol": {
+        "n_boot": 100000,
+        "seed": 42,
+        "difference_round_decimals": 10,
+        "wilcoxon_zero_method": "wilcox",
+        "wilcoxon_method": "approx",
+        "continuity_correction": false,
+        "scipy_version": "1.15.3",
+        "cluster_estimand": "unit-weighted mean; resample target names and retain all their pool units"
+      }
+    },
+    "layer_only_4096": {
+      "n_units": 22,
+      "n_unique_targets": 10,
+      "pool_counts": {
+        "EX": 10,
+        "MV": 5,
+        "VTAB": 7
+      },
+      "ssr_mean_regret": 0.06886363636363632,
+      "rankme_mean_regret": 0.13340909090909084,
+      "mean_difference": -0.06454545454545454,
+      "wins": 15,
+      "ties": 3,
+      "losses": 4,
+      "unit_bootstrap": {
+        "ci95": [
+          -0.10727272727272727,
+          -0.027954545454545454
+        ],
+        "two_sided_sign_p": 6e-05
+      },
+      "target_cluster_bootstrap": {
+        "ci95": [
+          -0.1219047619047619,
+          -0.01975
+        ],
+        "two_sided_sign_p": 0.00194
+      },
+      "wilcoxon_statistic": 22.0,
+      "wilcoxon_p": 0.003284635507949973,
+      "statistical_protocol": {
+        "n_boot": 100000,
+        "seed": 42,
+        "difference_round_decimals": 10,
+        "wilcoxon_zero_method": "wilcox",
+        "wilcoxon_method": "approx",
+        "continuity_correction": false,
+        "scipy_version": "1.15.3",
+        "cluster_estimand": "unit-weighted mean; resample target names and retain all their pool units"
+      }
+    },
+    "single_preprocess_4096": {
+      "n_units": 22,
+      "n_unique_targets": 10,
+      "pool_counts": {
+        "EX": 10,
+        "MV": 5,
+        "VTAB": 7
+      },
+      "ssr_mean_regret": 0.06886363636363632,
+      "rankme_mean_regret": 0.13340909090909084,
+      "mean_difference": -0.06454545454545454,
+      "wins": 15,
+      "ties": 3,
+      "losses": 4,
+      "unit_bootstrap": {
+        "ci95": [
+          -0.10727272727272727,
+          -0.027954545454545454
+        ],
+        "two_sided_sign_p": 6e-05
+      },
+      "target_cluster_bootstrap": {
+        "ci95": [
+          -0.1219047619047619,
+          -0.01975
+        ],
+        "two_sided_sign_p": 0.00194
+      },
+      "wilcoxon_statistic": 22.0,
+      "wilcoxon_p": 0.003284635507949973,
+      "statistical_protocol": {
+        "n_boot": 100000,
+        "seed": 42,
+        "difference_round_decimals": 10,
+        "wilcoxon_zero_method": "wilcox",
+        "wilcoxon_method": "approx",
+        "continuity_correction": false,
+        "scipy_version": "1.15.3",
+        "cluster_estimand": "unit-weighted mean; resample target names and retain all their pool units"
+      }
+    }
+  },
+  "inputs_unchanged": true,
+  "scope": "Only two torchvision VGG variants replaced; all other candidate scores frozen.",
+  "protocol": {
+    "svd_centered": false,
+    "k": 20,
+    "lp_seed": 0,
+    "sample_seed": 42,
+    "bootstrap_seed": 42,
+    "n_boot": 100000
+  },
+  "warnings": [
+    "Historical exact cache hashes/timestamps remain unrecovered; old affected rows are retired, not retroactively certified.",
+    "Auxiliary missing cell efficientnet_b2.ra_in1k/cifar10 persists; any score_complete=false outputs are partial diagnostics.",
+    "Non-VGG width/truncation metadata inherited, not newly feature-verified.",
+    "132/119 supports and their oracles are separate; never mix their regrets."
+  ]
+}

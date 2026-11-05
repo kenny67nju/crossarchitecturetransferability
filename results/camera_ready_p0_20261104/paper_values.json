@@ -1,0 +1,90 @@
+{
+  "headline": {
+    "n_units": 22,
+    "n_unique_targets": 10,
+    "pool_counts": {
+      "EX": 10,
+      "MV": 5,
+      "VTAB": 7
+    },
+    "ssr_mean_regret": 0.06886363636363632,
+    "rankme_mean_regret": 0.13340909090909084,
+    "mean_difference": -0.06454545454545454,
+    "wins": 15,
+    "ties": 3,
+    "losses": 4,
+    "unit_bootstrap": {
+      "ci95": [
+        -0.10727272727272727,
+        -0.027954545454545454
+      ],
+      "two_sided_sign_p": 6e-05
+    },
+    "target_cluster_bootstrap": {
+      "ci95": [
+        -0.1219047619047619,
+        -0.01975
+      ],
+      "two_sided_sign_p": 0.00194
+    },
+    "wilcoxon_statistic": 22.0,
+    "wilcoxon_p": 0.003284635507949973,
+    "statistical_protocol": {
+      "n_boot": 100000,
+      "seed": 42,
+      "difference_round_decimals": 10,
+      "wilcoxon_zero_method": "wilcox",
+      "wilcoxon_method": "approx",
+      "continuity_correction": false,
+      "scipy_version": "1.15.3",
+      "cluster_estimand": "unit-weighted mean; resample target names and retain all their pool units"
+    }
+  },
+  "random_mean_regret": 0.13683608670741018,
+  "figure_width_rhos": {
+    "VTAB": 0.876991746498288,
+    "EX": 0.8711834657537332
+  },
+  "pool_diagnosis": [
+    {
+      "pool": "MV",
+      "n_arch": 35,
+      "n_variants": 119,
+      "n_tasks": 5,
+      "rho_width": 0.6091267746031652,
+      "rho_quality": -0.04916104971852665,
+      "rm": 0.14399999999999993,
+      "random": 0.1913949579831932
+    },
+    {
+      "pool": "VTAB",
+      "n_arch": 24,
+      "n_variants": 24,
+      "n_tasks": 7,
+      "rho_width": 0.8788681998464762,
+      "rho_quality": 0.2331040361445025,
+      "rm": 0.10999999999999996,
+      "random": 0.10592261904761895
+    },
+    {
+      "pool": "EX",
+      "n_arch": 35,
+      "n_variants": 51,
+      "n_tasks": 10,
+      "rho_width": 0.7662896249081148,
+      "rho_quality": -0.06998883480373676,
+      "rm": 0.14449999999999996,
+      "random": 0.13119607843137246
+    }
+  ],
+  "inputs": {
+    "results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_pool132_scores.csv": "b7de4d7ee6b40e054ade64566a5c2144215bb9d7835cdc3df8bc2e1f30ad7604",
+    "results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_multi119_summary.csv": "529c9a6c7d02e7556a044a7630ba4025067fe4d52fa8f87a3132628746b968f3",
+    "results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_multi119_selection.csv": "5c59b25437ca366ae24d6059a99c258eef9528c3d65c78eeeebafd7a08920643",
+    "results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_common22.csv": "7e45886971d77c226038fa0c463e3ca87bfae8e2efbdf21c91ba9ed5b10eb417",
+    "results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_budget_summary.csv": "0e17b089878568d305b59e3997d531b95f626b41207495a51b4e77609f47246e",
+    "results/camera_ready/vtab_reference_24arch_uncentered/vtab_reference_audit_cells.csv": "69c3e2dfb0cc10cf9112c2fdd0d3eca8f331ffbb5adcfe0cd39a5bbd4586e02f",
+    "results/camera_ready/vtab_24arch_8tasks_lp_complete.csv": "cef5bb59964bae33a0344a747793acd80f6f1f8b50d508bdd6777bc6b475e841",
+    "results/camera_ready/extended_full_sota_score_complete.csv": "b725415b02731b57c251400994e1fc1c195b6abab1559f0d4f4197b0138598c8"
+  }
+}

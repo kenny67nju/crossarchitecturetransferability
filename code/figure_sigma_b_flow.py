@@ -7,8 +7,9 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 from pathlib import Path
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 from scipy.stats import spearmanr, pearsonr
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -80,7 +81,7 @@ ax.plot(x_fit, slope * x_fit + intercept, 'k--', lw=0.8, alpha=0.6,
 
 ax.set_xlabel(r'$\mathrm{SA}_k(H, H_{\mathrm{ref}})$  (k=20, ref=STL-10)')
 ax.set_ylabel(r'$f_{\mathrm{spe}} = \mathrm{tr}(Q\Sigma_B Q)\,/\,\mathrm{tr}(\Sigma_B)$')
-ax.set_title(f'(a)  Class-mean variance flow into specific subspace\n'
+ax.set_title(f'(a)  Reference-complement variance\n'
              rf'$\rho_{{\mathrm{{Sp}}}}={rho_sp:+.3f}$, $\rho_{{\mathrm{{Pe}}}}={rho_pe:+.3f}$  '
              f'(n={len(x_all)})', pad=4)
 ax.set_xlim(-0.02, 0.70)
@@ -126,7 +127,7 @@ ax.axvline(0, color='grey', lw=0.4, alpha=0.5)
 
 ax.set_xlabel(r'$f_{\mathrm{spe}}$  (per-task $z$-score)')
 ax.set_ylabel(r'$\mathrm{lp\_acc}$  (per-task $z$-score)')
-ax.set_title(f'(b)  Specific-subspace variance predicts LP accuracy\n'
+ax.set_title(f'(b)  Variance-accuracy association\n'
              rf'within-task mean $\rho_{{\mathrm{{Sp}}}}={mean_within_rho:+.3f}$  '
              f'(7 tasks)', pad=4)
 ax.set_xlim(-2.6, 2.6)
@@ -148,13 +149,6 @@ print(f"Saved: {out_pdf}")
 out_png = OUT / "fig_sigma_b_flow.png"
 plt.savefig(out_png, dpi=200)
 print(f"Saved: {out_png}")
-
-# 同步到 repository
-import shutil
-repo_paper = ROOT / "repository" / "paper"
-if repo_paper.exists():
-    shutil.copy(out_pdf, repo_paper / "fig_sigma_b_flow.pdf")
-    print(f"Copied to: {repo_paper}/fig_sigma_b_flow.pdf")
 
 print("\n===  关键统计  ===")
 print(f"全池  ρ_Sp(SA_k, frac_spe) = {rho_sp:+.4f}  (p={p_sp:.2e})")

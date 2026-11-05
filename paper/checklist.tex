@@ -5,7 +5,7 @@
 \item {\bf Claims}
     \item[] Question: Do the main claims made in the abstract and introduction accurately reflect the paper's contributions and scope?
     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: The abstract and Sections~1 and~7 state the RankMe-specific width-confounding claim, the cross-family scope of SSR$^{\ddagger}$, the corrected 22-unit result, and the principal limitations. The five-task two-stage result is explicitly described as a proof of concept rather than a general guarantee.
+    \item[] Justification: The abstract and Sections~1 and~7 state the RankMe-specific width-confounding claim, the cross-family scope of SSR$^{\ddagger}$, the 22-unit result, and the principal limitations. The five-task two-stage result is explicitly described as a proof of concept rather than a general guarantee.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the abstract and introduction do not include the claims made in the paper.
@@ -17,7 +17,7 @@
 \item {\bf Limitations}
     \item[] Question: Does the paper discuss the limitations of the work performed by the authors?
     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: Section~7 discusses heuristic reference selection, pool-dependent performance, the absence of a formal downstream-accuracy guarantee, within-family degeneration, and the limited five-task evidence for the two-stage pipeline.
+    \item[] Justification: Section~7 discusses heuristic reference selection, pool-dependent performance, the absence of a formal downstream-accuracy guarantee, limited within-family evidence and incomplete historical provenance, the limited five-task evidence for the two-stage pipeline, and preprocessing heterogeneity among retained MV candidates. The five-task diagnostics also include a lower-regret zero-label pipeline.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper has no limitation while the answer \answerNo{} means that the paper has limitations, but those are not discussed in the paper.
@@ -46,8 +46,8 @@
 
     \item {\bf Experimental result reproducibility}
     \item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
-    \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: Section~5 gives the exact effective-rank, subspace-alignment, and SSR$^{\ddagger}$ definitions and a complete algorithm, including uncentered SVD, $k=20$, and numerical clipping. Section~3 and Appendices~B--E document candidate pools, target tasks, linear-probe protocol, common support, and baseline accounting.
+    \item[] Answer: \answerNo{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: Section~5 gives the exact effective-rank, subspace-alignment, and SSR$^{\ddagger}$ definitions and a complete algorithm, including uncentered SVD, $k=20$, and numerical clipping. Section~3 and Appendices~B--G document supports, VGG extraction settings, fixed LP parameters, and cache/script manifests. Frozen result tables permit aggregate verification, but some original caches and historical environments are unavailable; full end-to-end historical reproducibility is not claimed.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -66,8 +66,8 @@
 
 \item {\bf Open access to data and code}
     \item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
-    \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: The accompanying repository at \url{https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8} provides scoring and analysis code, cached result tables, verification scripts, and feature-extraction instructions for the reported experiments.
+    \item[] Answer: \answerNo{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: The accompanying repository at \url{https://github.com/kenny67nju/crossarchitecturetransferability} provides scoring and analysis code, final result tables, provenance records, and verification instructions. Raw VGG feature caches are not distributed, and some historical caches and environments are unavailable; complete open-data reproduction is therefore not provided.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that paper does not include experiments requiring code.
@@ -84,7 +84,7 @@
 \item {\bf Experimental setting/details}
     \item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: Section~3 and Appendices~B--E report the evaluated model pools, datasets, feature dimensions, $80/20$ linear-probe split, logistic-regression setting, sample conventions, reference dataset, $k$, DiSCO grouping settings, and bootstrap procedures. No pretrained encoder is trained in this work.
+    \item[] Justification: Section~3 describes the pools, linear-probe protocol, sampling, and per-candidate preprocessing. Section~5 specifies the reference, $k$, clipping, DiSCO settings, and aggregate uncertainty analysis; Section~6 specifies the two-stage evaluation. Appendices~B--G provide pool-specific supports, extraction and LP settings, ablations, and the recorded compute environment. Encoders are frozen; only the evaluation linear probes are fitted. Historical reproducibility and compute-reporting gaps are disclosed in items 4 and 8.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -112,7 +112,7 @@
 \item {\bf Experiments compute resources}
     \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
     \item[] Answer: \answerNo{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: Appendix~\ref{app:environment} describes the Huawei Ascend NPU extraction reruns, the four-device sharding configuration, and CPU-based cached-feature analyses. Exact hardware specifications, software-version snapshots, and complete per-run runtimes were not consistently retained across historical runs, so the available information does not constitute full compute-resource reporting. Forward-evaluation counts are distinguished from wall-clock speedups.
+    \item[] Justification: Appendix~\ref{app:environment} describes NVIDIA L20 VGG extraction and the documented Huawei Ascend NPU extraction launcher, the four-device sharding configuration, and CPU-based cached-feature analyses. Exact hardware specifications, software-version snapshots, and complete per-run runtimes were not consistently retained across historical runs, so the available information does not constitute full compute-resource reporting. Forward-evaluation counts are distinguished from wall-clock speedups.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -162,7 +162,7 @@
 \item {\bf Licenses for existing assets}
     \item[] Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
     \item[] Answer: \answerNo{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: All model libraries and benchmark datasets are credited to their original sources, and the library licenses are documented in the repository. The paper does not enumerate an explicit license for every individual benchmark dataset, so we do not claim complete license documentation.
+    \item[] Justification: Dataset source publications or original release records are cited in Appendices~B--E, including the underlying sources of derived datasets. We do not provide a complete asset-by-asset inventory of licenses and terms for all datasets, model checkpoints, and libraries, so we answer No rather than claim complete licensing documentation.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not use existing assets.
@@ -214,7 +214,7 @@
     \item[] Question: Does the paper describe the usage of LLMs if it is an important, original, or non-standard component of the core methods in this research? Note that if the LLM is used only for writing, editing, or formatting purposes and does \emph{not} impact the core methodology, scientific rigor, or originality of the research, declaration is not required.
     %this research?
     \item[] Answer: \answerNA{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
-    \item[] Justification: LLMs were used only for language editing and were not part of the proposed method, experimental design, data analysis, or evaluation pipeline.
+    \item[] Justification: LLMs are not a component of the proposed scoring method. AI assistance was used for manuscript editing and code/audit support during preparation and revision; the mathematical scores and reported evaluations are computed by the documented numerical procedures, not by LLM judgments. The authors remain responsible for verification of the text, code, and results.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the core method development in this research does not involve LLMs as any important, original, or non-standard components.

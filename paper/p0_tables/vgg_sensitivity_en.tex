@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Complete auxiliary support: 118 candidates after excluding one variant with a missing score; 115 after also removing three VGG variants. Entries are five-task mean LP.}
+\label{tab:vgg_sensitivity}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Method & With VGG & Without VGG & $\Delta$ & Type \\
+\midrule
+Random & $0.629$ & $0.630$ & $0.001$ & reference \\
+RankMe & $0.677$ & $0.677$ & $0.000$ & zero-label \\
+RankMe $(-\log d)$ & $0.621$ & $0.621$ & $0.000$ & zero-label \\
+LogME & $0.602$ & $0.271$ & $-0.331$ & labels \\
+H-score & $0.351$ & $0.351$ & $0.000$ & labels \\
+NCTI & $0.666$ & $0.666$ & $0.000$ & labels \\
+\SSRdag & $0.723$ & $0.723$ & $0.000$ & zero-label \\
+LEEP clustering proxy & $0.783$ & $0.783$ & $0.000$ & labels \\
+\bottomrule
+\end{tabular}}
+\end{table}

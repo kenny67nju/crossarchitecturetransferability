@@ -1,0 +1,49 @@
+{
+  "scope": "Final manuscript analysis inputs and helper/source snapshots only. Intermediate experiment outputs are not distributed.",
+  "files": {
+    "code/recompute_p0_all.py": {
+      "sha256": "a7e7564997641f5fc3a871e86c196d60ab95903f2f5bad39f7c6673f91827d71",
+      "size_bytes": 15187
+    },
+    "code/recompute_vgg_results_v2.py": {
+      "sha256": "e5ff88aa448cd2da3d1685c4e8de87e91a77f427cdd81be2e3a3c557bb257df0",
+      "size_bytes": 10535
+    },
+    "inputs/historical_extract_phase_e_torchvision.py": {
+      "sha256": "d527f29879d22ba100759defce753e86f56cd06a93a4a7ba9db0c6aed20eb6cc",
+      "size_bytes": 6836
+    },
+    "inputs/historical_datasets_local.py": {
+      "sha256": "9d26b1a5780792816f2d2cbf2c2f49177dc509f68bfdcc44d3240f5fe4b0fe1c",
+      "size_bytes": 10660
+    },
+    "p0_aggregate_v2/single_preprocess_4096_pool132_scores.csv": {
+      "sha256": "b7de4d7ee6b40e054ade64566a5c2144215bb9d7835cdc3df8bc2e1f30ad7604",
+      "size_bytes": 296884
+    },
+    "p0_aggregate_v2/single_preprocess_4096_multi119_summary.csv": {
+      "sha256": "529c9a6c7d02e7556a044a7630ba4025067fe4d52fa8f87a3132628746b968f3",
+      "size_bytes": 3793
+    },
+    "p0_aggregate_v2/single_preprocess_4096_multi119_selection.csv": {
+      "sha256": "5c59b25437ca366ae24d6059a99c258eef9528c3d65c78eeeebafd7a08920643",
+      "size_bytes": 16242
+    },
+    "p0_aggregate_v2/single_preprocess_4096_common22.csv": {
+      "sha256": "7e45886971d77c226038fa0c463e3ca87bfae8e2efbdf21c91ba9ed5b10eb417",
+      "size_bytes": 2185
+    },
+    "p0_aggregate_v2/single_preprocess_4096_budget_summary.csv": {
+      "sha256": "0e17b089878568d305b59e3997d531b95f626b41207495a51b4e77609f47246e",
+      "size_bytes": 714
+    },
+    "p0_aggregate_v2/layer_only_4096_common22.csv": {
+      "sha256": "1d30bcdb71fb90e4a78486ffcc1bd78243d7212a072be0f11898d2fa46b6eb35",
+      "size_bytes": 2189
+    },
+    "p0_aggregate_v2/summary.json": {
+      "sha256": "5f8db541a2425ada49d6179931dd697da2d8dd0d2db34eaf408423984ccb15f3",
+      "size_bytes": 4490
+    }
+  }
+}

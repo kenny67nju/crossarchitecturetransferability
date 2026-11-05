@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Five-task MV pipelines on 119 candidates. CIs use 100,000 task bootstrap resamples. Counts are without/with canonical reuse, excluding reference setup. K counts labeled architecture evaluations.}
+\label{tab:two_stage}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Strategy & Mean LP & Regret & $95\%$ CI & Evaluations \\
+\midrule
+S1 Random & $0.630$ & $0.191$ & $[0.118,0.276]$ & $1/1$ \\
+S2 Flat-RankMe & $0.677$ & $0.144$ & $[0.093,0.220]$ & $119/119$ \\
+S3 Flat-\SSRdag & $0.723$ & $0.098$ & $[0.048,0.148]$ & $119/119$ \\
+S4 RankMe$\to$RankMe & $0.677$ & $0.144$ & $[0.093,0.220]$ & $38/37$ \\
+S5 \SSRdag$\to$RankMe & $0.719$ & $0.102$ & $[0.044,0.153]$ & $38/37$ \\
+S6 \SSRdag$\to$\SSRdag & $0.720$ & $0.101$ & $[0.051,0.151]$ & $38/37$ \\
+S7 $R_{\mathrm{UID}}\to$RankMe & $0.763$ & $0.058$ & $[0.005,0.111]$ & $37.4/36.4$ \\
+S8 H-score$\to$RankMe (labels; $K=35$) & $0.803$ & $0.018$ & $[0.000,0.052]$ & $37/36$ \\
+\bottomrule
+\end{tabular}}
+\end{table}

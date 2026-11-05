@@ -1,0 +1,3 @@
+method,mean_lp,mean_regret,ci95_low,ci95_high,mean_evaluations,mean_evaluations_reusing_canonical
+two_stage_rankme_uid_then_rankme,0.7630000000000001,0.05799999999999998,0.004999999999999982,0.11099999999999999,37.4,36.4
+two_stage_ssr_dagger_then_ssr_dagger,0.7200000000000001,0.10099999999999998,0.050999999999999976,0.15099999999999997,38.0,37.0

@@ -1,0 +1,24 @@
+variant,status
+densenet121.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+densenet169.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+densenet201.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+efficientnet_b0.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+efficientnet_b2.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+efficientnet_b3.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+efficientnet_b4.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+inception_v3.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+mnasnet1_0.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+mobilenet_v3_large.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+mobilenet_v3_large.torchvision_tv_v2,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+mobilenet_v3_small.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+regnet_x_3_2gf.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+regnet_y_3_2gf.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+resnet101.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+resnet101.torchvision_tv_v2,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+resnet152.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+resnet152.torchvision_tv_v2,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+swin_s.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+swin_t.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+vit_b_16.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+vit_b_32.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete
+vit_l_16.torchvision_tv_v1,retained; historical extractor applies loader transform then weights transform; individual cache provenance incomplete

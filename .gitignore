@@ -21,3 +21,34 @@ build/
 *.blg
 *.bcf
 *.run.xml
+
+# Local-only third-party reference PDFs and download/audit working files.
+# Keep the final correction/acceptance report in docs/ instead.
+/paper/reference_audit_*/
+
+# Local working files and pre-release backups (never upload experiment intermediates).
+/tmp/
+/archive/camera_ready_before_*.tar.gz
+/archive/references_before_history_completion_*.bib
+/results/vgg16_repair_20261104/
+/results/reference_corrections_20261104/
+/results/p0_vgg_pair_20261104/*
+!/results/p0_vgg_pair_20261104/PUBLIC_RELEASE_MANIFEST.json
+!/results/p0_vgg_pair_20261104/code/
+/results/p0_vgg_pair_20261104/code/*
+!/results/p0_vgg_pair_20261104/code/recompute_p0_all.py
+!/results/p0_vgg_pair_20261104/code/recompute_vgg_results_v2.py
+!/results/p0_vgg_pair_20261104/inputs/
+/results/p0_vgg_pair_20261104/inputs/*
+!/results/p0_vgg_pair_20261104/inputs/historical_extract_phase_e_torchvision.py
+!/results/p0_vgg_pair_20261104/inputs/historical_datasets_local.py
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/
+/results/p0_vgg_pair_20261104/p0_aggregate_v2/*
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_pool132_scores.csv
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_multi119_summary.csv
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_multi119_selection.csv
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_common22.csv
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/single_preprocess_4096_budget_summary.csv
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/layer_only_4096_common22.csv
+!/results/p0_vgg_pair_20261104/p0_aggregate_v2/summary.json
+/results/camera_ready_p0_20261104/installed_files.json

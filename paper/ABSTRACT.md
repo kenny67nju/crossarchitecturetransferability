@@ -1,52 +1,17 @@
-# Abstract (plain-text fallback, no math rendering required)
+# Camera-ready metadata
 
-**Cross-Architecture Transferability is Width-Confounded: Diagnosis and Subspace Correction**
+## Title
 
-Selecting a pretrained encoder for a downstream task without retraining or labels is a
-standard preprocessing step in transfer learning.  The dominant label-free score, RankMe,
-was validated within architecture families and is widely applied across them.  We show that
-its cross-architecture use is unsound: rankings are systematically driven by the
-penultimate-layer dimension rather than representational quality, and on heterogeneous model
-pools the score performs worse than uniform random selection.
+Width Confounding in Label-Free Cross-Architecture Model Selection: Diagnosis and Subspace Correction
 
-Under an isotropic random-feature model, we show specifically that RankMe effective rank
-scales as Theta(d). We propose Subspace-Corrected Ranking (SCR), which adds the relative
-geometry between each candidate's target features and its features on a fixed reference
-dataset. On a common support of 22 pool-task units, SSR-dagger reduces mean regret from
-0.173 (RankMe) to 0.069; the paired difference is -0.1043 (target-name-clustered 95% CI
-[-0.167, -0.040], p=0.00118). SSR-dagger is intended for cross-family selection, whereas
-RankMe remains preferable within a family. A five-task two-stage result is reported as a
-proof of concept, not a general cost guarantee.
+## Abstract
 
-Code: https://anonymous.4open.science/r/crossarchitecturetransferability-FEC8
+Selecting a pretrained encoder without target labels is a practical step in transfer learning. RankMe, validated primarily within architecture families, can be confounded by feature width in heterogeneous pools. Under an isotropic random-feature model at fixed aspect ratio, its effective rank scales as Theta(d). We propose Subspace-Corrected Ranking (SCR), which combines the target spectrum with the relative geometry between each candidate's target features and its features on a fixed reference dataset. Its default member SSR‡ subtracts log subspace alignment from log effective rank. Across 22 pool–task units from three heterogeneous model pools (MV/VTAB/EX), SSR‡ reduces mean selection regret from 0.133 to 0.069 relative to RankMe (paired difference: -0.0645; target-name-clustered 95% CI: [-0.122,-0.020]). On MV, the mean score–width correlation decreases from 0.609 to 0.305, consistent with a partial correction rather than elimination of width dependence. A five-task SSR‡ → RankMe pipeline retains similar regret with fewer candidate evaluations, but is not the best-performing zero-label pipeline in our diagnostic comparison. Reference selection remains heuristic, and preprocessing differences across candidates limit the generality of our empirical conclusions.
 
----
+## Keywords
 
-## Key numbers (no-LaTeX summary)
+Label-free model selection; transferability estimation; effective rank; width confounding; subspace alignment; pretrained encoders.
 
-| Setting                        | Score          | Mean regret | 95% CI             |
-|-------------------------------|----------------|-------------|--------------------|
-| MV pool flat (119v x 5t)       | RankMe         | +0.319      | [+0.149, +0.509]   |
-| MV pool flat (119v x 5t)       | SSR-dagger     | +0.098      | [+0.048, +0.148]   |
-| Common support (22 pool-task units) | RankMe     | +0.173      | —                  |
-| Common support (22 pool-task units) | SSR-dagger | +0.069     | paired difference CI [-0.167, -0.040] |
-| MV pool two-stage (3.1x cheaper) | SSR-dagger -> RankMe | +0.102 | [+0.044, +0.153] |
-| Mixed budget K=5 (label-free equiv.) | H-score -> RankMe | ~0.089 | —          |
-| Mixed budget K=35              | H-score -> RankMe | +0.018   | —                  |
+## TL;DR
 
-## Notation guide
-
-| LaTeX symbol     | Plain-text equivalent       | Meaning                                  |
-|------------------|-----------------------------|------------------------------------------|
-| r_eff(H)         | reff(H)                     | Spectral effective rank of feature matrix|
-| SA_k(H, H_ref)   | SA_k(H, H_ref)              | Top-k subspace alignment (principal angles)|
-| SSR-dagger       | SSR-dagger                  | [log reff - log SA_k] / log C            |
-| rho_Sp           | Spearman rho                | Spearman rank correlation coefficient    |
-| SCR              | SCR                         | Subspace-Corrected Ranking (score family)|
-| regret           | regret = oracle LP - strategy LP | Gap to oracle linear-probe accuracy |
-
-## One-sentence summary
-
-Label-free transferability scores are secretly ranking pretrained models by output
-dimension rather than quality; a subspace alignment correction (SSR-dagger) fixes this
-and halves selection error across three heterogeneous model pools.
+RankMe is width-associated across heterogeneous encoders; target–reference subspace correction reduces width association and selection regret on the evaluated common support, without universal accuracy or pipeline-optimality guarantees.

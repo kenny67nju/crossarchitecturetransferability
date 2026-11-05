@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering\small
+\caption{各池的宽度与质量诊断。MV 为 119 个候选；VTAB 排除 STL-10。相关为逐任务 Spearman 的均值。}
+\label{tab:pool_diagnosis_zh}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+池 & 架构/任务 & $\rho(\mathrm{RankMe},d)$ & $\rho(d,\mathrm{LP})$ & RM 遗憾 & 随机遗憾 \\
+\midrule
+MV & $35/5$ & $0.609$ & $-0.049$ & $0.144$ & $0.191$ \\
+VTAB & $24/7$ & $0.879$ & $0.233$ & $0.110$ & $0.106$ \\
+EX & $35/10$ & $0.766$ & $-0.070$ & $0.144$ & $0.131$ \\
+\bottomrule
+\end{tabular}}
+\end{table}

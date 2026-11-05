@@ -32,10 +32,13 @@
 
 \title{无标签跨架构模型选择中的宽度混淆：诊断与子空间校正}
 \author{%
-  Qin Liu \quad Chen Zhong \quad Fengshan ZHAO\thanks{通讯作者：Fengshan Zhao，\texttt{fs.zhao@nju.edu.cn}}\\
+  Qin Liu \quad Chen Zhong \quad Fengshan Zhao\thanks{通讯作者：Fengshan Zhao，\texttt{fs.zhao@nju.edu.cn}}\\
   南京大学新型软件技术国家重点实验室\\
   中国南京
 }
+\hypersetup{unicode=true,
+  pdftitle={无标签跨架构模型选择中的宽度混淆：诊断与子空间校正},
+  pdfauthor={Qin Liu, Chen Zhong, Fengshan Zhao}}
 \date{}
 
 \begin{document}
@@ -46,35 +49,35 @@
 \maketitle
 
 \begin{abstract}
-在没有目标标签时选择预训练编码器，是迁移学习中的常见预处理步骤。RankMe 是一种广泛使用的无标签分数，但其验证主要局限于同一架构族。本文表明，在比较异构架构时，其有效秩会受到倒数第二层宽度的严重混淆：在各向同性随机特征模型下，RankMe 有效秩按 $\Theta(d)$ 缩放；在实验中，其跨架构排序主要追踪特征宽度，而非迁移质量。我们提出子空间校正排序（Subspace-Corrected Ranking, SCR），将目标谱信息与“同一候选编码器在目标数据和固定参考数据上的特征子空间相对几何”结合。其无超参数成员 \SSRdag 用对数有效秩减去对数子空间对齐度。在 MV、VTAB 和 EX 的 $22$ 个共同支持池--任务单元上，\SSRdag 将平均遗憾从 RankMe 的 $0.173$ 降至 $0.069$；配对差值为 $-0.1043$（按目标名称聚类的 $95\%$ 置信区间 $[-0.167,-0.040]$，$p=0.00118$）。\SSRdag 面向跨架构族选择，并非 RankMe 的通用替代品；同一架构族内部仍优先使用 RankMe。五个 MV 任务上的概念验证还表明，\SSRdag$\to$RankMe 两阶段流程可在保持相近遗憾的同时减少前向评估，但这不是一般性的成本保证。
+在没有目标标签时选择预训练编码器，是迁移学习中的实际需求。主要在同架构族内验证的 RankMe，在异构模型池中可能受到特征宽度混淆。在固定长宽比的各向同性随机特征模型下，其有效秩按 $\Theta(d)$ 缩放。我们提出子空间校正排序（SCR），将目标谱与同一候选编码器在目标数据和固定参考数据上的子空间相对几何结合。默认成员 \SSRdag 用对数有效秩减去对数子空间对齐度。在三个异构模型池（MV/VTAB/EX）的 $22$ 个池--任务单元上，\SSRdag 相比 RankMe 将平均选择遗憾从 $0.133$ 降至 $0.069$（配对差值：$-0.0645$；按目标名称聚类的 $95\%$ CI：$[-0.122,-0.020]$）。在 MV 上，平均分数--宽度相关从 $0.609$ 降至 $0.305$，与宽度依赖得到部分校正、而非完全消除的解释一致。五任务 \SSRdag$\to$RankMe 流程以更少候选评估保持相近遗憾，但并非诊断比较中表现最优的零标签流程。参考集选择仍依赖启发式规则，候选模型之间的预处理差异限制了实验结论的普遍适用性。
 \end{abstract}
 
 \section{引言}
 迁移学习首先要决定对目标任务微调哪个预训练编码器。当候选模型共享同一架构、仅预训练方案不同时，可以在倒数第二层特征上使用无标签分数进行低成本选择。RankMe~\citep{garrido2023rankme} 计算特征矩阵的有效秩 $\reff(H)$，并按 $\log\reff$ 排序。在其原始验证所采用的同架构场景中，候选模型的特征维度 $d$ 固定，因此宽度不会干扰排序。
 
-实际模型库却包含 ResNet、ViT、ConvNeXt、EfficientNet 等结构完全不同的骨干网络，其倒数第二层维度相差可达一个数量级。我们发现，在这种跨架构场景中，RankMe 会系统性失败：在包含 $35$ 个架构、$132$ 个预训练变体的模型池中，它在所有任务上都选择最宽的变体，且表现差于均匀随机选择。
+timm~\citep{wightman2019timm} 和 torchvision 模型库包含 ResNet~\citep{he2016resnet}、ViT~\citep{dosovitskiy2021vit}、ConvNeXt~\citep{liu2022convnext}、EfficientNet~\citep{tan2019efficientnet} 等特征宽度差异显著的异构骨干。RankMe 的同族验证不足以证明其跨架构可靠性。在 MV 的 119 变体支持上，RankMe 与宽度明显相关（逐任务平均相关 $0.609$），其遗憾 $0.144$ 低于随机的 $0.191$，但高于 \SSRdag 的 $0.098$。但在 VTAB 和 EX 上，RankMe 的平均遗憾高于随机。综合这些结果，宽度关联本身并不能决定模型选择表现优于还是劣于随机选择。
 
-其机制来自近各向同性条件下 RankMe 的仅目标谱形式。修正后的 Marchenko--Pastur 推导表明，在固定正长宽比下，RankMe 有效秩按 $\Theta(d)$ 缩放，因此 $\log\reff$ 渐近等于 $\log d$ 加一个仅依赖长宽比的常数。该形式结论只针对 RankMe；“旋转不变”本身不足以推出任意分数都随 $d$ 单调变化。
+其机制来自各向同性条件下 RankMe 的仅目标谱形式。Marchenko--Pastur 推导表明，在固定正长宽比下，RankMe 有效秩按 $\Theta(d)$ 缩放，因此 $\log\reff$ 渐近等于 $\log d$ 加一个仅依赖长宽比的常数。该形式结论只针对 RankMe；“旋转不变”本身不足以推出任意分数都随 $d$ 单调变化。
 
 我们的校正是关系式的，而非仅依赖目标谱。SCR 使用同一候选编码器分别提取目标数据和参考数据的特征，并比较二者的子空间。该分数对共同表示基变换保持不变，但并非仅由目标特征的奇异值谱决定。在完整 VTAB 支持上，$\SAk$ 与参考子空间之外的类均值方差比例高度负相关（$\rhoSp=-0.959$）。这构成机制层面的经验证据，而非下游准确率的形式保证。
 
 \paragraph{贡献。}
-（1）我们给出 RankMe 在各向同性随机特征模型下的 $\Theta(d)$ 缩放结论，并在多个异构模型池中验证严重的宽度混淆；（2）提出基于候选模型内部“目标--参考”相对几何的 SCR 及其无超参数成员 \SSRdag；（3）给出适用范围明确的两阶段流程：跨架构族用 \SSRdag，族内变体用 RankMe；（4）构建四个可复现实验池，共覆盖 $52$ 个任务单元，宽度范围为 $d\in[192,4096]$。
+（1）给出 RankMe 在各向同性模型下的 $\Theta(d)$ 缩放，并报告异构池中的宽度关联；（2）提出使用同一候选内部目标--参考几何的 SCR；（3）评估跨族用 \SSRdag、所选组内用 RankMe 的五任务流程，不主张族内普遍优势；（4）报告四个池、$52$ 个记录任务单元及 $22$ 单元共同支持主比较。结果文件、来源清单与评分脚本支持结果级核验；历史缓存不完整及 SSL 参考来源缺失均明确披露，不将整个模型库称为已全面复现。
 
 \section{相关工作}
 RankMe~\citep{garrido2023rankme} 使用 $p_i=\sigma_i/\sum_j\sigma_j$ 定义有效秩；本文关注超出其原始同架构验证范围的异构模型池。VNE~\citep{kim2023vne} 使用归一化平方奇异值的熵，但本文不把针对 RankMe 的定理推广到 VNE。官方分类版 DiSCO~\citep{zhang2025disco} 使用目标真实标签构造类条件量，因此本文将其作为有标签比较方法，而不是零标签基线。LogME、H-score、NCTI、LEEP 等同样需要标签。子空间对齐最初用于无监督域适应~\citep{fernando2013sa}；本文则把它用于度量同一候选编码器在目标数据和固定参考数据上的通用--特定特征结构。
 
 \section{实验设置}
-我们采用四个架构差异显著的模型池，其概况见表~\ref{tab:pool_setup_zh}，各池完整细节见附录 B--E。\textbf{MV 池}（多变体池）包含 $132$ 个 timm~\citep{wightman2019timm} 变体、$35$ 个拥有多个变体的架构和 $5$ 个任务；它是唯一在每个架构下包含多个变体的模型池，因此也只有该池用于评估两阶段流程。\textbf{VTAB 池}~\citep{zhai2019large} 使用在全部 $8$ 个任务上同时拥有缓存特征与线性探针结果的 $24$ 个架构；共同支持评估中 STL-10 仅作为参考，因此保留 $7$ 个目标任务。\textbf{SSL 池}包含 $8$ 个自监督或多模态编码器与 $29$ 个任务，包括 CLIP~\citep{radford2021clip}、DINOv2~\citep{oquab2023dinov2}、DINO~\citep{caron2021dino} 和 MoCo~\citep{he2020moco}；它以较少骨干覆盖不同预训练目标。\textbf{EX 池}包含来自 $35$ 个规范架构的 $51$ 个监督预训练 timm 变体和 $10$ 个任务，其中包括 $d=4096$ 的 VGG-16；其宽度跨度与 MV 池相同，均为 $21.3\times$，但覆盖更多任务。四个池合计包含 $52$ 个任务单元，宽度范围为 $d\in[192,4096]$。
+表~\ref{tab:pool_setup_zh} 概括四个模型池（细节见附录 B--E）。MV 包含 $48$ 组中的 $132$ 个 timm/torchvision~\citep{wightman2019timm} 变体；其中 $35$ 个多变体组的 $119$ 个变体构成五任务主比较及两阶段支持。VTAB~\citep{zhai2019large} 有 $24$ 个架构在八任务上具备完整特征及 LP 值；排除 STL-10 参考后为七个目标。SSL 包含八个自监督/多模态编码器，包括 CLIP~\citep{radford2021clip}、DINOv2~\citep{oquab2023dinov2}、DINO~\citep{caron2021dino} 和 MoCo~\citep{he2020moco}，在 $29$ 个任务上的支持不完整。EX 包含 $35$ 个架构的 $51$ 个监督预训练 timm 变体和十个任务。四个库存合计覆盖 $52$ 个任务单元，宽度为 $d\in[192,4096]$。
 \begin{table}[h]
 \centering\small
-\caption{四个异构评估池。宽度跨度决定混淆严重程度。}
+\caption{四个异构评估池。宽度范围描述候选池，不是经过验证的分数选择阈值。}
 \label{tab:pool_setup_zh}
 \resizebox{\linewidth}{!}{\begin{tabular}{lccccc}
 \toprule
 模型池 & 架构数 & 变体数 & 任务数 & $d$ 范围 & $d_{\max}/d_{\min}$ \\
 \midrule
-MV（多变体） & $35$ & $119$（多变体）/$132$（全部） & $5$ & $[192,4096]$ & $21.3\times$ \\
+MV（多变体） & $35$/$48$（全） & $119$（多变体）/$132$（全部） & $5$ & $[192,4096]$ & $21.3\times$ \\
 VTAB & $24$ & $24$ & $8$ & $[192,2048]$ & $10.7\times$ \\
 SSL/多模态 & $8$ & $8$ & $29$ & $[384,2048]$ & $5.3\times$ \\
 EX（监督预训练） & $35$ & $51$ & $10$ & $[192,4096]$ & $21.3\times$ \\
@@ -82,39 +85,46 @@ EX（监督预训练） & $35$ & $51$ & $10$ & $[192,4096]$ & $21.3\times$ \\
 \end{tabular}}
 \end{table}
 
-\textbf{分数。}有效秩严格采用 RankMe 定义：$p_i=\sigma_i/\sum_j\sigma_j$，$\reff=\exp(-\sum_i p_i\log p_i)$。对每个候选编码器 $m$，$\SAk$ 比较其目标特征与 STL-10 特征；二者由同一编码器产生，因此维度都为 $d_m$。所有主要结果使用未经额外中心化的特征矩阵，默认 $k=20$，取对数前将正值下限裁剪为 $10^{-12}$。不同候选模型的子空间从不直接比较。官方分类版 DiSCO 和其他需要标签的方法与零标签 RankMe--\SSRdag 比较分开报告。
+\textbf{分数。}有效秩严格采用 RankMe 定义：$p_i=\sigma_i/\sum_j\sigma_j$，$\reff=\exp(-\sum_i p_i\log p_i)$。在 $22$ 单元主比较中，对每个候选编码器 $m$，$\SAk$ 比较其目标特征与 STL-10 特征；二者由同一编码器产生，因此维度都为 $d_m$。所有主要结果使用未经额外中心化的特征矩阵，默认 $k=20$，取对数前将正值下限裁剪为 $10^{-12}$。不同候选模型的子空间从不直接比较。官方分类版 DiSCO 和其他需要标签的方法与零标签 RankMe--\SSRdag 比较分开报告。
 
-\textbf{线性探针真值。}我们使用单次固定 $80/20$ 划分上、$C=1$ 的 $\ell_2$ 正则逻辑回归之留出准确率（\texttt{lp\_acc}）。策略质量以相对逐任务 oracle 准确率的差距，即\emph{遗憾}表示。置信区间由任务级 bootstrap 获得，重采样次数 $n_{\mathrm{boot}}=10{,}000$；方法间比较采用配对 bootstrap。
+\textbf{线性探针真值。}使用 $80/20$ 划分上 $C=1$ 的 $\ell_2$ 正则逻辑回归留出准确率。遗憾是与同一候选集内逐任务 oracle 的差距。$22$ 单元的配对及目标聚类 bootstrap，以及五任务流程区间，均采用 seed=42、$100{,}000$ 次重采样。
+
+\textbf{特征提取与预处理。}两个 torchvision VGG 模型保留 $4096$ 维隐藏全连接表示，主结果使用一次官方权重预处理。MV 主支持另外保留 $23$ 个非 VGG torchvision 变体，其中包括 SVHN oracle DenseNet-169；其历史提取脚本在 loader 的缩放与归一化之后再次调用官方权重变换。部分历史缓存的逐文件来源不完整，故这说明脚本层面的协议差异，并不等同于逐文件来源均已确认。VGG 同时评估一次变换和匹配历史双重变换的对照；两者给出相同的 $22$ 单元 RankMe/\SSRdag 遗憾，但不能据此认定整个模型池已采用统一预处理（附录 B、G）。
 
 \section{宽度混淆}
 \begin{lemma}[Marchenko--Pastur 缩放]
 \label{lem:mp_zh}
-令 $H\in\mathbb{R}^{n\times d}$ 的各行独立同分布于 $\mathcal N(0,\sigma^2I_d)$。当 $n,d\to\infty$ 且 $\gamma=n/d$ 固定时，$\reff(H)/d\to c(\gamma)>0$ 几乎处处成立，其中 $c(\gamma)$ 仅依赖长宽比。因此 $\reff(H)=\Theta(d)$。
+令 $H\in\mathbb{R}^{n\times d}$ 的各行独立同分布于 $\mathcal N(0,\sigma^2I_d)$，其中 $\sigma>0$。当 $n,d\to\infty$ 且 $\gamma=n/d\in(0,\infty)$ 固定时，$\reff(H)/d\to c(\gamma)>0$ 几乎处处成立，其中 $c(\gamma)$ 仅依赖长宽比。因此 $\reff(H)=\Theta(d)$。
 \end{lemma}
+
+\textbf{宽度为何进入分数。}令 $\lambda_i=\sigma_i^2/(n\sigma^2)$ 包含全部 $d$ 个特征值，记 $S_d=d^{-1}\sum_i\sqrt{\lambda_i}$。RankMe 的奇异值归一化给出精确恒等式
+\[
+ \log\reff(H)=\log d+\log S_d
+ -\frac{1}{2S_d d}\sum_i\sqrt{\lambda_i}\log\lambda_i.
+\]
+在给定高斯模型和固定长宽比下，最后两项收敛至有限常数。连续延拓 $\sqrt{x}\log x\to0$（$x\downarrow0$）处理零特征值，不要求谱与零点之间存在间隙。因此，宽度通过显式的 $\log d$ 项进入分数。这是解释性模型，并非声称所有预训练表示都各向同性；各类总方差相等也不能证明方向各向同性。完整推导见附录 A。
 
 \begin{proposition}[\SSRdag 的关系性与共同基不变性]
 \label{prop:nonrot_zh}
-对候选编码器 $m$ 和 $Q\in O(d_m)$，同时将 $(H_{m,T},H_{m,R})$ 替换为 $(H_{m,T}Q,H_{m,R}Q)$，其主角、$\SAk$ 和 \SSRdag 均不变。但是，\SSRdag 并非只由 $H_{m,T}$ 的奇异值决定；它还依赖目标与参考右奇异子空间的相对几何。
+对候选编码器 $m$，假定保留的右奇异子空间唯一确定，或在奇异值并列时对所选子空间作一致变换。对 $Q\in O(d_m)$，同时将 $(H_{m,T},H_{m,R})$ 替换为 $(H_{m,T}Q,H_{m,R}Q)$，其主角、$\SAk$ 和 \SSRdag 均不变。一般而言，\SSRdag 并非只由 $H_{m,T}$ 的奇异值决定；它还依赖目标与参考右奇异子空间的相对几何。
 \end{proposition}
 
-引理~\ref{lem:mp_zh} 是 RankMe 特有的结论；仅凭旋转不变性不能推出任意分数都关于 $d$ 单调。命题~\ref{prop:nonrot_zh} 说明，\SSRdag 在不依赖任意共同基选择的同时，引入了目标谱中没有的信息。在 EX 上，RankMe 与 $d$ 在 $10$ 个任务上的平均 Kendall 相关为 $\tau=+0.617$，进一步确认了强宽度一致性。
+\textbf{校正为何增加信息。}共同基变换给出 $V_T'=Q^\top V_T$、$V_R'=Q^\top V_R$，因此 $(V_T')^\top V_R'=V_T^\top V_R$。相反，固定秩一参考后，秩一目标可在保持奇异值不变时改变与参考的夹角 $\theta$；当 $k_m=1$ 时，$\SAk=\cos^2\theta$。因此，分数能通过相对几何区分目标谱相同的表示，同时不依赖任意坐标选择。
 
-\textbf{跨模型池的经验混淆。}RankMe 与宽度的逐任务平均 Spearman 相关在 MV、VTAB、SSL 上分别为 $0.61$、$0.879$、$0.815$；而宽度与线性探针准确率的平均相关分别为 $-0.10$、$+0.23$、$-0.45$。因此，宽度可强烈支配 RankMe，却不能可靠识别最佳迁移表示。MV 中 RankMe 在五个任务上均选择 $d=4096$ 的 VGG-16，平均遗憾 $0.319$，比随机选择高 $0.125$。在 VTAB 上，即便宽度--准确率的平均相关为正，RankMe 的平均遗憾 $0.110$ 仍略差于随机选择的 $0.106$。
+引理~\ref{lem:mp_zh} 是 RankMe 特有的结论；仅凭旋转不变性不能推出任意分数都关于 $d$ 单调。命题~\ref{prop:nonrot_zh} 说明，\SSRdag 在不依赖任意共同基选择的同时，引入了目标谱中没有的信息。在保留的 EX 支持上，RankMe 与 $d$ 在 $10$ 个任务上的平均 Kendall 相关为 $\tau=+0.618$。
 
-\begin{table}[h]
-\centering\small
-\caption{MV、VTAB 与 SSL 模型池中的宽度混淆；EX 诊断见附录 E。RankMe 与 $d$ 高度正相关，但 $d$ 本身不能可靠预测质量。}
-\label{tab:pool_diagnosis_zh}
-\resizebox{\linewidth}{!}{\begin{tabular}{lrrrrr}
-\toprule
-模型池 & 架构、任务 & $\rhoSp(\mathrm{RankMe},d)$ & $\rhoSp(d,\mathrm{lp\_acc})$ & RankMe 遗憾 & 随机遗憾 \\
-\midrule
-MV & $35,5$ & $+0.61$ & $-0.10$ & $+0.319$ & $+0.194$ \\
-VTAB & $24,7$ & $+0.879$ & $+0.23$ & $+0.110$ & $+0.106$ \\
-SSL & $8,29$ & $+0.815$ & $-0.45$ & $+0.103$ & $+0.066$ \\
-\bottomrule
-\end{tabular}}
-\end{table}
+\textbf{有限模型池示例。}图~\ref{fig:reff_d_zh} 统一使用与主分数一致的 RankMe 奇异值归一化。按架构组取平均后，有效秩与宽度的 Spearman 相关在 VTAB 为 $+0.877$，EX 为 $+0.871$。它们不同于逐任务相关，也不是拟合的渐近定律。
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.64\linewidth]{fig_reff_d_scatter.pdf}
+\caption{$24$ 个 VTAB 与 $35$ 个 EX 架构组的有效秩与特征宽度。斜率为 $1$ 的虚线仅为视觉参考，并非拟合。此谱诊断使用 VTAB 的八个缓存数据集；所有目标选择比较均排除 STL-10。}
+\label{fig:reff_d_zh}
+\end{figure}
+
+\textbf{跨模型池的经验关联。}MV、VTAB、EX 中，逐任务平均 $\rhoSp(\mathrm{RankMe},d)$ 为 $0.609$、$0.879$、$0.766$，宽度--LP 相关为 $-0.049$、$+0.233$、$-0.070$。MV 上，\SSRdag 将宽度相关从 $0.609$ 降至 $0.305$（逐任务范围 $[0.156,0.495]$），并将分数--LP 相关从 $0.352$ 提高至 $0.512$。这为降低而非消除宽度依赖提供描述性证据，不证明因果关系。MV RankMe 优于随机；VTAB、EX 的平均遗憾高于各自随机基线（表~\ref{tab:pool_diagnosis_zh}）。
+
+\input{p0_tables/pool_diagnosis_zh}
 
 \textbf{VTAB 逐任务结果。}表~\ref{tab:vtab_pertask_zh} 对每个非参考目标均使用同一组 $24$ 个候选。RankMe--宽度相关从 $0.838$ 到 $0.915$，而遗憾随任务显著变化。
 
@@ -139,66 +149,17 @@ SVHN & $+0.915$ & $+0.110$ & efficientnet\_b3 ($d=1536$) \\
 \end{tabular}
 \end{table}
 
-\textbf{严重程度由架构间宽度方差驱动。}MV 池覆盖 $d\in[192,4096]$，VGG-16 位于高宽度尾部，因此失败最明显。只移除三个 VGG 变体（约占模型池 $3\%$），Flat-RankMe 遗憾便下降 $0.175$，接近随机策略；而 \SSRdag 的观测遗憾不变。逐任务看，Flat-RankMe 在五个任务上均选中 \texttt{vgg16}，\SSRdag 则在 $4/5$ 个任务上选到距离 oracle 不超过 $0.07$ LP 的候选。
+\textbf{VGG 敏感性与任务差异。}移除三个 VGG 变体（$3/119\approx2.5\%$）不改变 RankMe 和 \SSRdag 的遗憾，仍为 $0.144$ 和 $0.098$。RankMe 在四个任务上选择 ResNeXt，在 SVHN 选择 Inception。\SSRdag 在四个任务上优于 RankMe，但在 SVHN 更差；距离 oracle 不超过 $0.07$ LP 的任务只有两个（表~\ref{tab:main_pertask_zh}）。
 
-\begin{table}[h]
-\centering\small
-\caption{MV 多变体支持上的逐任务结果。}
-\resizebox{\linewidth}{!}{\begin{tabular}{lrrrrlll}
-\toprule
-任务 & Oracle & 随机 & RankMe & \SSRdag & RankMe 选择 & \SSRdag 选择 & Oracle 架构 \\
-\midrule
-CIFAR-10 & .970 & .785 & .550 & .870 & vgg16 & resnet50 & convnext\_base \\
-CIFAR-100 & .825 & .484 & .180 & .670 & vgg16 & resnet152 & convnext\_base \\
-DTD & .740 & .564 & .445 & .720 & vgg16 & convnext\_base & convnext\_base \\
-EuroSAT & .955 & .881 & .765 & .905 & vgg16 & efficientnet\_b3 & densenet201 \\
-SVHN & .615 & .430 & .570 & .450 & vgg16 & efficientnet\_b3 & densenet169 \\
-\bottomrule
-\end{tabular}}
-\end{table}
+\input{p0_tables/main_pertask_zh}
 
-\textbf{谱截断的独立验证。}在每个候选的前 $D$ 个奇异值上重新计算 $\reff$，可独立检验混淆是否来自奇异值谱尾部。MV 池上取 $D=256$ 时，$\rhoSp(r_{\mathrm{eff},D=256},d)$ 从完整谱的 $+0.63$ 降至 $+0.06$，Flat-RankMe 遗憾由 $+0.319$ 降至 $+0.094$，与 \SSRdag 相当。但谱截断不适用于两阶段流程：ViT-tiny 和 DeiT-tiny 的 $d=192$，完全不会被截断，因而仍保留宽度次序；其多变体支持上的阶段 1 遗憾为 $+0.204$，超过 \SSRdag 的两倍（附录 E）。
+\textbf{谱截断诊断。}一个 CIFAR-10 单元缺少截断及辅助分数；仅对这类比较，在全部五任务统一剔除该变体，得到完整 118 候选支持。截断 $D=128/256/512/768$ 的遗憾分别为 $0.134/0.134/0.151/0.142$，完整谱 RankMe 为 $0.144$，\SSRdag 为 $0.098$。截断有时有效，但此处没有达到 \SSRdag；其有效性或失败均不是普遍结论，截止维度也是额外设计选择（附录 E）。
 
-\textbf{相关的经验失败。}在 MV 池上，LogME 和 H-score 的迹形式也在全部任务上选择 \texttt{vgg16}，且存在 VGG 时性能下降；LEEP 和 NCTI 不呈现这一模式。这里只报告经验观察：形式化宽度混淆结论仅适用于给定各向同性模型下的 RankMe，不覆盖任意谱分数或旋转不变分数。
+\textbf{辅助方法比较。}表~\ref{tab:sota_flat_zh}--\ref{tab:vgg_sensitivity_zh} 采用完整 118 候选支持，移除 VGG 后为 115 候选。移除 VGG 会使 LogME 变差，H-score 则不变。朴素宽度归一化 $\log\reff-\log d$ 的遗憾为 $0.200$，高于同一 118 候选支持的随机值 $0.192$；直接扣除宽度在该设置中不足以达到 \SSRdag 的表现。LEEP 列为保留的聚类代理，并非官方 LEEP 实现。这些辅助比较不扩展只针对 RankMe 的理论结论。
 
-\begin{table}[h]
-\centering\small
-\caption{MV 多变体支持上的平坦比较（$119$ 变体 $\times5$ 任务）。数值为保留或移除三个 VGG 变体时的逐任务平均遗憾。}
-\label{tab:sota_flat_zh}
-\begin{tabular}{lrrrl}
-\toprule
-方法 & 含 VGG & 不含 VGG & $\Delta$ & 类型 \\
-\midrule
-随机 & $+0.194$ & $+0.193$ & $-0.001$ & --- \\
-Flat-RankMe & $+0.319$ & $+0.144$ & $-0.175$ & 无标签 \\
-Flat-LogME & $+0.319$ & $+0.550$ & $+0.231$ & 有标签 \\
-Flat-H-score & $+0.319$ & $+0.470$ & $+0.151$ & 有标签 \\
-Flat-NCTI & $+0.162$ & $+0.155$ & $-0.007$ & 有标签 \\
-\textbf{Flat-\SSRdag} & $\mathbf{+0.098}$ & $\mathbf{+0.098}$ & $\mathbf{0.000}$ & \textbf{无标签} \\
-Flat-LEEP & $+0.038$ & $+0.038$ & $0.000$ & 有标签 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{p0_tables/sota_flat_zh}
 
-\begin{table}[h]
-\centering\small
-\caption{MV 池中平坦策略对 VGG 类 $d=4096$ 特征的敏感性。数值为五个任务的平均 LP。}
-\label{tab:vgg_sensitivity_zh}
-\begin{tabular}{lrrrr}
-\toprule
-方法 & 含 VGG & 不含 VGG & $\Delta$ & 类型 \\
-\midrule
-随机 & $0.629$ & $0.630$ & $+0.001$ & --- \\
-Flat-RankMe & $0.502$ & $0.677$ & $+0.175$ & 无标签 \\
-Flat-NormRankMe ($-\log d$) & $0.600$ & $0.449$ & $-0.151$ & 无标签 \\
-\textbf{Flat-\SSRdag} & $\mathbf{0.723}$ & $\mathbf{0.723}$ & $\mathbf{0.000}$ & 无标签 \\
-Flat-LogME & $0.502$ & $0.271$ & $-0.231$ & 有标签 \\
-Flat-H-score & $0.502$ & $0.351$ & $-0.151$ & 有标签 \\
-Flat-LEEP & $0.783$ & $0.783$ & $0.000$ & 有标签 \\
-Flat-NCTI & $0.659$ & $0.666$ & $+0.007$ & 有标签 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{p0_tables/vgg_sensitivity_zh}
 
 \section{子空间校正排序}
 \label{sec:ssr_zh}
@@ -206,14 +167,29 @@ Flat-NCTI & $0.659$ & $0.666$ & $+0.007$ & 有标签 \\
 \[
 f_{\mathrm{spe}}(H,H_{\mathrm{ref}}):=\frac{\mathrm{tr}(Q\Sigma_BQ)}{\mathrm{tr}(\Sigma_B)},
 \]
-即位于参考子空间之外的类间协方差比例。$f_{\mathrm{spe}}$ 衡量候选模型的判别方差中，有多少是架构特定的，而非与通用编码器共享。在完整 VTAB 支持（$24\times7=168$ 个架构--任务对）上，$\SAk$ 与 $f_{\mathrm{spe}}$ 几乎完全负相关（$\rhoSp=-0.959$）；逐任务内部，$f_{\mathrm{spe}}$ 对 LP 准确率的平均 Spearman 相关为 $+0.420$。因此，减去子空间对齐度是一种有经验依据的无标签惩罚，用于降低类均值方差被通用子空间吸收的候选得分；这只是机制证据，不是下游保证。由于 \texttt{resnet152} 只在八个 VTAB 数据集中的一个同时具备参考和目标特征，我们将其统一排除；最终 $24$ 架构支持上的全部 $168$ 对均成功计算。
+即位于同一候选编码器的参考数据子空间之外的类间协方差比例。该残差比例本身并不能证明信息是架构特有的，也不涉及不同编码器之间的比较。在完整 VTAB 支持（$24\times7=168$ 个架构--任务对）上，$\SAk$ 与 $f_{\mathrm{spe}}$ 几乎完全负相关（$\rhoSp=-0.959$）；逐任务内部，$f_{\mathrm{spe}}$ 对 LP 准确率的平均 Spearman 相关为 $+0.420$。因此，减去子空间对齐度是一种有经验依据的无标签惩罚，用于惩罚与参考数据子空间的重叠；这只是机制证据，不是下游保证。由于 \texttt{resnet152} 只在八个 VTAB 数据集中的一个同时具备参考和目标特征，我们将其统一排除；最终 $24$ 架构支持上的全部 $168$ 对均成功计算。
 
 对候选编码器 $m$，令未经额外中心化的特征矩阵为 $H_{m,T}\in\mathbb R^{n_T\times d_m}$ 和 $H_{m,R}\in\mathbb R^{n_R\times d_m}$。令 $V_T,V_R\in\mathbb R^{d_m\times k_m}$ 分别包含其前导右奇异向量，其中 $k_m=\min\{k,n_T,n_R,d_m\}$，默认 $k=20$。若主角为 $\theta_1,\ldots,\theta_{k_m}$，则
 \[
 \SAk(H_{m,T},H_{m,R})=\frac{1}{k_m}\lVert V_T^\top V_R\rVert_F^2
 =\frac{1}{k_m}\sum_{i=1}^{k_m}\cos^2\theta_i.
 \]
-完整流程为：使用同一候选编码器提取目标与参考特征；分别计算未经额外中心化的 SVD；保留两个前 $k_m$ 子空间；由主角计算 $\SAk$；由目标奇异值计算 RankMe 的 $\reff$；将 $\reff$ 和 $\SAk$ 裁剪到至少 $10^{-12}$；最后返回标量分数。候选模型的特征维度可以不同，因为不存在跨候选的子空间比较。
+完整计算见算法~\ref{alg:ssr_score_zh}。候选模型的特征维度可以不同，因为不存在跨候选的子空间比较。
+
+\begin{algorithm}[t]
+\caption{单个候选的零标签 \SSRdag 评分}
+\label{alg:ssr_score_zh}
+\begin{algorithmic}[1]
+\Require 编码器 $m$；非空无标签目标 $T$ 和与其分离的参考 $R$，特征非零；$k=20$；$\epsilon=10^{-12}$
+\State 使用同一编码器及其固定预处理提取 $H_{m,T}$、$H_{m,R}$，缓存参考特征。
+\State 分别计算未经中心化的薄 SVD，保留目标奇异值 $\{\sigma_i\}$。
+\State 令 $k_m=\min\{k,n_T,n_R,d_m\}$，保留具有 $k_m$ 列的右奇异向量基 $V_T,V_R$。
+\State $s\gets \lVert V_T^\top V_R\rVert_F^2/k_m$。
+\State $p_i\gets\sigma_i/\sum_j\sigma_j$；$r\gets\exp(-\sum_{i:p_i>0}p_i\log p_i)$。
+\State $a\gets\log\max(r,\epsilon)-\log\max(s,\epsilon)$。
+\State \Return 若有类别数元数据 $C(T)>1$，返回 $a/\log C(T)$；否则返回 $a$，逐任务排序相同。
+\end{algorithmic}
+\end{algorithm}
 
 SCR 分数族定义为
 \[
@@ -226,35 +202,79 @@ SCR 分数族定义为
 \]
 对固定任务，正因子 $1/\log C(T)$ 不改变候选排序。该分数对共同表示基变换不变，但不是目标奇异值谱的单输入函数。
 
-所有主实验使用 STL-10 作为实用而非理论最优的参考数据集：它规模较小、包含多类自然物体、所有候选均支持，并与七个 VTAB 目标任务不重合。我们的默认建议是选用一个通用且与目标不重叠的参考数据集。完整 $24$ 架构 VTAB 支持上，STL-10 单参考的遗憾为 $0.061$；四个预先指定参考数据集的逐目标留一中位数集成为 $0.055$。论文早期 Flowers-102 自参考结果因目标/参考泄漏而撤回。集成收益仅基于七个任务，且参考侧成本近似线性增加，因此单参考仍为默认方案。
+\textbf{实现边界。}“无参数”指权重固定为 $\beta=1$；$k$、参考数据和预处理仍是设计选择。我们固定使用 $k=20$，不按目标标签调参。最终评估协议下对 $k$ 的敏感性尚未验证（附录 D）。主评分采用非中心化 SVD。对齐度下限 $10^{-12}$ 保证对数有限，而非统计稳定性。截断边界的并列奇异值需遵循命题~\ref{prop:nonrot_zh} 的一致子空间约定。
+
+STL-10 是实用而非理论最优的选择：它规模小、内容多样、所有候选均支持，并与所评估 $22$ 个池--任务单元的目标分离。默认采用一个通用且与目标分离的参考，在查看目标标签或准确率之前确定。其他领域应使用模态兼容、内容多样且样本量足以估计子空间的数据。在 $24$ 架构 VTAB 支持上，单参考遗憾为 $0.061$；四个预定参考的逐目标留一中位数为 $0.055$。七任务的这一差异及近似线性的参考侧成本不足以确立集成为更优默认方案。
+
+\textbf{目标分离的参考协议。}集成消融预先固定 STL-10、CIFAR-10、Flowers-102 和 Pets 四个参考数据集。对每个评估目标，先从集合中移除同名数据集，再使用同一候选编码器分别计算目标与各剩余参考的对齐度。先对这些对齐度取中位数，再施加对数校正；不按目标准确率挑选参考，也不对不同编码器的分数取平均。在预处理不变时，每个候选的参考特征可缓存并跨目标复用。目标标签只用于事后的 LP 评估和类间方差诊断，不进入这一选择规则。这些控制排除了直接的目标/参考数据集重合，但不证明参考集合最优，也不消除对参考领域及样本组成的敏感性（附录 D）。
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=.88\linewidth]{fig_sigma_b_flow.pdf}
-\caption{（a）子空间对齐度 $\SAk$ 与架构特定子空间中的类均值方差比例 $f_{\mathrm{spe}}$ 近乎完全负相关；（b）在每个任务内部，$f_{\mathrm{spe}}$ 能预测线性探针准确率。}
+\caption{（a）同一候选的目标特征与 STL-10 特征的对齐度，与该候选参考数据子空间之外的类均值方差比例 $f_{\mathrm{spe}}$ 近乎完全负相关；（b）在每个任务内部，$f_{\mathrm{spe}}$ 能预测线性探针准确率。}
 \end{figure}
 
-在 MV 的 $5$ 个任务、VTAB 的 $7$ 个非参考任务以及 EX 的 $10$ 个任务组成的 $22$ 个共同支持池--任务单元上，\SSRdag 的平均遗憾为 $0.069$，RankMe 为 $0.173$，随机选择为 $0.137$。\SSRdag 减 RankMe 的配对差值是 $-0.1043$（单元 bootstrap 的 $95\%$ CI 为 $[-0.169,-0.046]$，$p=0.00016$）。这些观测包含 $10$ 个不同目标名称，其中 $8$ 个跨模型池重复；按目标名称聚类重采样后，$95\%$ CI 为 $[-0.167,-0.040]$，双侧 $p=0.00118$（$100{,}000$ 次重采样），配对 Wilcoxon 检验为 $p=0.00254$。
+在 MV 的 $5$ 个任务、VTAB 的 $7$ 个非参考任务以及 EX 的 $10$ 个任务组成的 $22$ 个共同支持池--任务单元上，\SSRdag 的平均遗憾为 $0.069$，RankMe 为 $0.133$，随机选择为 $0.137$。\SSRdag 减 RankMe 的配对差值是 $-0.0645$（单元 bootstrap 的 $95\%$ CI 为 $[-0.107,-0.028]$，$p=0.00006$）。这些观测包含 $10$ 个不同目标名称，其中 $8$ 个跨模型池重复；按目标名称聚类重采样后，$95\%$ CI 为 $[-0.122,-0.020]$，双侧 $p=0.00194$（$100{,}000$ 次重采样），配对 Wilcoxon 检验为 $p=0.00328$。 Wilcoxon 对差值舍入到小数点后 10 位，零值处理为 \texttt{wilcox}，采用正态近似、无连续性修正，SciPy 1.15.3。
+
+几何机制的验证使用完整 VTAB 支持上的 $24\times7=168$ 个架构--任务对。$\SAk$ 与参考子空间之外的类间协方差比例 $f_{\mathrm{spe}}$ 的相关为 $-0.959$；逐任务内部，$f_{\mathrm{spe}}$ 与线性探针准确率的平均相关为 $+0.420$。这只是经验机制证据，不是 \SSRdag 与下游准确率之间的理论界。
+
+\textbf{如何理解汇总结果。}配对比较在每个池内为各方法使用相同的可用候选支持和逐任务 oracle；不同池的候选集合不必相同。按目标名称 bootstrap 会将被抽中目标的所有跨池记录一起重采样，而不把它们视为独立任务。这处理了目标重复的结构，但不能证明对任意未见任务或模型库的泛化。特别是，区间以保留的特征缓存及 LP 评估协议为条件，不是覆盖新预训练运行、参考选择或训练/测试划分的置信区间。因此，在汇总改进之外，仍需同时查看分池结果。
+
+\textbf{分池证据及其限制。}表~\ref{tab:pool_regrets_zh} 分解同一组 $22$ 单元；总体均值按各池任务数加权，而非对池等权。独立的 SSL 诊断只覆盖 $232$ 个可能模型--任务单元中的 $209$ 个，且历史 SSR 参考清单缺失。SSL 不纳入主文目标分离比较。
+
+\textbf{有标签比较。}官方分类 DiSCO 使用目标真实标签构造类条件协方差。表~\ref{tab:official_disco_zh} 报告 PCA-128 协议，分别采用 $G=6$ 和 $G=8$ 个连续、近似等大的谱分组（附录 C）。与 \SSRdag 相比，这些数值显示的是依赖模型池的折衷，而非统一优越性：DiSCO 在 EX 上更好，VTAB 上的排序则依赖 $G$。其 SSL 数值 $0.045/0.042$ 来自独立的诊断支持，不加入主实验汇总。标签需求并不使 DiSCO 无效，而是使其成为另一信息预算下的比较方法。因此，我们将其结果与“关系校正是否改善 RankMe”这一零标签问题分开呈现。
+
+\begin{table}[h]
+\centering\small
+\caption{各模型池上的官方 PCA-128 分类 DiSCO；MV 与主比较一致，采用 119 候选。$G$ 是连续、近等大小谱分组的数量；DiSCO 使用目标标签。}
+\label{tab:official_disco_zh}
+\begin{tabular}{lrrr}
+\toprule
+模型池 & 任务数 & $G=6$ 遗憾 & $G=8$ 遗憾 \\
+\midrule
+MV & $5$ & $0.145$ & $0.145$ \\
+VTAB（排除 STL-10） & $7$ & $0.067$ & $0.040$ \\
+EX & $10$ & $0.045$ & $0.049$ \\
+SSL & $29$ & $0.045$ & $0.042$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{主实验共同支持上的分池平均遗憾（越低越好）。使用与跨池表相同的观测，不增加实验；所有方法均排除 STL-10。}
+\label{tab:pool_regrets_zh}
+\begin{tabular}{lrrrr}
+\toprule
+模型池 & 任务 & RankMe & \SSRdag & 差值 \\
+\midrule
+MV & $5$ & $0.1440$ & $0.0980$ & $-0.0460$ \\
+VTAB & $7$ & $0.1100$ & $0.0614$ & $-0.0486$ \\
+EX & $10$ & $0.1445$ & $0.0595$ & $-0.0850$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{table}[h]
 \centering\small
 \caption{$22$ 个共同支持池--任务单元上的零标签跨池比较。官方分类 DiSCO 使用目标标签，故不列入此表。}
+\label{tab:crosspool_zh}
 \begin{tabular}{lrrl}
 \toprule
 方法 & 平均遗憾 & 标签预算 & 作用 \\
 \midrule
 随机选择 & $0.137$ & 零 & 参照 \\
-RankMe & $0.173$ & 零 & 目标谱 \\
+RankMe & $0.133$ & 零 & 目标谱 \\
 \textbf{\SSRdag} & $\mathbf{0.069}$ & 零 & 目标--参考几何 \\
+\midrule
+\multicolumn{4}{p{0.94\linewidth}}{\small \SSRdag 与 RankMe 的配对差值：$\Delta=-0.0645$；目标聚类 $95\%$ CI $[-0.122,-0.020]$，$p=0.00194$。} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-几何机制的验证使用完整 VTAB 支持上的 $24\times7=168$ 个架构--任务对。$\SAk$ 与参考子空间之外的类间协方差比例 $f_{\mathrm{spe}}$ 的相关为 $-0.959$；逐任务内部，$f_{\mathrm{spe}}$ 与线性探针准确率的平均相关为 $+0.420$。这只是经验机制证据，不是 \SSRdag 与下游准确率之间的理论界。
+\textbf{范围。}Marchenko--Pastur 引理只刻画给定各向同性模型下的 RankMe；我们不声称 \SSRdag 与线性探针准确率之间存在理论界。几何前提是经验性的，参考选择是启发式的，相对于有标签方法的性能也依赖模型池。在所评估的异构共同支持上，\SSRdag 优于宽度敏感的 RankMe，但这不证明其完全消除了宽度依赖。
 
-\textbf{范围。}Marchenko--Pastur 引理只刻画给定各向同性模型下的 RankMe；我们不声称 \SSRdag 与线性探针准确率之间存在理论界。几何前提是经验性的，参考选择是启发式的，相对于有标签方法的性能也依赖模型池。本文的具体主张是：在所评估的异构共同支持上，\SSRdag 校正了 RankMe 的跨架构族宽度混淆。
-
-\textbf{负结果。}两种失败模式界定了 \SSRdag 的适用范围。第一，将 TwoNN 内在维度~\citep{facco2017estimating} 纳入 $\log\reff/(\UID\cdot\log C)$ 并不能改善跨架构排序：MV 多变体支持上的池级平均 $\Delta\rho(\mathrm{SCR}_{\mathrm{uid}}-\SSRdag)=-0.538$（$95\%$ CI $[-0.782,-0.270]$），每个架构族分别计算也均为负。内在维度代理不能替代子空间对齐。第二，在候选仅因同一骨干族的预训练方案而异的 ViT-only 子池中，$\SAk$ 轮廓相似且与 LP 准确率不相关；\SSRdag 比 RankMe 低 $\Delta\rho=-0.26$（$95\%$ CI $[-0.43,-0.07]$，$p=0.010$）。这是同族局限，而两阶段流程在架构选择后使用 RankMe，按构造规避了这一问题。
+\textbf{适用范围诊断。}MV 的 173 个非恒定架构--任务组内，RankMe 和 \SSRdag 的平均 Spearman 相关分别为 $0.527$、$0.519$。这一微小描述性差异不证明 RankMe 在同族内总是更优。附录 F 给出组内和分阶段诊断。
 
 \section{两阶段与混合预算流程}
 \begin{algorithm}[h]
@@ -266,54 +286,55 @@ RankMe & $0.173$ & 零 & 目标谱 \\
 \end{algorithmic}
 \end{algorithm}
 
-在五个 MV 任务上，平坦策略平均评估 $118.8$ 个变体；两阶段流程平均评估 $35+3=38$ 个候选。无标签流程 \SSRdag$\to$RankMe 的遗憾为 $0.102$，接近平坦 \SSRdag 的 $0.098$，前向评估量约为其三分之一。该结果只应视为五任务概念验证，不构成一般性能或成本保证。探索性的混合预算版本在阶段 1 使用带标签 H-score：$K=5$ 时遗憾为 $0.089$，$K=35$ 时为 $0.018$。
+在五个 MV 任务上，平坦策略评估 119 个候选。\SSRdag$\to$RankMe 平均不复用时评估 $35+3=38$ 次，复用阶段 1 的规范代表时为 37 次，遗憾 $0.102$，平坦 \SSRdag 为 $0.098$。这些是排除参考初始化的候选评估次数，不是实测时间节省；五任务证据只支持概念验证。
 
-\begin{table}[h]
-\centering\small
-\caption{MV 多变体池上的流程比较（$35$ 个架构、$119$ 个变体、$5$ 个任务）。成本为每个任务的（变体，任务）特征前向评估次数。}
-\label{tab:two_stage_zh}
-\resizebox{\linewidth}{!}{\begin{tabular}{lrrrr}
-\toprule
-策略 & 平均 LP & 遗憾 & $95\%$ CI & 成本 \\
-\midrule
-S1 随机 & $0.627$ & $+0.194$ & $[+0.118,+0.289]$ & $1.0$ \\
-S2 Flat-RankMe & $0.502$ & $+0.319$ & $[+0.149,+0.509]$ & $118.8$ \\
-S3 Flat-\SSRdag & $0.723$ & $+0.098$ & $[+0.048,+0.148]$ & $118.8$ \\
-S4 两阶段 RankMe$\to$RankMe & $0.677$ & $+0.144$ & $[+0.093,+0.220]$ & $38.0$ \\
-\textbf{S5 两阶段 \SSRdag$\to$RankMe（无标签）} & $\mathbf{0.719}$ & $\mathbf{+0.102}$ & $\mathbf{[+0.044,+0.153]}$ & $\mathbf{38.0}$ \\
-\midrule
-\textbf{两阶段 H-score$\to$RankMe（混合，阶段 1 用 $K=35$ 个标签）} & $\mathbf{0.803}$ & $\mathbf{+0.018}$ & --- & $\mathbf{39.0}$ \\
-\bottomrule
-\end{tabular}}
-\end{table}
+\input{p0_tables/two_stage_zh}
 
-\textbf{混合预算版本。}作为同一组五个 MV 任务上的探索扩展，我们在阶段 1 以 H-score~\citep{bao2019hscore} 替代 \SSRdag，只对 $K$ 个架构代表使用标签，并在阶段 2 保留 RankMe。观测遗憾在 $K=5$ 时为 $0.089$，在 $K=35$ 时为 $0.018$。这些点仅说明该基准上可能存在标签--计算折衷；有限任务数不足以支持一般部署建议。
+\textbf{分阶段诊断。}在同一 $119$ 候选支持上，\SSRdag$\to$\SSRdag 的遗憾为 $0.101$，接近 \SSRdag$\to$RankMe 的 $0.102$。阶段 2 使用 RankMe 只需目标特征，可避免为新评估变体提取参考特征；理由并非普遍的组内优势。零标签替代方案 $R_{\mathrm{UID}}\to$RankMe 的遗憾为 $0.058$，不复用/复用时评估 $37.4/36.4$ 次。这里 $R_{\mathrm{UID}}=\log\reff/(\UID\log C)$ 使用 TwoNN 内在维度估计~\citep{facco2017estimating}，而非原始 UID（附录 F）。全部 $35$ 个规范代表分数均可用。这些基于缓存分数的后验诊断说明所提流程在该五任务基准上并非最优。
+
+\textbf{混合预算版本。}阶段 1 在随机抽取的 $K$ 个架构代表上使用 H-score，阶段 2 保留 RankMe。$K$ 表示使用标签的架构评估次数，不是标注样本数。每个预算在五任务上重复抽取 100 次，$K=5$ 时平均遗憾 $0.089$、$K=35$ 时为 $0.018$；实际不复用平均候选次数为 $8.324$、$37$。这仍是探索性的信息--计算折衷。
 
 \begin{figure}[h]
 \centering
 \begin{minipage}[b]{.49\linewidth}\includegraphics[width=\linewidth]{fig_pareto.pdf}\end{minipage}\hfill
 \begin{minipage}[b]{.49\linewidth}\includegraphics[width=\linewidth]{fig_costsplit.pdf}\end{minipage}
-\caption{五任务 MV 概念验证。左：遗憾与前向评估次数；右：混合流程遗憾与阶段 1 标签预算 $K$。}
+\caption{五任务 MV 概念验证。左：遗憾与不复用的候选评估次数，附任务 bootstrap 区间；右：平均遗憾与使用标签的架构评估次数 $K$，不是标注样本数。}
 \end{figure}
 
 \section{讨论与局限}
-\SSRdag 适用于架构族之间的选择。当候选仅是在同一骨干上的不同预训练方案时，$\SAk$ 变化不足以追踪准确率：ViT-only 子池上 \SSRdag 相对 RankMe 的 $\Delta\rho=-0.26$（$95\%$ CI $[-0.43,-0.07]$，$p=0.010$）。因此实践规则是：跨架构族使用 \SSRdag；同族变体使用 RankMe；混合多变体模型库采用 \SSRdag 后接 RankMe。
 
-官方 DiSCO 与 \SSRdag 的相对表现依赖模型池，尤其在 SSL 和 EX 上。更重要的是，官方分类 DiSCO 使用目标真实标签形成类条件协方差，而 \SSRdag 不使用目标标签，因此二者不能被表述为同一标签预算下的统一优劣关系。
+\textbf{计算口径。}有记录的 MV/EX 特征提取启动器使用四个华为昇腾 NPU；VGG 提取使用 NVIDIA L20 GPU。评分与统计分析使用 CPU。候选评估次数不含参考初始化，不表示实测运行时间或能耗节省。附录 G 给出有记录的环境及其覆盖范围。
+\textbf{适用范围。}证据支持所评估异构池上的关系校正。RankMe 和 \SSRdag 的平均组内相关接近，不构成普遍的同族排序。两阶段配置是一种实践选择，而非有保证的决策规则。
 
-本研究仍有四项主要局限：参考数据集选择是启发式的；子空间对齐与下游准确率之间没有形式保证；相对有标签方法的性能依赖模型池；两阶段实验仅有五个 MV 任务。本文的严格主张仅是：在所评估的异构共同支持上，\SSRdag 校正了 RankMe 的跨架构族宽度混淆。
+\textbf{校正捕获了什么。}对齐项增加每个候选特征空间内目标与参考的相对几何，而不比较不同编码器的坐标系；共同基变换不变性得到保持。低对齐度不按定义等同于有用信息：参考子空间之外的变化可能与标签无关，共享方向也可能有判别性。VTAB 类间方差诊断支持该几何解释，但不构成通用准确率预测器。
 
+参考缓存可在同一编码器的不同目标任务间复用，但不消除初始化成本，也不能跨编码器互换。使用 $M$ 个参考数据集时，近似 $M$ 倍成本作用于参考侧提取和对齐，而非端到端运行时间。
+
+\textbf{局限。}参考选择仍是启发式的，对齐度没有形式化准确率保证。七任务 VTAB 单参考与集成遗憾为 $0.061$、$0.055$，不足以确立更优默认方案。MV 内不同预处理历史可能影响评分及 LP oracle；两种 VGG 对照不能解决其他候选的这一问题。五任务流程诊断中存在遗憾更低的零标签替代方案，因此不证明所提流程最优或具有广泛部署性能。
+
+\begin{samepage}
 \section{结论}
-在异构架构池中，RankMe 会受到特征宽度的严重混淆：在给定各向同性模型下，其有效秩按 $\Theta(d)$ 缩放，因此可能按宽度而非迁移质量排序。\SSRdag 使用同一候选编码器内部的目标--参考子空间关系，补充目标谱所缺少的信息。在 $22$ 个完整共同支持单元上，它将平均遗憾从 $0.173$ 降至 $0.069$（差值 $-0.1043$；目标聚类 $95\%$ CI $[-0.167,-0.040]$，$p=0.00118$）。结果支持跨架构族零标签选择使用 \SSRdag、同架构族选择使用 RankMe，同时把参考设计、下游保证、模型池依赖性和更广泛的两阶段验证留作未来工作。
+我们揭示无标签跨架构模型选择中的宽度混淆，并提出 SCR，以 \SSRdag 作为默认的关系校正实例。在固定长宽比的给定各向同性模型下，RankMe 有效秩按 $\Theta(d)$ 缩放。在 $22$ 个共同支持池--任务单元上，\SSRdag 相比 RankMe 将平均选择遗憾从 $0.133$ 降至 $0.069$（配对差值：$-0.0645$；按目标名称聚类的 $95\%$ CI：$[-0.122,-0.020]$）。在 MV 上，平均分数--宽度相关从 $0.609$ 降至 $0.305$，支持部分校正而非完全消除宽度依赖。这些结果体现了在所评估模型池上引入目标谱之外的目标--参考几何信息的价值，但不构成通用排序或最优两阶段流程的证明。全模型池的统一预处理、参考设计、下游保证及更广泛的两阶段验证仍是开放问题。\label{page:content_end}\par
+\end{samepage}
 
+\clearpage
 \begin{ack}
 本工作得到“111 中心”（编号 B26023）和教育部基础学科与交叉学科突破计划（编号 JYB2025XDXM118）的支持。
+
+\noindent\textbf{利益冲突：}作者声明不存在利益冲突。
 \end{ack}
 
 \bibliographystyle{plainnat}
 \bibliography{references}
 
+\clearpage
 \appendix
+\renewcommand{\thepage}{S\arabic{page}}
+\setcounter{page}{1}
+\section*{补充材料}
+\noindent\textbf{无标签跨架构模型选择中的宽度混淆：诊断与子空间校正}\\
+Qin Liu、Chen Zhong、Fengshan Zhao\\
+附录 A--G 与正文配套使用；参考文献编号对应正文中的参考文献表。
 \section{Marchenko--Pastur 定律与各向同性}
 \begin{proof}[引理证明]
 写作 $\reff(H)=\exp(H_{\mathrm{ent}}(\mathbf p))$，其中 RankMe 使用 $p_i=\sigma_i/\sum_j\sigma_j$。令 $\lambda_i=\sigma_i^2/(n\sigma^2)$，经验测度包含全部 $d$ 个特征值，包括 $d>n$ 时的零特征值。由 Marchenko--Pastur 定律~\citep{marchenko1967distribution}，该测度几乎处处收敛到 $\mu_\gamma$。定义
@@ -330,141 +351,126 @@ H_{\mathrm{ent}}(\mathbf p)=\log d+\log m_{1/2}-
 对任意固定正长宽比，上述矩均有限，包括谱支撑到达零或在零点存在原子的情形。因此 $\reff(H)/d\to c(\gamma)>0$，即 $\reff(H)=\Theta(d)$。
 \end{proof}
 
-\textbf{近各向同性的经验诊断。}VTAB 上可获得诊断的架构--任务对中，类协方差统计量 $\eta_\Sigma=\mathrm{Var}_c[\mathrm{tr}(\Sigma_c)]/(\mathbb E_c[\mathrm{tr}(\Sigma_c)])^2$ 的中位数为 $0.022$、均值为 $0.035$，且 $93.3\%$ 小于 $0.1$。这说明各向同性近似与这些表示具有经验相关性，但不是对 RankMe 排序的界，也不是其他旋转不变分数的定理。
+\begin{proof}[命题~\ref{prop:nonrot_zh} 的证明]
+若 $H=U\Sigma V^\top$，则 $HQ=U\Sigma(Q^\top V)^\top$。两个保留基分别变为 $V_T'=Q^\top V_T$、$V_R'=Q^\top V_R$，故 $(V_T')^\top V_R'=V_T^\top QQ^\top V_R=V_T^\top V_R$。奇异值与经过裁剪的分数也不变。为说明目标谱不足以确定分数，固定沿 $e_1$ 的秩一参考，令具有相同奇异值的秩一目标的右方向为 $\cos\theta\,e_1+\sin\theta\,e_2$。当 $k_m=1$ 时，对齐度为 $\cos^2\theta$，从而可在目标谱不变时改变分数。若截断边界穿过并列奇异值块，必须一致地选择子空间；任意独立的 SVD 并列处理不在不变性命题的范围内。
+\end{proof}
 
-\textbf{宽度关联的经验结果。}图~\ref{fig:reff_d_zh} 在双对数坐标上给出 MV、VTAB 与 EX 中逐架构平均的 $\reff$ 和 $d$。MV 和 EX 均使用完整数据集特征，二者的 Spearman 相关分别为 $+0.70$ 和 $+0.86$。VTAB 使用 $n=1000$ 个下采样特征；当 $d>n$ 时 $\reff$ 被 $n$ 截断，形成较低的数据带，相关为 $+0.41$。这些有限模型池的现象与渐近引理一致，但本身不能证明该引理。
+\textbf{类别总方差诊断。}VTAB 上可获得诊断的架构--任务对中，$\eta_\Sigma=\mathrm{Var}_c[\mathrm{tr}(\Sigma_c)]/(\mathbb E_c[\mathrm{tr}(\Sigma_c)])^2$ 的中位数为 $0.022$、均值为 $0.035$，且 $93.3\%$ 小于 $0.1$。它衡量各类总方差的相似性，而非方向上的各向同性：相同的各向异性类协方差也能给出 $\eta_\Sigma=0$。因此，该统计量不用于验证引理~\ref{lem:mp_zh} 的各向同性假设；该假设定义的是解释性模型，而非对所有预训练表示均已验证的性质。
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=.62\linewidth]{fig_reff_d_scatter.pdf}
-\caption{各架构跨任务平均后的有效秩与倒数第二层维度（双对数坐标）。三种模型池均呈正向秩相关；斜率为 1 的虚线或点线仅作视觉参考，并非拟合的渐近定律。VTAB 使用 $n=1000$ 个下采样特征，故 $d>n$ 时 $\reff\leq n$ 形成较低的数据带。}
-\label{fig:reff_d_zh}
-\end{figure}
+\textbf{宽度图的协议。}VTAB 系列采用非中心化 SVD 和 RankMe 奇异值有效秩。该谱诊断的架构均值使用八个缓存数据集，但目标选择排除 STL-10。EX 使用保留的 RankMe 分数。MV 的记录分组键内部可能具有不同宽度，故该图不画 MV，另报告按变体计算的 MV 相关。
+
+
 
 \section{MV 池（多变体池）}
+\textbf{数据集来源。}CIFAR-10/100 来自 \citet{krizhevsky2009cifar}，DTD 来自 \citet{cimpoi2014dtd}，EuroSAT 来自 \citet{helber2017eurosat}，SVHN 来自 \citet{netzer2011svhn}。ImageNet~\citep{deng2009imagenet} 是监督预训练候选的预训练数据集，不是主汇总中的目标。
+
 \textbf{设置。}MV 库存包含 $132$ 个 ImageNet-1k 预训练变体；架构选择和两阶段比较使用属于至少含两个变体的 $35$ 个架构族的固定 $119$ 变体支持。所有模型来自 timm~\citep{wightman2019timm} 和 torchvision，并在 CIFAR-10、CIFAR-100、DTD、EuroSAT、SVHN 五个目标任务上评估。架构涵盖 VGG~\citep{simonyan2015vgg}、ResNet~\citep{he2016resnet}、DenseNet、EfficientNet~\citep{tan2019efficientnet}、MobileNet、RegNet、ViT~\citep{dosovitskiy2021vit}、DeiT、ConvNeXt~\citep{liu2022convnext}、Swin 等，宽度从 ViT/DeiT-tiny 的 $192$ 到 VGG-16 的 $4096$，跨度约 $21$ 倍。LP 真值采用与 VTAB 相同的 $80/20$ 划分和 $C=1$ 的 $\ell_2$ 正则逻辑回归。
 
 \begin{table}[h]
 \centering\small
-\caption{MV 池的架构族、变体数和倒数第二层维度。}
+\caption{MV 固定多变体支持的架构分组键与变体数，共 $35$ 组、$119$ 个变体。ResNet 等大类包含多个分组键。}
 \label{tab:mv_families_zh}
-\begin{tabular}{llrr}
+\begin{tabular}{lrlr}
 \toprule
-架构族 & 骨干类别 & 变体数 & $d$ \\
+分组键 & 变体数 & 分组键 & 变体数 \\
 \midrule
-VGG & CNN & $3$ & $4096$ \\
-ResNet & CNN & $8$ & $512,2048$ \\
-DenseNet & CNN & $4$ & $1024,2208$ \\
-EfficientNet & CNN & $4$ & $1280$--$1536$ \\
-MobileNetV3 & CNN & $2$ & $960$ \\
-RegNet & CNN & $3$ & $368$--$1512$ \\
-ViT & Transformer & $6$ & $192,384,768$ \\
-DeiT & Transformer & $6$ & $192,384,768$ \\
-ConvNeXt & ConvNet & $4$ & $768$ \\
-Swin Transformer & Transformer & $4$ & $768$ \\
-其他（MnasNet 等） & CNN/混合 & $5$ & $1280$--$1984$ \\
+\texttt{convnext\_base} & $2$ & \texttt{regnet} & $8$ \\
+\texttt{convnext\_small} & $3$ & \texttt{resnet101} & $4$ \\
+\texttt{convnext\_tiny} & $3$ & \texttt{resnet152} & $4$ \\
+\texttt{deit\_base} & $2$ & \texttt{resnet18} & $3$ \\
+\texttt{deit\_small} & $2$ & \texttt{resnet34} & $3$ \\
+\texttt{deit\_tiny} & $2$ & \texttt{resnet50} & $11$ \\
+\texttt{densenet121} & $3$ & \texttt{resnext50} & $3$ \\
+\texttt{densenet169} & $3$ & \texttt{swin\_small} & $4$ \\
+\texttt{densenet201} & $3$ & \texttt{swin\_tiny} & $3$ \\
+\texttt{efficientnet\_b0} & $3$ & \texttt{tf\_efficientnet} & $2$ \\
+\texttt{efficientnet\_b2} & $3$ & \texttt{vgg16} & $3$ \\
+\texttt{efficientnet\_b3} & $3$ & \texttt{vit\_b32} & $2$ \\
+\texttt{efficientnet\_b4} & $2$ & \texttt{vit\_base} & $9$ \\
+\texttt{inception\_v3} & $3$ & \texttt{vit\_large} & $2$ \\
+\texttt{mixer\_b16} & $2$ & \texttt{vit\_small} & $4$ \\
+\texttt{mnasnet} & $3$ & \texttt{vit\_tiny} & $2$ \\
+\texttt{mobilenet\_v3\_large} & $4$ & \texttt{wide\_resnet50\_2} & $3$ \\
+\texttt{mobilenet\_v3\_small} & $3$ &  &  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{宽度混淆细节。}逐任务 $\rhoSp(\mathrm{RankMe},d)$ 范围为 $+0.50$ 至 $+0.72$，均值 $+0.61$，五个任务全部为正。RankMe 在所有任务上均选择 \texttt{vgg16}，而 oracle 随任务为 \texttt{convnext\_base} 或 \texttt{densenet201}。RankMe 平均遗憾 $+0.319$，比随机选择的 $+0.194$ 高 $0.125$。移除三个 VGG 变体（约占模型池 $2.3\%$）后，Flat-RankMe 遗憾降至 $+0.144$；\SSRdag 在移除前后均为 $+0.098$，这里仅将其视为经验稳健性，而非一般不变性。
+\textbf{宽度诊断。}MV RankMe--宽度逐任务相关为 $0.588$ 至 $0.631$，均值 $0.609$。RankMe 遗憾 $0.144$ 低于精确随机期望 $0.1914$，但高于 \SSRdag 的 $0.098$。移除 VGG 不改变这两种分数的遗憾。SVHN oracle 为 DenseNet-169。EuroSAT 有两个并列 oracle 变体：DenseNet-201 和 ViT-large，LP 均为 $0.955$。
 
-\textbf{多变体结构与两阶段评估。}该池含 $35$ 个架构族，平均每族 $3.8$ 个变体，范围为 $1$--$8$。只有由不少于两个成员的架构族所组成的 $119$ 变体支持能评估两阶段流程：阶段 1 用每个架构的一个规范变体选架构族，阶段 2 在所选族内搜索。相对于平坦评估的 $118.8$ 次前向，记录的平均成本 $35+3=38$ 对应 $3.1$ 倍前向缩减。
+\textbf{多变体结构。}库存包含 $48$ 组、$132$ 个变体，主支持为 $35$ 个多变体组、$119$ 个变体。VGG16-BN 是主支持之外的单成员组。规范代表取每组按字典序排列的首个变体。平坦评估为 $119$ 次。完整 $132$ 候选池的 RankMe、\SSRdag 诊断遗憾分别为 $0.152$、$0.082$，有各自的 oracle，与主支持比较分开报告。
 
-\textbf{仅 CNN 子池。}为排除混淆来自 ViT/CNN 结构差异的解释，我们评估移除 ViT、DeiT 和 Swin 后的 $78$ 个 CNN 类变体。RankMe 在 $4/5$ 个任务上选择 \texttt{vgg16}；DTD 上选择宽度次高的 \texttt{densenet201}（$d=2208$）。仅 CNN 子池中的 $\rhoSp(\mathrm{RankMe},d)=+0.57$，说明混淆在同一大类架构内仍然存在。
+\textbf{来源与 LP 敏感性。}每个 torchvision VGG 模型均有三种提取设置的目标及 STL-10 缓存：$25088$ 维展平特征、$4096$ 维双重变换、$4096$ 维一次官方变换。清单记录路径、时间戳、缓存/权重/脚本哈希、LP 划分、预测和求解器版本。独立检查验证全部 $36$ 个缓存，并复现两种 $4096$ 维设置下全部 $20$ 个 LP 单元的预测。这两种设置及测试的 scikit-learn 版本（1.6.1 和 1.2.2）给出相同的 $22$ 单元 RankMe/\SSRdag 遗憾，尽管个别 VGG 的 LP 准确率可能不同。该敏感性测试不证明辅助指标或未测试候选的协议等价。
+
+% BEGIN VERSION NOTE
+\paragraph{版本来源与更正。}
+早期版本使用 torchvision VGG 的 $25088$ 维展平特征，却描述为 $4096$ 维倒数层特征。当前库存替换两个 VGG 模型的十个目标行，另外 $650$ 行保持不变。$22$ 单元的 SSR 减 RankMe 差值从 $-0.1043$ 变为 $-0.0645$，且 MV RankMe 优于随机。早期的 MV 差于随机、无充分支持的 CNN-only/Transformer-only 效应、普遍同族优势等主张不受支持。有效秩归一化、官方有标签 DiSCO、目标分离参考比较和候选支持集均以当前协议为准。原始受影响缓存的来源不完整；新清单记录替换数据，而非重建该历史。
+% END VERSION NOTE
 
 \section{SSL/多模态池}
+\textbf{额外数据集来源。}除附录 B、D、E 引用的数据集外，SSL 库存还包含 MNIST~\citep{lecun1998mnist}、USPS~\citep{hull1994usps}、GTSRB~\citep{stallkamp2011gtsrb}、Semeion~\citep{semeion1998digits} 和 Beans~\citep{makererebeans}。CIFAR-100-coarse 使用 CIFAR-100 的超类标签~\citep{krizhevsky2009cifar}。Rendered-SST2 是 CLIP~\citep{radford2021clip} 使用的 Stanford Sentiment Treebank~\citep{socher2013sst} 图像渲染版本。Beans 和 Semeion 引用原始数据发布记录，而不假定存在独立论文。
+
+十一个生物医学任务使用 MedMNIST~\citep{yang2023medmnist}：PathMNIST（结直肠组织学图像~\citep{kather2019path}）、DermaMNIST（HAM10000/ISIC~\citep{tschandl2018ham,codella2019isic}）、OCTMNIST 和 PneumoniaMNIST~\citep{kermany2018medical}、RetinaMNIST（DeepDRiD~\citep{liu2022deepdrid}）、BreastMNIST~\citep{aldhabyani2020breast}、BloodMNIST~\citep{acevedo2020blood}、TissueMNIST~\citep{ljosa2012tissue}，以及 OrganAMNIST/OrganCMNIST/OrganSMNIST（LiTS 图像及器官标注~\citep{bilic2019lits,xu2019organs}）。这些引用区分了标准化任务与底层图像来源；我们不声称采集了这些图像。
+
 \textbf{设置。}我们从 $8$ 个 SSL/多模态编码器提取倒数第二层特征：ResNet-50/101、MoCo-v3-R50、ConvNeXt-B、ViT-B/16、CLIP-ViT-L/14、DINOv2-ViT-B/14 和 DINO-ViT-S/16。特征维度 $d\in\{384,768,1024,2048\}$，不含 VGG 类架构。评估使用覆盖 VTAB、MedMNIST 变体和标准迁移基准的 $29$ 个下游任务，LP 真值采用与 MV 相同的 $80/20$ 逻辑回归协议。
 
-\textbf{宽度混淆。}逐任务 $\rhoSp(\mathrm{RankMe},d)$ 平均为 $+0.815$，范围 $[+0.45,+0.95]$，其中 $27/29$ 个任务为正。Flat-RankMe 在 $25/29$ 个任务上选择 $d=2048$ 的 ResNet 类编码器，而 oracle 在 $11/29$ 个任务上为 CLIP-ViT-L/14、在 $8/29$ 个任务上为 ConvNeXt-B。RankMe 平均遗憾为 $+0.103$，随机为 $+0.066$，且 $26/29$ 个任务上非最优。
+\textbf{可用支持与范围。}留存的 SSL 表包含 $8\times29=232$ 个可能单元中的 $209$ 个。23 个任务各有八个候选，FGVC-Aircraft 有四个，Flowers-102、Food-101、Oxford-Pets 和 Rendered-SST2 各有五个，Semeion 只有一个。Oracle 在可用候选内计算，因此 Semeion 的选择遗憾必为零。官方 DiSCO 与同一组 209 个 LP 单元匹配。这些历史诊断不是完整矩形基准，不纳入 $22$ 单元主比较。历史 SSR 脚本指定 ImageNet 参考特征，并设有逐模型 CIFAR-10 回退路径，但没有保留逐次运行的参考清单。因此，其 SSR 列不被视为已验证的目标分离 STL-10 评估，也不用于支撑主校正结论。
 
-\textbf{有标签比较。}用官方 PCA-128 DiSCO 替换投稿版代理实现后，在 $29$ 个 SSL 任务上，$G=6/8$ 的遗憾为 $0.045/0.042$。被撤回的代理实现为 $0.026$，官方完整特征评分为 $0.057/0.047$；它们属于不同算法或维度设置，而非同一协议的重复运行。早期回复草稿中的 $0.077/0.071$ 不对应任何保留输出，是转录错误。由于官方分类 DiSCO 使用目标真实标签形成类条件协方差，我们将其与零标签 \SSRdag--RankMe 比较分开，并不主张统一优越性。
+\textbf{诊断限制。}SSL 支持不完整且缺少逐次运行的参考清单，因此不能在主实验的目标分离协议下完整对齐 RankMe/\SSRdag 比较。官方 DiSCO 结果是可用 $209$ 单元上的描述性结果，与主实验零标签比较分开呈现。
 
-\begin{table}[h]
-\centering\small
-\caption{各模型池上的官方 PCA-128 分类 DiSCO。$G$ 是连续、近等大小谱分组的数量；DiSCO 使用目标标签。}
-\label{tab:official_disco_zh}
-\begin{tabular}{lrrr}
-\toprule
-模型池 & 任务数 & $G=6$ 遗憾 & $G=8$ 遗憾 \\
-\midrule
-MV & $5$ & $0.146$ & $0.146$ \\
-VTAB（排除 STL-10） & $7$ & $0.067$ & $0.040$ \\
-EX & $10$ & $0.045$ & $0.049$ \\
-SSL & $29$ & $0.045$ & $0.042$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+\textbf{有标签比较。}官方 PCA-128 DiSCO 在可用的 $29$ 个 SSL 任务上，$G=6/8$ 的遗憾为 $0.045/0.042$；完整特征评分为 $0.057/0.047$，属于不同维度设置。官方分类 DiSCO 使用目标真实标签形成类条件协方差，因此与零标签 \SSRdag--RankMe 比较分开报告。
+
+正文表~\ref{tab:official_disco_zh} 汇总这些有标签结果及 MV、VTAB、EX 的对应结果。
 
 \section{VTAB 池}
+\textbf{数据集来源。}除附录 B 中的共同来源，本池使用 Fashion-MNIST~\citep{xiao2017fashion}、Flowers-102~\citep{nilsback2008flowers}、Oxford-IIIT Pets~\citep{parkhi2012pets} 和 STL-10~\citep{coates2011stl10}。\texttt{pets} 与 \texttt{oxford\_pets} 指同一数据集。“VTAB 池”指本文保留的评估池，不表示复现完整的原始 VTAB 套件~\citep{zhai2019large}。
+
 \textbf{设置。}最终共同模型池包含在八个 VTAB 数据集（CIFAR-10/100、DTD、Fashion-MNIST、Flowers-102、Pets、STL-10、SVHN）上同时拥有完整特征和 LP 值的 $24$ 个 timm 预训练架构。原始清单还列出 ResNet-152，但其八个特征文件只有一个可用，因此我们统一排除，而不让候选集随任务变化。STL-10 特征只作为 $\SAk$ 的参考，并从共同支持目标中排除。
 
-\textbf{参考任务与 $k$ 消融。}审计后的协议采用未经额外中心化的 SVD 和 RankMe 的奇异值归一化，并排除 STL-10 目标。$k=20$ 时，以 STL-10 为单参考，在完整 $24$ 架构支持的其余七个任务上遗憾为 $0.061$。投稿版 Flowers-102 自参考结果因参考与目标重合而撤回。早期消融显示稳定区间约为 $k\in[10,50]$；我们不利用目标标签调参，直接采用中点 $k=20$。
+\textbf{参考协议与固定 $k$。}协议采用未经额外中心化的 SVD 和 RankMe 的奇异值归一化，并排除 STL-10 目标。$k=20$ 时，以 STL-10 为单参考，在完整 $24$ 架构支持的其余七个任务上遗憾为 $0.061$。参考敏感性只使用目标与参考分离的比较。我们固定使用 $k=20$，不按目标标签调参。该最终评估协议下对 $k$ 的敏感性尚未验证。
+
+\textbf{评估支持。}库存含 $660$ 个 MV、$510$ 个 EX 和 $192$ 个 VTAB 模型--任务单元，其中 $168$ 个 VTAB 单元对应非参考目标。$22$ 单元汇总使用 MV 多变体支持、全部七个非参考 VTAB 目标及十个 EX 目标。七任务单参考与集成遗憾分别为 $0.061/0.055$。
 
 \textbf{多参考稳健性。}为实现目标不重叠的评估，当当前目标与参考名称相同，就从预先确定的 STL-10、CIFAR-10、Flowers-102、Pets 集合中删去该参考，并对其余对齐度取中位数。该逐目标留一集成遗憾为 $0.055$，单独使用 STL-10 为 $0.061$。七个任务上的有限差异不足以抵消约 $M$ 倍的参考侧成本，因此默认仍为一个通用且与目标不重叠的参考，参考设计仍是开放问题。
 
 \section{EX 池与阶段 1 比较}
-\textbf{EX 池。}EX 包含来自 $35$ 个规范架构的 $51$ 个 ImageNet-1k 监督预训练变体，其中包括 $d=4096$ 的 VGG-16，$d_{\max}/d_{\min}=21.3$。十个目标涵盖细粒度识别（FGVC-Aircraft、Flowers-102、Food-101、Oxford-Pets）、纹理/场景（DTD、EuroSAT）、数字/服饰（SVHN、Fashion-MNIST）和通用物体（CIFAR-10/100），特征在完整数据集上提取。Flat-\SSRdag 遗憾为 $+0.060$，RankMe 为 $+0.144$。依赖目标标签的官方 DiSCO 在 $G=6/8$ 时为 $+0.045/+0.049$，不纳入零标签比较。
+\textbf{数据集来源。}FGVC-Aircraft~\citep{maji2013aircraft} 和 Food-101~\citep{bossard2014food} 补充了附录 B、D 引用的八个目标数据集；STL-10 不是 EX 目标。
 
-\begin{table}[h]
-\centering\small
-\caption{MV 池平坦比较的复现（与正文表~\ref{tab:sota_flat_zh} 数据相同）。}
-\label{tab:sota_flat_app_zh}
-\begin{tabular}{lrrl}
-\toprule
-方法 & 含 VGG（遗憾） & 不含 VGG（遗憾） & 类型 \\
-\midrule
-随机 & $+0.194$ & $+0.193$ & --- \\
-Flat-RankMe & $+0.319$ & $+0.144$ & 无标签 \\
-Flat-LogME & $+0.319$ & $+0.550$ & 有标签 \\
-Flat-H-score & $+0.319$ & $+0.470$ & 有标签 \\
-Flat-NCTI & $+0.162$ & $+0.155$ & 有标签 \\
-\textbf{Flat-\SSRdag} & $\mathbf{+0.098}$ & $\mathbf{+0.098}$ & \textbf{无标签} \\
-Flat-LEEP & $+0.038$ & $+0.038$ & 有标签 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\textbf{EX 池。}EX 包含来自 $35$ 个规范架构的 $51$ 个 ImageNet-1k 监督预训练变体，其中包括 $d=4096$ 的 VGG-16，$d_{\max}/d_{\min}=21.3$。十个目标涵盖细粒度识别（FGVC-Aircraft、Flowers-102、Food-101、Oxford-Pets）、纹理/场景（DTD、EuroSAT）、数字/服饰（SVHN、Fashion-MNIST）和通用物体（CIFAR-10/100），特征在完整数据集上提取。Flat-\SSRdag 遗憾为 $0.0595$，RankMe 为 $0.1445$。依赖目标标签的官方 DiSCO 在 $G=6/8$ 时为 $+0.045/+0.049$，不纳入零标签比较。
 
-\textbf{谱截断。}在前 $D$ 个奇异值上重新计算 $\reff$ 是有用的诊断：MV 中 $D=256$ 时，宽度相关下降，平坦遗憾接近 \SSRdag。我们不把它作为阶段 1 替代方案，因为 $d<D$ 的候选不会被截断，而且截止值本身引入了额外设计选择。
+完整支持的辅助比较见表~\ref{tab:sota_flat_zh}。
+
+\textbf{谱截断。}完整 118 候选辅助支持上，top-256 RankMe 遗憾为 $0.134$，介于完整谱 RankMe 的 $0.144$ 和 \SSRdag 的 $0.098$ 之间。相应的截断分数$\to$RankMe 两阶段遗憾为 $0.136$，\SSRdag$\to$RankMe 为 $0.102$。这些是特定设置中的观察，不证明截断本质上不适用。
 
 \section{消融与负结果}
-\textbf{撤回的探索规则。}我们不保留早期用 $d_{\max}/d_{\min}$ 阈值在 \SSRdag 与 DiSCO 间选择的规则：后者依赖标签，而且表面上的交叉点来自已被替代的代理实现。我们也删除加性 SCR 变体的跨池调参主张，因为无超参数主结果并不需要这些主张。
+\textbf{信息预算。}DiSCO 使用目标标签，\SSRdag 不使用。宽度范围本身不是在二者间选择的已验证标准。默认关系分数将权重固定为一，不进行跨池调参。
 
-\textbf{校正的代数形式。}MV 池上的 $-\alpha\log\SAk$ 族中，$\alpha\in[0.5,2]$ 的遗憾均较相近，为 $+0.093$ 至 $+0.162$；反向控制 $-\log(1-\SAk)$ 的遗憾为 $+0.366$，说明减去对齐度的方向很重要。为简洁起见采用 $\alpha=1$。
+\textbf{校正的代数形式。}MV 上，$-\alpha\log\SAk$ 在测试点 $\alpha=0.5,1,2$ 的遗憾分别为 $0.098$、$0.098$、$0.093$。三个离散点不证明整个连续区间稳定。完整 $118$ 候选辅助支持上，加法变体 $g(s)=1-s$、$\beta=1$ 的遗憾为 $0.117$。其实现分数 $(\log\reff-s)/\log C$ 与家族定义相差任务内常数 $1/\log C$，因此排序及遗憾一致，但原始分数不同。反向控制 $-\log(1-\SAk)$ 为 $0.388$。保持 $\alpha=1$ 而不利用目标表现调参，这些对照仅展示关系项形式的敏感性。
 
-\textbf{MV 池 Flat-RankMe 逐任务结果。}Flat-RankMe 在每个任务上都选择 \texttt{vgg16}，其 $d=4096$ 倒数第二层不随目标变化地支配 $\reff$；Flat-\SSRdag 则选择适合任务的 ConvNeXt、ResNet 或 EfficientNet 变体。
+\textbf{逐任务选择。}选择和 oracle 见表~\ref{tab:main_pertask_zh}。RankMe 在四任务选择 ResNeXt，在 SVHN 选择 Inception。\SSRdag 在四个配对任务比较中更优，但在 SVHN 更差。
 
-\begin{center}\small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrlll}
-\toprule
-任务 & Oracle & 随机 & Flat-RM & Flat-\SSRdag & RM 选择 & \SSRdag 选择 & Oracle 架构 \\
-\midrule
-CIFAR-10 & $0.970$ & $0.785$ & $0.550$ & $0.870$ & vgg16 & resnet50 & convnext\_base \\
-CIFAR-100 & $0.825$ & $0.484$ & $0.180$ & $0.670$ & vgg16 & resnet152 & convnext\_base \\
-DTD & $0.740$ & $0.564$ & $0.445$ & $0.720$ & vgg16 & convnext\_base & convnext\_base \\
-EuroSAT & $0.955$ & $0.881$ & $0.765$ & $0.905$ & vgg16 & efficientnet\_b3 & densenet201 \\
-SVHN & $0.615$ & $0.430$ & $0.570$ & $0.450$ & vgg16 & efficientnet\_b3 & densenet169 \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-\textbf{负结果 1：UID 损害同族变体排序。}在分母中加入 TwoNN 内在维度（$\mathrm{SCR}_{\mathrm{uid}}=\log\reff/(\UID\cdot\log C)$）不能改善变体排序。MV 多变体支持上的池级平均 $\Delta\rho(\mathrm{SCR}_{\mathrm{uid}}-\SSRdag)=-0.538$（$95\%$ CI $[-0.782,-0.270]$），逐架构族结果也全部为负。
 
-\textbf{负结果 2：\SSRdag 在仅 ViT 子池中退化。}当候选限制为 ViT 族架构（ViT、DeiT 和 Swin 变体，共 $33$ 个模型 $\times10$ 个任务）时，不同预训练方案的 $\SAk$ 轮廓相似但与 LP 准确率无关；\SSRdag 比 RankMe 低 $\Delta\rho=-0.26$（$95\%$ CI $[-0.43,-0.07]$，$p=0.010$，任务配对 bootstrap）。在同时含 ViT 与 CNN 的混合池中，\SSRdag 能识别更好的架构。
+\textbf{UID 归一化分数。}定义 $R_{\mathrm{UID}}=\log\reff/(\UID\log C)$，使用保留的 TwoNN 内在维度估计~\citep{facco2017estimating}；这不是原始 UID 分数。完整 118 候选辅助支持上，平坦 $R_{\mathrm{UID}}$ 遗憾为 $0.364$，\SSRdag 为 $0.098$。但 $R_{\mathrm{UID}}\to$RankMe 在该支持及主实验 119 候选上均为 $0.058$：虽然一个非规范代表的辅助单元缺失，全部 $35$ 个阶段 1 规范代表分数均可用。因此，平坦排名较差不一定意味着第一阶段筛选较差。这项五任务后验比较优于所评估的 \SSRdag 流程，但不构成通用 UID 选择规则。
 
-\textbf{同族排序与 $\log C$ 缩放器。}在任一单独架构族内，\SSRdag 相比 RankMe 不提供额外排序信号（MV 六个架构族上的 $\Delta\rho\in[-0.48,-0.07]$）。$\log C$ 任务缩放器方便但并非原则性选择：oracle 缩放器 $1/(1-\overline{\mathrm{LP}})$ 的 Spearman $\rho=+0.82$，\SSRdag 为 $+0.49$，随机逐任务缩放器为 $+0.39$。我们保留 $\log C$ 用于跨任务聚合，同时指出其他逐任务缩放器可能同样可行。
+\textbf{窄池适用范围。}现有证据不能仅根据 CNN/Transformer 归属确定普遍更优的分数。关于同质子池的主张需要匹配的候选与任务支持。
+
+\textbf{同族排序与任务缩放。}$35\times5$ 个架构--任务组中，两组的 LP 为常数；剩余 $173$ 组的平均组内 Spearman 相关为 RankMe $0.527$、\SSRdag $0.519$。这只是描述性结果，不是显著优越性主张。固定任务内，包括 $1/\log C(T)$ 在内的公共正比例缩放不改变候选排序。我们聚合逐任务遗憾而非原始分数。
 
 \section{实验环境与计算资源核算}
 \label{app:environment}
 
-\textbf{加速特征提取。}为修正后的 DiSCO 评估补跑 MV 和 EX 特征提取时，使用华为昇腾 NPU，通过 PyTorch 的 \texttt{torch\_npu} 扩展及 Ascend 工具链运行。留存的启动脚本把候选模型划分为四个独立分片，分配到编号 0--3 的四个 NPU 设备，每个设备运行一个提取进程，配置批大小为 64。模型在推理模式下运行，特征以 float32 数组缓存。这一说明对应有记录的补跑配置，并不意味着全部历史特征缓存都在同一硬件上生成。仓库还保留了建议至少 16\,GB 加速器内存的 CUDA 复现指南。
+\textbf{NPU 特征提取。}MV/EX DiSCO 特征提取启动器使用 PyTorch 与 \texttt{torch\_npu}/Ascend，四个 NPU 设备（0--3），每设备一个模型分片，批大小 64，推理模式与 float32 缓存。这并不能确定每份历史缓存的硬件来源。
 
-\textbf{缓存特征分析。}修正后的 DiSCO 评分、VTAB 线性探测补齐、参考子空间审计及 bootstrap 分析使用缓存特征，通过 NumPy、SciPy 和 scikit-learn 等基于 CPU 的 Python 例程完成。留存的 MV/EX DiSCO 评分脚本配置了 16 个工作进程。特征缓存将编码器推理与后续评分分离，使重复评估指标时无需重新提取特征。
+\textbf{缓存特征分析。}DiSCO、线性探针、参考比较与 bootstrap 使用 CPU 上的 NumPy/SciPy/scikit-learn 程序。MV/EX DiSCO 启动器使用 $16$ 个工作进程；缓存避免为不同分数重复编码器推理。
 
-\textbf{报告范围。}第 6 节的成本比较统计候选模型--任务的前向评估次数，并非实测运行时间加速比、节能比例或 NPU 与 GPU 的硬件对比。参考特征提取及缓存另有初始化成本。历史运行未一致保留加速器具体型号与内存、主机 CPU 与内存、软件版本快照，以及完整的逐次运行时间。因此，本文报告有记录的配置，不声称提供完整的项目级计算预算，并在计算资源 checklist 项中保留“否”的回答。
+\textbf{VGG 提取环境。}两个 VGG 模型使用 NVIDIA L20（约 46\,GB）、批大小 64、float32 缓存、PyTorch 2.5.1+cu124、torchvision 0.20.1、Python 3.11.11、NumPy 1.26.4、SciPy 1.15.3 和 scikit-learn 1.6.1。主机暴露 16 个 CPU 线程、约 123\,GiB 内存，评分限制为八线程。LP 使用 seed=0 分层 800/200 划分、仅在训练集拟合 StandardScaler、$C=1$、lbfgs、max\_iter=1000。隔离的 sklearn 1.2.2 对照改变部分 VGG LP，但不改变主实验遗憾。缓存和脚本哈希、实际生成时间均已记录。
+
+\textbf{报告范围。}第 6 节统计候选--任务评估次数，而非运行时间、能耗或硬件加速比；参考初始化另计。历史硬件、软件和运行时间记录不完整，无法完整报告计算资源，检查清单中该项仍回答“否”。
 
 \clearpage
+\renewcommand{\thepage}{C\arabic{page}}
+\setcounter{page}{1}
 \input{checklist_zh}
 
 \end{document}

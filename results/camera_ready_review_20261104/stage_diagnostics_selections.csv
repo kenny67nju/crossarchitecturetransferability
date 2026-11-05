@@ -1,0 +1,11 @@
+task,method,stage1,stage2,arch,variant,lp_acc,oracle,regret,n_candidates,n_stage1,n_stage2,evaluation_count,evaluation_count_reusing_canonical
+cifar10,two_stage_ssr_dagger_then_ssr_dagger,ssr_dagger,ssr_dagger,resnext50,resnext50_32x4d.a1h_in1k,0.855,0.97,0.11499999999999999,119,35,3,38,37
+cifar100,two_stage_ssr_dagger_then_ssr_dagger,ssr_dagger,ssr_dagger,resnet152,resnet152,0.67,0.825,0.15499999999999992,119,35,4,39,38
+dtd,two_stage_ssr_dagger_then_ssr_dagger,ssr_dagger,ssr_dagger,convnext_base,convnext_base,0.72,0.74,0.020000000000000018,119,35,2,37,36
+eurosat,two_stage_ssr_dagger_then_ssr_dagger,ssr_dagger,ssr_dagger,efficientnet_b3,efficientnet_b3.ra2_in1k,0.905,0.955,0.04999999999999993,119,35,3,38,37
+svhn,two_stage_ssr_dagger_then_ssr_dagger,ssr_dagger,ssr_dagger,efficientnet_b3,efficientnet_b3,0.45,0.615,0.16499999999999998,119,35,3,38,37
+cifar10,two_stage_rankme_uid_then_rankme,rankme_uid,rankme,vit_b32,vit_base_patch32_224.augreg_in1k,0.845,0.97,0.125,119,35,2,37,36
+cifar100,two_stage_rankme_uid_then_rankme,rankme_uid,rankme,convnext_base,convnext_base,0.825,0.825,0.0,119,35,2,37,36
+dtd,two_stage_rankme_uid_then_rankme,rankme_uid,rankme,convnext_base,convnext_base.fb_in22k_ft_in1k,0.74,0.74,0.0,119,35,2,37,36
+eurosat,two_stage_rankme_uid_then_rankme,rankme_uid,rankme,vit_b32,vit_base_patch32_224.augreg_in1k,0.93,0.955,0.02499999999999991,119,35,2,37,36
+svhn,two_stage_rankme_uid_then_rankme,rankme_uid,rankme,swin_small,swin_small_patch4_window7_224,0.475,0.615,0.14,119,35,4,39,38

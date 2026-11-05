@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Complete auxiliary support: 118 candidates after excluding one variant with a missing score; 115 after also removing three VGG variants. Entries are five-task mean regret.}
+\label{tab:sota_flat}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Method & With VGG & Without VGG & $\Delta$ & Type \\
+\midrule
+Random & $0.192$ & $0.191$ & $-0.001$ & reference \\
+RankMe & $0.144$ & $0.144$ & $0.000$ & zero-label \\
+RankMe $(-\log d)$ & $0.200$ & $0.200$ & $0.000$ & zero-label \\
+LogME & $0.219$ & $0.550$ & $0.331$ & labels \\
+H-score & $0.470$ & $0.470$ & $0.000$ & labels \\
+NCTI & $0.155$ & $0.155$ & $0.000$ & labels \\
+\SSRdag & $0.098$ & $0.098$ & $0.000$ & zero-label \\
+LEEP clustering proxy & $0.038$ & $0.038$ & $0.000$ & labels \\
+\bottomrule
+\end{tabular}}
+\end{table}
