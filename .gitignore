@@ -8,6 +8,8 @@ __pycache__/
 dist/
 build/
 .env
+.venv/
+.pytest_cache/
 
 # LaTeX build artifacts
 *.aux
@@ -28,6 +30,7 @@ build/
 
 # Local working files and pre-release backups (never upload experiment intermediates).
 /tmp/
+/archive/local/
 /archive/camera_ready_before_*.tar.gz
 /archive/references_before_history_completion_*.bib
 /results/vgg16_repair_20261104/

@@ -6,6 +6,23 @@ Qin Liu, Chen Zhong, and Fengshan Zhao. State Key Laboratory of Novel Software T
 
 This repository provides scoring and analysis code, final result tables, provenance records, verification scripts, and bilingual paper sources. It supports verification from the retained numerical results; it is **not a complete public raw-feature or end-to-end historical reproduction package**.
 
+## Camera-ready papers and checkout
+
+- [English camera-ready PDF](paper/Paper06_camera_ready_en.pdf): 10 content pages, 26 pages total.
+- [Chinese translation PDF](paper/Paper06_camera_ready_zh.pdf): 9 content pages, 19 pages total.
+
+Both files include the disclosures, references, appendices, and checklist. Use the English PDF for the conference submission. `main` is the public entry point; `codex/camera-ready` is the camera-ready maintenance branch. To explicitly check out that branch:
+
+```sh
+git clone --branch codex/camera-ready https://github.com/kenny67nju/crossarchitecturetransferability.git
+cd crossarchitecturetransferability
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install numpy pandas scipy matplotlib pypdf
+```
+
+The commands below assume this environment is active. No GPU, PyTorch, or raw feature caches are needed for the retained-result analysis. `requirements.txt` covers the broader historical extraction workflow and does not replace the PDF-specific prerequisites below. See [the file guide](docs/REPOSITORY_GUIDE.md) for current versus archived material.
+
 ## Method and scope
 
 RankMe uses singular-value probabilities `p_i = sigma_i / sum_j sigma_j`, not squared singular values. Subspace-Corrected Ranking (SCR) is our relational score family; SSR‡ is its default member:
@@ -53,14 +70,22 @@ The statistical reference configuration is 100,000 bootstrap resamples, seed 42;
 
 ## Build the complete papers
 
-Install XeLaTeX, BibTeX, Poppler, and Python `pypdf`; make their executables available on PATH. The Chinese source also requires its configured Chinese fonts.
+Install XeLaTeX, BibTeX, and Poppler (`pdffonts`); make their executables available on PATH. Python `pypdf` is included in the lightweight setup above. On macOS these tools can be provided by MacTeX/BasicTeX and Homebrew Poppler; on Linux, by the corresponding TeX Live XeTeX/Chinese-language and Poppler packages.
+
+The Chinese source currently selects `Arial Unicode.ttf` from `/Library/Fonts/`. For Chinese builds on other machines, install a suitably licensed font there or edit the three `setCJK...font` declarations in `paper/main_v18_zh.tex` to use an installed CJK font. A substitute font may change line breaks and page counts; check the regenerated PDF. The English build does not need this CJK font:
+
+```sh
+python3 code/build_camera_ready_pdfs.py --language en
+```
+
+With the Chinese font configured, build and audit both languages:
 
 ```sh
 python3 code/build_camera_ready_pdfs.py --language both
 python3 code/audit_camera_ready_pdfs.py
 ```
 
-The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The `combined` PDFs are byte-identical compatibility aliases. The supplement PDFs are optional appendix extracts, not required companion files. `main_v18.pdf` is a historical filename and is not rebuilt by this pipeline.
+The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The `combined` PDFs are byte-identical compatibility aliases. The supplement PDFs are optional appendix extracts, not required companion files. The old `main_v18.pdf` is archived under `archive/paper/history/` and is not rebuilt by this pipeline. The source names `main_v18.tex` and `main_v18_zh.tex` remain the current build inputs for compatibility.
 
 ## Release map and provenance
 
@@ -69,12 +94,14 @@ The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper0
 | `paper/main_v18.tex`, `paper/main_v18_zh.tex` | Current bilingual camera-ready sources |
 | `paper/references.bib`, `docs/DATASET_SOURCES.md` | Dataset publications/releases and task-name mapping |
 | `results/p0_vgg_pair_20261104/` | Selected final P0 score/support tables, helper/source snapshots, and public-release hash manifest; not the complete experimental bundle |
-| `results/camera_ready_p0_20261104/` | Final manuscript derivatives, numeric/PDF audits, installation hashes |
+| `results/camera_ready_p0_20261104/` | Final manuscript derivatives, numeric/PDF audits, and input hashes in `paper_values.json` |
 | `results/camera_ready_review_20261104/` | Stage-specific and within-family diagnostics |
 | `results/camera_ready/` | Retained VTAB/EX inputs and earlier audits; consult final input hashes rather than assuming every file is current |
 | `code/metrics/` | Effective-rank, subspace-alignment, SSR, and DiSCO implementations |
 | `docs/CAMERA_READY_FINAL_ACCEPTANCE_20261104.md` | Acceptance checks and remaining limitations |
 | `archive/` | Earlier sources and results preserved for provenance |
+
+`archive/paper/rebuttals/` contains historical author responses; `archive/paper/history/` contains the old submission PDF and an unused historical figure. Their claims and numbers are historical, not the current results. Local-only downloads, build remnants, and backups are under ignored `archive/local/`; experimental intermediate directories are also ignored. No raw images, weights, or feature caches are included in this release.
 
 Historical scripts such as `reproduce_all.py` and old top-level result CSVs are not the canonical camera-ready reproduction entry point. Use the final input hashes and commands above; do not mix historical scores with final LP/support tables.
 
