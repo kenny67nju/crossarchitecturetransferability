@@ -1,27 +1,6 @@
-"""
-Paper06 — Grassmann 统一框架
-子空间对齐度 SA_k（Subspace Alignment）
-
-核心公式：
-    SA_k(S_A, S_B) = (1/k) Σᵢ cos²(θᵢ)
-
-    θ₁,...,θₖ 为 S_A 和 S_B 的主角（principal angles）
-    SA_k = 1 → 完全对齐（方向冗余）
-    SA_k = 0 → 完全正交（理想互补）
-
-与 Paper05/sa_metric.py 的关系：
-    本模块是独立的纯 numpy 计算核，去除了 DataLoader 依赖，
-    适用于直接传入特征矩阵的调用场景。
-    SAMetric 类（含特征提取）请参见 sa_metric_full.py。
-"""
-
+"""Final camera-ready scoring kernels; no implicit centering."""
 import numpy as np
 from typing import Dict, Tuple
-
-
-# ─────────────────────────────────────────────────────────────
-# 核心计算
-# ─────────────────────────────────────────────────────────────
 
 def principal_angles_from_matrices(
     H_A: np.ndarray,
@@ -66,7 +45,6 @@ def principal_angles_from_matrices(
 
     return cos_angles, angles_rad
 
-
 def compute_subspace_alignment(
     H_A: np.ndarray,
     H_B: np.ndarray,
@@ -76,7 +54,7 @@ def compute_subspace_alignment(
     计算 SA_k：两个特征矩阵的 top-k 子空间对齐度。
 
     Args:
-        H_A: (N_A, d) 特征矩阵（已建议 per-sample L2 归一化）
+        H_A: (N_A, d) 输入特征矩阵；本函数不额外中心化或归一化
         H_B: (N_B, d) 特征矩阵
         k:   主子空间维度
 
@@ -100,74 +78,3 @@ def compute_subspace_alignment(
         "cos_angles":     cos_angles.tolist(),
         "k_used":         k_eff,
     }
-
-
-def compute_multiscale_sa(
-    H_A: np.ndarray,
-    H_B: np.ndarray,
-    k_values: Tuple[int, ...] = (10, 20, 50),
-) -> Dict:
-    """
-    多尺度 SA_k，对多个 k 值分别计算并汇总。
-
-    Returns:
-        dict: {
-            "sa_k10": float, "sa_k20": float, "sa_k50": float,
-            "mean_sa_multiscale": float
-        }
-    """
-    results = {}
-    sa_list = []
-    for k in k_values:
-        r = compute_subspace_alignment(H_A, H_B, k=k)
-        results[f"sa_k{k}"] = r["sa_k"]
-        sa_list.append(r["sa_k"])
-    results["mean_sa_multiscale"] = float(np.mean(sa_list))
-    return results
-
-
-def top_k_basis(H: np.ndarray, k: int) -> np.ndarray:
-    """
-    提取特征矩阵的 top-k 右奇异向量（Grassmann 流形上的点表示）。
-
-    Returns:
-        V_k: (d, k) 正交矩阵，列向量为 top-k 主方向
-    """
-    k_eff = max(1, min(k, min(H.shape)))
-    _, _, Vt = np.linalg.svd(H, full_matrices=False)
-    return Vt[:k_eff, :].T   # (d, k_eff)
-
-
-# ─────────────────────────────────────────────────────────────
-# 单元测试
-# ─────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    rng = np.random.default_rng(42)
-    N, d = 200, 512
-
-    def _norm(H):
-        return H / (np.linalg.norm(H, axis=1, keepdims=True) + 1e-8)
-
-    # 测试 1：相同矩阵 → SA_k ≈ 1.0
-    H = _norm(rng.standard_normal((N, d)))
-    r = compute_subspace_alignment(H, H.copy(), k=20)
-    assert r["sa_k"] > 0.99, f"同矩阵 SA_k={r['sa_k']:.4f} 应≈1"
-    print(f"[测试1] 同矩阵  SA_20={r['sa_k']:.4f}  ✓")
-
-    # 测试 2：独立随机矩阵 → SA_k ≈ k/d（接近 0）
-    H2 = _norm(rng.standard_normal((N, d)))
-    r2 = compute_subspace_alignment(H, H2, k=20)
-    print(f"[测试2] 随机矩阵 SA_20={r2['sa_k']:.4f}  (期望接近 0)")
-
-    # 测试 3：轻度扰动 → SA_k 介于两者之间
-    H3 = _norm(H + 0.1 * rng.standard_normal((N, d)))
-    r3 = compute_subspace_alignment(H, H3, k=20)
-    assert r3["sa_k"] > r2["sa_k"], "扰动版 SA_k 应高于随机"
-    print(f"[测试3] 扰动矩阵 SA_20={r3['sa_k']:.4f}  ✓ > 随机")
-
-    # 测试 4：多尺度
-    ms = compute_multiscale_sa(H, H3)
-    print(f"[测试4] 多尺度: " + "  ".join(f"k{k}={ms[f'sa_k{k}']:.4f}" for k in (10, 20, 50)))
-
-    print("\n所有测试通过 ✓")

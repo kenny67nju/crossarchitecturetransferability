@@ -1,35 +1,13 @@
-# Camera-ready result source of truth
+# Retained final VTAB / EX inputs
 
-Generate all files in this directory with:
+These are inputs to the final camera-ready analysis, not earlier headline aggregates.
 
-```bash
-python code/summarize_official_disco.py
-python code/build_camera_ready_results.py
-```
+- vtab_24arch_8tasks_lp_complete.csv: candidate dimensions and LP values; selection comparisons exclude STL-10.
+- vtab_reference_24arch_uncentered/: final uncentered RankMe / subspace-alignment cells and reference-ablation summaries.
+- vtab_fspe_24arch_uncentered.csv: the 168-pair geometric diagnostic used by Figure 3 (24 architectures on seven non-reference targets).
+- extended_full_sota_score_complete.csv: EX scores and LP values.
 
-`headline_metrics.json` is the canonical source for numbers quoted in the
-camera-ready paper. The 22-unit label-free comparison excludes STL-10 from all
-methods. Official classification DiSCO is reported separately because it uses
-target ground-truth labels.
+The authoritative headline statistics are in ../camera_ready_p0_20261104/paper_values.json.
+Final input hashes there identify the precise files used. Legacy score columns, where present in retained source tables, are not alternative current headline definitions. Use the named fields in the final analysis scripts.
 
-The final VTAB audit first completes 48 previously missing LP cells from cached
-features, then restricts evaluation to the 24 architectures with features on
-all eight tasks. The uncentered reference audit was independently rerun on the
-server in
-`/data/Paper06/camera_ready_20260904/results/vtab_reference_24arch_uncentered`.
-Its 192 cached SVDs and 168 scored non-STL-10 cells are checked in here.
-
-The earlier 18-architecture support produced the provisional VTAB regrets
-0.053 (STL-10 reference) and 0.051 (four-reference LOO). Those values are
-superseded by 0.061 (STL-10) and 0.055 (four-reference LOO) on the complete
-24-architecture support after correcting the historical `n_class=0` placeholders.
-
-The official PCA-128 DiSCO summaries are regenerated from the score CSVs and
-the completed linear-probe tables.  They must not be mixed with the legacy
-`disco` columns in the top-level pool tables, which came from a different,
-non-official implementation.
-
-`ssl_disco_history_summary.csv` records the historical SSL variants. The
-values 0.077/0.071 in an early meta-response draft match none of the retained
-score files and are treated as a transcription error; official PCA-128 values
-are 0.045/0.042 (G=6/G=8).
+No raw feature caches or complete historical extraction package are included.

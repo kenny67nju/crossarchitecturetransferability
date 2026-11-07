@@ -1,7 +1,0 @@
-Dear Area Chair,
-
-Thank you for guiding the discussion. We would like to note that Reviewer VFAK's latest public comment explicitly states that their assessment is Borderline Accept (4), while the numerical rating currently visible in the system still appears to be 3. This may simply be an interface or timing issue, but we mention it so that the stated assessment and the recorded score can be considered consistently.
-
-After the audit and discussion, we have withdrawn or narrowed the claims that were not adequately supported and have committed to a comprehensive correction. Importantly, the paper's central contribution remains intact: it identifies a practically consequential width confound in RankMe when heterogeneous architecture families are compared, and introduces SSR as a lightweight label-free relational correction for this specific cross-family setting. On the corrected common support, SSR's improvement over the same-budget RankMe baseline remains statistically supported. We do not claim that SSR is universally preferable within an architecture family or superior to label-dependent methods.
-
-We respectfully ask that the final assessment consider Reviewer VFAK's stated Borderline Accept (4) judgment and the value of this surviving, more precisely scoped contribution. Thank you again for your time and careful consideration.

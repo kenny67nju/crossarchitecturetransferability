@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+from final_selection import multi
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,7 +67,7 @@ def regret(
     key: str,
     excluded_tasks: set[str] | None = None,
 ) -> tuple[float, int, int]:
-    merged = ground_truth.merge(scores, on=[key, "task"], how="inner")
+    merged = ground_truth.merge(scores, on=[key, "task"], how="inner", validate="one_to_one")
     merged = merged.dropna(subset=["lp_acc", "official_disco"])
     if excluded_tasks:
         merged = merged[~merged["task"].isin(excluded_tasks)]
@@ -81,7 +82,8 @@ def main() -> None:
     pools = [
         (
             "mv",
-            pd.read_csv(RESULTS / "camera_ready" / "pool_b_final_score_complete.csv"),
+            multi(pd.read_csv(RESULTS / "p0_vgg_pair_20261104" / "p0_aggregate_v2" /
+                              "single_preprocess_4096_pool132_scores.csv")),
             "variant",
             set(),
         ),
@@ -109,14 +111,16 @@ def main() -> None:
     rows = []
     for pool, truth, key, excluded in pools:
         for groups in (6, 8):
-            scores = (
-                load_ssl_scores(groups)
-                if pool == "ssl"
-                else load_scores(pool, groups, key)
-            )
+            if pool == "mv":
+                scores = truth[[key, "task", f"disco_official_g{groups}"]].rename(
+                    columns={f"disco_official_g{groups}": "official_disco"})
+            else:
+                scores = load_ssl_scores(groups) if pool == "ssl" else load_scores(pool, groups, key)
             value, tasks, cells = regret(
                 truth, scores, key, excluded
             )
+            expected = {"mv": (5, 595), "vtab": (7, 168), "ex": (10, 510), "ssl": (29, 209)}
+            assert (tasks, cells) == expected[pool], (pool, groups, tasks, cells)
             rows.append(
                 {
                     "pool": pool.upper(),
@@ -130,6 +134,13 @@ def main() -> None:
     output = pd.DataFrame(rows)
     output.to_csv(DISCO / "official_disco_regret_summary.csv", index=False)
     print(output.to_string(index=False))
+    # Appendix diagnostic, separate from the PCA-128 baseline.
+    ssl_truth = pools[-1][1]
+    for groups in (6, 8):
+        scores = load_ssl_scores(groups, RESULTS / f"ssl_official_g{groups}.csv")
+        value, tasks, cells = regret(ssl_truth, scores, "model")
+        assert (tasks, cells) == (29, 209)
+        print(f"SSL full-feature appendix diagnostic G={groups}: {value:.6f} ({tasks} tasks, {cells} cells)")
 
 
 if __name__ == "__main__":

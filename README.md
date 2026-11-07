@@ -18,10 +18,10 @@ git clone --branch codex/camera-ready https://github.com/kenny67nju/crossarchite
 cd crossarchitecturetransferability
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install numpy pandas scipy matplotlib pypdf
+python -m pip install -r requirements.txt
 ```
 
-The commands below assume this environment is active. No GPU, PyTorch, or raw feature caches are needed for the retained-result analysis. `requirements.txt` covers the broader historical extraction workflow and does not replace the PDF-specific prerequisites below. See [the file guide](docs/REPOSITORY_GUIDE.md) for current versus archived material.
+The commands below assume this environment is active. No GPU, PyTorch, or raw feature caches are needed for the retained-result analysis. `requirements.txt` covers the final public analysis and scoring package; PDF system dependencies are listed below. See [the file guide](docs/REPOSITORY_GUIDE.md) and [verification guide](docs/RELEASE_VERIFICATION.md).
 
 ## Method and scope
 
@@ -60,11 +60,14 @@ Run from the repository root in a Python environment with NumPy, pandas, SciPy, 
 ```sh
 python3 code/build_p0_camera_assets.py
 python3 code/figure_sigma_b_flow.py
+python3 code/summarize_official_disco.py
 python3 code/audit_p0_manuscript.py
 python3 code/audit_dataset_citations.py
+python3 code/audit_float_body_references.py
+python3 -m unittest discover -s tests -v
 ```
 
-These commands regenerate manuscript tables/figures and verify retained numerical inputs. They do not download datasets, extract all features, or rerun all linear probes. Only final analysis inputs and the helper/source snapshots needed by these commands are published from the P0 bundle; their hashes are listed in `results/p0_vgg_pair_20261104/PUBLIC_RELEASE_MANIFEST.json`. Intermediate runs, caches, logs, and backup archives remain local. Generated manuscript derivatives go to `results/camera_ready_p0_20261104/` and `paper/`.
+These commands regenerate manuscript tables/figures and verify retained numerical inputs. They do not download datasets, extract all features, or rerun all linear probes. The P0 manifest hashes seven numerical inputs and two original feature-extraction source snapshots. These two snapshots document preprocessing provenance; they are not current extraction entry points. Final selection helpers are in `code/final_selection.py`, without the historical repair-run orchestration. Intermediate runs, caches, logs, backup archives and generated acceptance reports remain local. Generated manuscript derivatives go to `results/camera_ready_p0_20261104/` and `paper/`.
 
 The statistical reference configuration is 100,000 bootstrap resamples, seed 42; target-name resampling retains every corresponding pool unit and uses a unit-weighted mean. Wilcoxon uses paired differences rounded to 10 decimals, `zero_method='wilcox'`, `method='approx'`, two-sided, no continuity correction. The recorded reference SciPy version is 1.15.3; the audit was also run with SciPy 1.17.1, NumPy 2.4.4, and pandas 3.0.2.
 
@@ -87,7 +90,7 @@ python3 code/build_camera_ready_pdfs.py --language both
 python3 code/audit_camera_ready_pdfs.py
 ```
 
-The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The build also generates `combined` compatibility copies and optional `supplement` appendix extracts; these four PDFs are local-only, ignored by Git, and not distributed in the current repository. Run the build before the PDF audit to generate these local files. No separate supplement is needed to read the complete papers. The old `main_v18.pdf` is archived under `archive/paper/history/` and is not rebuilt by this pipeline. The source names `main_v18.tex` and `main_v18_zh.tex` remain the current build inputs for compatibility.
+The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The build also generates `combined` compatibility copies and optional `supplement` appendix extracts; these four PDFs are local-only, ignored by Git, and not distributed in the current repository. Run the build before the PDF audit to generate these local files. No separate supplement is needed to read the complete papers. The source names `main_v18.tex` and `main_v18_zh.tex` remain the current build inputs for compatibility.
 
 ## Release map and provenance
 
@@ -95,17 +98,15 @@ The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper0
 |---|---|
 | `paper/main_v18.tex`, `paper/main_v18_zh.tex` | Current bilingual camera-ready sources |
 | `paper/references.bib`, `docs/DATASET_SOURCES.md` | Dataset publications/releases and task-name mapping |
-| `results/p0_vgg_pair_20261104/` | Selected final P0 score/support tables, helper/source snapshots, and public-release hash manifest; not the complete experimental bundle |
-| `results/camera_ready_p0_20261104/` | Final manuscript derivatives, numeric/PDF audits, and input hashes in `paper_values.json` |
+| `results/p0_vgg_pair_20261104/` | Final P0 score/support tables, two source snapshots, and public-release hash manifest; not the complete experimental bundle |
+| `results/camera_ready_p0_20261104/` | Final manuscript derivatives and input hashes in `paper_values.json`; run reports are generated locally |
 | `results/camera_ready_review_20261104/` | Stage-specific and within-family diagnostics |
-| `results/camera_ready/` | Retained VTAB/EX inputs and earlier audits; consult final input hashes rather than assuming every file is current |
+| `results/camera_ready/` | Final VTAB/EX inputs and reference-ablation results |
 | `code/metrics/` | Effective-rank, subspace-alignment, SSR, and DiSCO implementations |
-| `docs/CAMERA_READY_FINAL_ACCEPTANCE_20261104.md` | Acceptance checks and remaining limitations |
-| `archive/` | Earlier sources and results preserved for provenance |
+| `docs/RELEASE_VERIFICATION.md` | Reproduction checks and their limits |
+| `RELEASE_FILES.txt` | Explicit public-release file list |
 
-`archive/paper/rebuttals/` contains historical author responses; `archive/paper/history/` contains the old submission PDF and an unused historical figure. Their claims and numbers are historical, not the current results. Local-only downloads, build remnants, and backups are under ignored `archive/local/`; experimental intermediate directories are also ignored. No raw images, weights, or feature caches are included in this release.
-
-Historical scripts such as `reproduce_all.py` and old top-level result CSVs are not the canonical camera-ready reproduction entry point. Use the final input hashes and commands above; do not mix historical scores with final LP/support tables.
+The entire `archive/` directory, old author responses, working reports, superseded score tables, repair-run scripts and third-party paper downloads are excluded from the current public snapshot. Local originals are preserved. `.gitignore` uses an explicit release allowlist to prevent accidental re-uploads; update it together with `RELEASE_FILES.txt` when adding a public file. This cleanup does not rewrite Git history: previously committed material remains accessible in older commits. No raw images, weights, or feature caches are included.
 
 ## Data access, attribution, and limitations
 

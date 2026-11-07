@@ -1,6 +1,6 @@
 """Generate camera-ready tables/figures from immutable P0 results (no raw edits)."""
 from pathlib import Path
-import json,hashlib,sys
+import json,hashlib
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
@@ -15,8 +15,7 @@ AGG=P0/'p0_aggregate_v2'
 OUT=ROOT/'results/camera_ready_p0_20261104'
 TEX=ROOT/'paper/p0_tables'
 ARM='single_preprocess_4096'
-sys.path.insert(0,str(P0/'code'))
-import recompute_p0_all as calc
+import final_selection as calc
 matplotlib.rcParams.update({'pdf.fonttype':42,'ps.fonttype':42,'font.size':9})
 
 def read(name): return pd.read_csv(AGG/f'{ARM}_{name}.csv')
@@ -36,7 +35,7 @@ def savefig(fig,name):
     fig.savefig(ROOT/'paper'/f'{name}.png',dpi=180,bbox_inches='tight');plt.close(fig)
 def main():
     OUT.mkdir(exist_ok=True);TEX.mkdir(exist_ok=True)
-    frame=read('pool132_scores'); multi=calc.prior.multi(frame)
+    frame=read('pool132_scores'); multi=calc.multi(frame)
     common=read('common22');summary=read('multi119_summary').set_index('method');sel=read('multi119_selection')
     extra=followup_diagnostics()
     summary=pd.concat([summary.drop(index=extra.index,errors='ignore'),extra])

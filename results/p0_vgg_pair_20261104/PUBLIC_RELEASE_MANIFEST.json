@@ -1,14 +1,6 @@
 {
-  "scope": "Final manuscript analysis inputs and helper/source snapshots only. Intermediate experiment outputs are not distributed.",
+  "scope": "Final numerical inputs and two immutable feature-extraction provenance snapshots. Historical repair scripts and intermediate runs are local-only.",
   "files": {
-    "code/recompute_p0_all.py": {
-      "sha256": "a7e7564997641f5fc3a871e86c196d60ab95903f2f5bad39f7c6673f91827d71",
-      "size_bytes": 15187
-    },
-    "code/recompute_vgg_results_v2.py": {
-      "sha256": "e5ff88aa448cd2da3d1685c4e8de87e91a77f427cdd81be2e3a3c557bb257df0",
-      "size_bytes": 10535
-    },
     "inputs/historical_extract_phase_e_torchvision.py": {
       "sha256": "d527f29879d22ba100759defce753e86f56cd06a93a4a7ba9db0c6aed20eb6cc",
       "size_bytes": 6836
