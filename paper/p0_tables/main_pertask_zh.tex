@@ -3,7 +3,7 @@
 \caption{MV 119 候选逐任务 LP。随机列为精确期望。\SSRdag 在四个任务优于 RankMe，在 SVHN 更差。EuroSAT 另有 ViT-large 并列 oracle（LP 0.955）。}
 \label{tab:main_pertask_zh}
 \setlength{\tabcolsep}{4pt}
-\resizebox{\linewidth}{!}{%
+\begin{adjustbox}{max width=\linewidth}
 \begin{tabular}{lrrrrrrr}
 \toprule
 任务 & Oracle & 随机 & RM & \SSRdag & RM 选择 & \SSRdag 选择 & Oracle 组 \\
@@ -14,5 +14,6 @@ DTD & $0.740$ & $0.564$ & $0.625$ & $0.720$ & resnext50 & convnext\_base & convn
 EuroSAT & $0.955$ & $0.882$ & $0.880$ & $0.905$ & resnext50 & efficientnet\_b3 & densenet201 (tie) \\
 SVHN & $0.615$ & $0.428$ & $0.500$ & $0.450$ & inception\_v3 & efficientnet\_b3 & densenet169 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}

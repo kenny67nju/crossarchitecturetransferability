@@ -136,6 +136,21 @@ def export_part(reader: PdfReader, start: int, end: int, split: int,
     return remote_links
 
 
+def build_overview() -> None:
+    """Build the editable TikZ overview before either manuscript uses it."""
+    stage = Path(tempfile.mkdtemp(prefix="paper06-overview-"))
+    run(["xelatex", "-interaction=nonstopmode", "-halt-on-error",
+         f"-output-directory={stage}", "fig_method_overview.tex"],
+        dict(os.environ), stage / "build.txt")
+    log = (stage / "fig_method_overview.log").read_text(errors="replace")
+    for error in ("Missing character:", "Overfull", "Undefined control sequence"):
+        if error in log:
+            raise RuntimeError(f"{error} in overview; see {stage}")
+    pdf = stage / "fig_method_overview.pdf"
+    assert len(PdfReader(pdf).pages) == 1
+    shutil.copy2(pdf, PAPER / pdf.name)
+
+
 def build(language: str) -> None:
     stem = "main_v18" if language == "en" else "main_v18_zh"
     marker = "Supplementary Material" if language == "en" else "补充材料"
@@ -202,5 +217,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--language", choices=("en", "zh", "both"), default="both")
     args = parser.parse_args()
+    build_overview()
     for language in (("en", "zh") if args.language == "both" else (args.language,)):
         build(language)

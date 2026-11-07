@@ -167,11 +167,11 @@ def lp_accuracy(H, y, seed=SEED):
 
 
 def compute_ssr(H_tgt, H_ref, n_class, k=K):
-    """Compute canonical SSR† and its diagnostic components."""
+    """Compute canonical SSR‡ and its diagnostic components."""
     reff = effective_rank(H_tgt)
     sa_result = compute_subspace_alignment(H_ref, H_tgt, k=k)
     sa_k = sa_result['sa_k'] if isinstance(sa_result, dict) else float(sa_result)
-    # UID is retained only as a reported diagnostic; it is not part of SSR†.
+    # UID is retained only as a reported diagnostic; it is not part of SSR‡.
     rng = np.random.RandomState(SEED)
     U, _, _ = np.linalg.svd(H_tgt, full_matrices=False)
     Uk = U[:, :k]
@@ -657,7 +657,7 @@ def run_analysis():
 
     # ── Summary statistics ──
     print("\n─── Summary: Extended pool (Spearman rho vs LP) ───")
-    methods_lf = [('ssr_dagger', 'SSR† (ours)', 'No'), ('rankme', 'RankMe', 'No')]
+    methods_lf = [('ssr_dagger', 'SSR‡ (ours)', 'No'), ('rankme', 'RankMe', 'No')]
     methods_lr = [('ncti', 'NCTI', 'Yes'), ('hscore', 'H-score', 'Yes'),
                   ('leep', 'LEEP', 'Yes'), ('logme', 'LogME', 'Yes'),
                   ('disco', 'DISCO', 'Yes')]

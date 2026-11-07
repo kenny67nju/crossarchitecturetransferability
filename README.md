@@ -72,6 +72,8 @@ The statistical reference configuration is 100,000 bootstrap resamples, seed 42;
 
 Install XeLaTeX, BibTeX, and Poppler (`pdffonts`); make their executables available on PATH. Python `pypdf` is included in the lightweight setup above. On macOS these tools can be provided by MacTeX/BasicTeX and Homebrew Poppler; on Linux, by the corresponding TeX Live XeTeX/Chinese-language and Poppler packages.
 
+The build also compiles the editable overview in `paper/fig_method_overview.tex`; the TeX installation must include `standalone`, PGF/TikZ, and `newtx` (text and math fonts). The resulting vector PDF is shared by both language versions.
+
 The Chinese source currently selects `Arial Unicode.ttf` from `/Library/Fonts/`. For Chinese builds on other machines, install a suitably licensed font there or edit the three `setCJK...font` declarations in `paper/main_v18_zh.tex` to use an installed CJK font. A substitute font may change line breaks and page counts; check the regenerated PDF. The English build does not need this CJK font:
 
 ```sh

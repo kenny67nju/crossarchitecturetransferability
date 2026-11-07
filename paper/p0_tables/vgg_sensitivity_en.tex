@@ -3,7 +3,7 @@
 \caption{Complete auxiliary support: 118 candidates after excluding one variant with a missing score; 115 after also removing three VGG variants. Entries are five-task mean LP.}
 \label{tab:vgg_sensitivity}
 \setlength{\tabcolsep}{4pt}
-\resizebox{\linewidth}{!}{%
+\begin{adjustbox}{max width=\linewidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & With VGG & Without VGG & $\Delta$ & Type \\
@@ -17,5 +17,6 @@ NCTI & $0.666$ & $0.666$ & $0.000$ & labels \\
 \SSRdag & $0.723$ & $0.723$ & $0.000$ & zero-label \\
 LEEP clustering proxy & $0.783$ & $0.783$ & $0.000$ & labels \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}

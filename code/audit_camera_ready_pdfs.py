@@ -127,7 +127,7 @@ def main():
             camera_ready_pages=len(main_pdf.pages), delivery_mode='complete_with_appendices',
             combined_pages=len(combined.pages),metadata_verified=True)
     report['passed'] = True
-    report['visual_review'] = 'Recorded separately in docs/CAMERA_READY_FINAL_ACCEPTANCE_20261104.md.'
+    report['visual_review'] = 'Recorded separately in docs/CAMERA_READY_READABILITY_REVIEW_20261107.md.'
     (ROOT / 'results/camera_ready_p0_20261104/pdf_acceptance.json').write_text(
         json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))

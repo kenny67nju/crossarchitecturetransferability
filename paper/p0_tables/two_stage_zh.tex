@@ -1,9 +1,9 @@
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering\small
 \caption{MV 119 候选、五任务流程。区间为 100000 次任务 bootstrap。评估次数分别为不复用/复用规范代表；不含参考初始化。K 是使用标签的架构评估次数。}
 \label{tab:two_stage_zh}
 \setlength{\tabcolsep}{4pt}
-\resizebox{\linewidth}{!}{%
+\begin{adjustbox}{max width=\linewidth}
 \begin{tabular}{lrrrr}
 \toprule
 策略 & 平均 LP & 遗憾 & $95\%$ CI & 次数 \\
@@ -17,5 +17,6 @@ S6 \SSRdag$\to$\SSRdag & $0.720$ & $0.101$ & $[0.051,0.151]$ & $38/37$ \\
 S7 $R_{\mathrm{UID}}\to$RankMe & $0.763$ & $0.058$ & $[0.005,0.111]$ & $37.4/36.4$ \\
 S8 H-score$\to$RankMe (有标签; $K=35$) & $0.803$ & $0.018$ & $[0.000,0.052]$ & $37/36$ \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}

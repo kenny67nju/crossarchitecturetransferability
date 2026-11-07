@@ -22,11 +22,12 @@ matplotlib.rcParams.update({'pdf.fonttype':42,'ps.fonttype':42,'font.size':9})
 def read(name): return pd.read_csv(AGG/f'{ARM}_{name}.csv')
 def table(name,lang,caption,headers,rows,label=None):
     label=label or 'tab:'+name+('_zh' if lang=='zh' else '')
-    lines=[r'\begin{table}[htbp]',r'\centering\small',r'\caption{'+caption+'}',r'\label{'+label+'}',
-           r'\setlength{\tabcolsep}{4pt}',r'\resizebox{\linewidth}{!}{%',r'\begin{tabular}{l'+'r'*(len(headers)-1)+'}',r'\toprule',
+    placement='!ht' if name=='two_stage' and lang=='zh' else 'htbp'
+    lines=[r'\begin{table}['+placement+']',r'\centering\small',r'\caption{'+caption+'}',r'\label{'+label+'}',
+           r'\setlength{\tabcolsep}{4pt}',r'\begin{adjustbox}{max width=\linewidth}',r'\begin{tabular}{l'+'r'*(len(headers)-1)+'}',r'\toprule',
            ' & '.join(headers)+r' \\',r'\midrule']
     lines += [' & '.join(row)+r' \\' for row in rows]
-    lines += [r'\bottomrule',r'\end{tabular}}',r'\end{table}','']
+    lines += [r'\bottomrule',r'\end{tabular}',r'\end{adjustbox}',r'\end{table}','']
     (TEX/f'{name}_{lang}.tex').write_text('\n'.join(lines))
 def num(x,d=3):return f'${x:.{d}f}$'
 def fmtci(lo,hi):return f'$[{lo:.3f},{hi:.3f}]$'
@@ -88,7 +89,9 @@ def main():
     ax.set(xlabel='Stage-1 labeled architecture evaluations $K$',ylabel='Mean regret',xlim=(0,36),ylim=(0,.175))
     ax.grid(alpha=.2);ax.legend(fontsize=8,loc='upper right')
     for k in [5,35]:
-        r=budget[budget.budget==k].iloc[0];ax.annotate(f'{r.regret:.3f}',(k,r.regret),xytext=(-5,10),textcoords='offset points',fontsize=9)
+        r=budget[budget.budget==k].iloc[0]
+        offset=(2,-15) if k==5 else (-5,10)
+        ax.annotate(f'{r.regret:.3f}',(k,r.regret),xytext=offset,textcoords='offset points',fontsize=9)
     savefig(fig,'fig_costsplit')
     for lang in ['en','zh']:
         zh=lang=='zh'

@@ -3,7 +3,7 @@
 \caption{Width and quality diagnostics by pool. MV uses 119 candidates; VTAB excludes STL-10. Correlations are per-task Spearman means.}
 \label{tab:pool_diagnosis}
 \setlength{\tabcolsep}{4pt}
-\resizebox{\linewidth}{!}{%
+\begin{adjustbox}{max width=\linewidth}
 \begin{tabular}{lrrrrr}
 \toprule
 Pool & Groups/tasks & $\rho(\mathrm{RankMe},d)$ & $\rho(d,\mathrm{LP})$ & RM regret & Random regret \\
@@ -12,5 +12,6 @@ MV & $35/5$ & $0.609$ & $-0.049$ & $0.144$ & $0.191$ \\
 VTAB & $24/7$ & $0.879$ & $0.233$ & $0.110$ & $0.106$ \\
 EX & $35/10$ & $0.766$ & $-0.070$ & $0.144$ & $0.131$ \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}

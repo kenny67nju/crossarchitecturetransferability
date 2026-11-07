@@ -3,7 +3,7 @@
 \caption{辅助方法的完整共同支持：剔除一个缺项变体后为 118 个候选，再移除三个 VGG 变体后为 115 个。数值为五任务平均 LP。}
 \label{tab:vgg_sensitivity_zh}
 \setlength{\tabcolsep}{4pt}
-\resizebox{\linewidth}{!}{%
+\begin{adjustbox}{max width=\linewidth}
 \begin{tabular}{lrrrr}
 \toprule
 方法 & 含 VGG & 不含 VGG & $\Delta$ & 类型 \\
@@ -17,5 +17,6 @@ NCTI & $0.666$ & $0.666$ & $0.000$ & 有标签 \\
 \SSRdag & $0.723$ & $0.723$ & $0.000$ & 无标签 \\
 LEEP 聚类代理 & $0.783$ & $0.783$ & $0.000$ & 有标签 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{adjustbox}
 \end{table}

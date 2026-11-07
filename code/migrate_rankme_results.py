@@ -1,4 +1,4 @@
-"""Normalize shipped result CSVs to the canonical RankMe/SSR† definitions.
+"""Normalize shipped result CSVs to the canonical RankMe/SSR‡ definitions.
 
 This migration is deterministic and uses only shipped sufficient statistics.
 It does not replace a full rerun from feature matrices.
