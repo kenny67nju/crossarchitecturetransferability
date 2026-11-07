@@ -5,7 +5,7 @@
 - 英文完整提交版：[`paper/Paper06_camera_ready_en.pdf`](../paper/Paper06_camera_ready_en.pdf)。
 - 中文完整译稿：[`paper/Paper06_camera_ready_zh.pdf`](../paper/Paper06_camera_ready_zh.pdf)。
 - 两份均含正文、披露、参考文献、附录及 checklist。
-- `combined` 是兼容副本，与对应完整版本逐字节相同；`supplement` 只是可选附录摘录。
+- `combined` 是兼容副本，`supplement` 是可选附录摘录；中英文共四份仅保留在本地，已由 Git 忽略，不在当前远端版本中发布。构建脚本仍会生成它们，运行 PDF 验收前请先构建。公开下载只需上面的两份完整版本。
 - `paper/main_v18.tex`、`paper/main_v18_zh.tex` 是当前源文件；文件名保留 v18 不代表旧投稿内容。
 
 ## 目录职责

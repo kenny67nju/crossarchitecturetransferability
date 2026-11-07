@@ -87,7 +87,7 @@ python3 code/build_camera_ready_pdfs.py --language both
 python3 code/audit_camera_ready_pdfs.py
 ```
 
-The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The `combined` PDFs are byte-identical compatibility aliases. The supplement PDFs are optional appendix extracts, not required companion files. The old `main_v18.pdf` is archived under `archive/paper/history/` and is not rebuilt by this pipeline. The source names `main_v18.tex` and `main_v18_zh.tex` remain the current build inputs for compatibility.
+The complete deliverables are [`paper/Paper06_camera_ready_en.pdf`](paper/Paper06_camera_ready_en.pdf) and [`paper/Paper06_camera_ready_zh.pdf`](paper/Paper06_camera_ready_zh.pdf). Each contains the main text, funding and competing-interests disclosures, references, appendices, and checklist. The build also generates `combined` compatibility copies and optional `supplement` appendix extracts; these four PDFs are local-only, ignored by Git, and not distributed in the current repository. Run the build before the PDF audit to generate these local files. No separate supplement is needed to read the complete papers. The old `main_v18.pdf` is archived under `archive/paper/history/` and is not rebuilt by this pipeline. The source names `main_v18.tex` and `main_v18_zh.tex` remain the current build inputs for compatibility.
 
 ## Release map and provenance
 

@@ -55,3 +55,10 @@ build/
 !/results/p0_vgg_pair_20261104/p0_aggregate_v2/layer_only_4096_common22.csv
 !/results/p0_vgg_pair_20261104/p0_aggregate_v2/summary.json
 /results/camera_ready_p0_20261104/installed_files.json
+
+# Local-only compatibility copies and optional appendix extracts.
+# The two complete camera-ready PDFs remain tracked for public download.
+/paper/Paper06_camera_ready_combined_en.pdf
+/paper/Paper06_camera_ready_combined_zh.pdf
+/paper/Paper06_supplement_en.pdf
+/paper/Paper06_supplement_zh.pdf
